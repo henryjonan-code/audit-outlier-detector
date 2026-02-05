@@ -1,5 +1,6 @@
 """
 Konfigurasi untuk Analisis Saham IHSG ala Warren Buffett
+Version 2.0 - Dengan Valuation Score dan Liquidity Filter
 """
 
 # Daftar saham-saham IHSG yang akan dianalisis
@@ -82,15 +83,28 @@ IHSG_STOCKS = [
     "TBIG.JK",  # Tower Bersama
 ]
 
-# Bobot untuk sistem scoring Warren Buffett
+# ============================================================================
+# FORMULA BUFFETT SCORE V2.0
+# ============================================================================
+# Menambahkan Valuation Score dengan bobot signifikan
+# Rekomendasi: Valuasi 25-30% (bukan 40%) karena DCF sensitif terhadap asumsi
+#
+# Formula:
+# BUFFETT_SCORE = (0.15 × Debt) + (0.15 × ROE) + (0.10 × Trend) +
+#                 (0.10 × Margin) + (0.10 × Dividend) + (0.10 × Liquidity) +
+#                 (0.05 × Growth) + (0.25 × Valuation)
+# ============================================================================
+
 SCORING_WEIGHTS = {
-    'price_trend_1y': 0.15,      # Trend harga 1 tahun (15%)
-    'debt_to_equity': 0.20,      # Rasio hutang (20%) - semakin rendah semakin baik
-    'roe': 0.20,                 # Return on Equity (20%)
-    'profit_margin': 0.15,       # Profit Margin (15%)
-    'dividend_yield': 0.15,      # Dividend Yield (15%)
-    'current_ratio': 0.10,       # Current Ratio (10%)
+    'debt_to_equity': 0.15,      # Rasio hutang (15%) - rendah lebih baik
+    'roe': 0.15,                 # Return on Equity (15%)
+    'price_trend_1y': 0.10,      # Trend harga 1 tahun (10%)
+    'profit_margin': 0.10,       # Profit Margin (10%)
+    'dividend_yield': 0.10,      # Dividend Yield (10%)
+    'current_ratio': 0.05,       # Current Ratio (5%)
     'earnings_growth': 0.05,     # Pertumbuhan Laba (5%)
+    'valuation': 0.25,           # Valuation Score - PEG, P/E, P/B (25%)
+    'liquidity': 0.05,           # Trading Liquidity/Volume (5%)
 }
 
 # Kriteria minimum Warren Buffett
@@ -100,4 +114,47 @@ MIN_CRITERIA = {
     'min_profit_margin': 10,    # Profit margin minimal 10%
     'min_dividend_yield': 1.0,  # Dividend yield minimal 1%
     'min_current_ratio': 1.0,   # Current ratio minimal 1.0
+}
+
+# ============================================================================
+# LIQUIDITY FILTER - Anti Goreng
+# ============================================================================
+# Saham dengan volume rendah mudah dimanipulasi (digoreng)
+# Filter:
+# 1. Average Daily Volume minimal 1 juta lembar
+# 2. Market Cap minimal 5 Triliun Rupiah
+# 3. Free Float minimal 15%
+# ============================================================================
+
+LIQUIDITY_CRITERIA = {
+    'min_avg_volume': 1_000_000,      # Minimal 1 juta lembar per hari
+    'min_market_cap': 5e12,           # Minimal 5 Triliun Rupiah
+    'min_free_float_pct': 15,         # Minimal 15% free float
+}
+
+# ============================================================================
+# VALUATION CRITERIA
+# ============================================================================
+# Untuk menilai apakah saham undervalued atau overvalued
+# Menggunakan kombinasi:
+# 1. PEG Ratio (P/E dibagi Growth) - ideal < 1
+# 2. P/E Ratio relatif terhadap industri
+# 3. P/B Ratio - ideal < 2 untuk value investing
+# ============================================================================
+
+VALUATION_BENCHMARKS = {
+    'ideal_peg': 1.0,           # PEG < 1 = undervalued
+    'max_pe_ratio': 20,         # P/E > 20 mulai mahal
+    'ideal_pb_ratio': 2.0,      # P/B < 2 untuk value
+    'sector_pe': {              # P/E rata-rata per sektor
+        'Financial Services': 12,
+        'Energy': 8,
+        'Basic Materials': 10,
+        'Consumer Defensive': 18,
+        'Consumer Cyclical': 15,
+        'Healthcare': 20,
+        'Communication Services': 12,
+        'Real Estate': 15,
+        'Industrials': 12,
+    }
 }

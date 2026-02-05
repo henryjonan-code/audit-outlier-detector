@@ -1,28 +1,33 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
 Data berdasarkan informasi publik yang tersedia (perkiraan Q4 2024/Q1 2025)
+Version 2.0 - Dengan Volume dan Valuasi Data
+
 DISCLAIMER: Data ini hanya untuk demonstrasi, selalu verifikasi dengan sumber resmi
 """
 
 SAMPLE_STOCK_DATA = [
-    # Bank - Perbankan
+    # Bank - Perbankan (High Liquidity)
     {
         'ticker': 'BBCA.JK',
         'name': 'Bank Central Asia Tbk',
         'sector': 'Financial Services',
         'industry': 'Banks - Regional',
         'current_price': 9875,
-        'price_change_1y': 12.5,  # Return 1 tahun ~12.5%
-        'debt_to_equity': 0.82,   # Bank memang D/E tinggi karena nature bisnisnya
-        'roe': 21.5,              # ROE sangat baik ~21.5%
+        'price_change_1y': 12.5,
+        'debt_to_equity': 0.82,
+        'roe': 21.5,
         'roa': 3.8,
-        'profit_margin': 45.2,    # Profit margin sangat tinggi
-        'dividend_yield': 2.8,    # Dividend yield ~2.8%
-        'current_ratio': None,    # Bank tidak pakai current ratio
+        'profit_margin': 45.2,
+        'dividend_yield': 2.8,
+        'current_ratio': None,
         'earnings_growth': 15.3,
         'pe_ratio': 22.5,
         'pb_ratio': 4.8,
-        'market_cap': 1250e12,    # ~1,250 Triliun
+        'peg_ratio': 1.47,
+        'market_cap': 1250e12,
+        'avg_volume': 25_000_000,  # 25 juta lembar/hari - SANGAT LIQUID
+        'free_float_pct': 45,
     },
     {
         'ticker': 'BBRI.JK',
@@ -35,12 +40,15 @@ SAMPLE_STOCK_DATA = [
         'roe': 19.8,
         'roa': 3.2,
         'profit_margin': 35.8,
-        'dividend_yield': 5.2,    # Dividend yield tinggi
+        'dividend_yield': 5.2,
         'current_ratio': None,
         'earnings_growth': 12.1,
         'pe_ratio': 12.8,
         'pb_ratio': 2.5,
+        'peg_ratio': 1.06,
         'market_cap': 720e12,
+        'avg_volume': 80_000_000,  # 80 juta - PALING LIQUID
+        'free_float_pct': 43,
     },
     {
         'ticker': 'BMRI.JK',
@@ -58,7 +66,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 18.5,
         'pe_ratio': 10.2,
         'pb_ratio': 2.3,
+        'peg_ratio': 0.55,  # MURAH! PEG < 1
         'market_cap': 580e12,
+        'avg_volume': 45_000_000,
+        'free_float_pct': 40,
     },
     {
         'ticker': 'BBNI.JK',
@@ -76,7 +87,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 8.5,
         'pe_ratio': 9.5,
         'pb_ratio': 1.4,
+        'peg_ratio': 1.12,
         'market_cap': 180e12,
+        'avg_volume': 35_000_000,
+        'free_float_pct': 40,
     },
 
     # Consumer Goods
@@ -87,7 +101,7 @@ SAMPLE_STOCK_DATA = [
         'industry': 'Packaged Foods',
         'current_price': 11500,
         'price_change_1y': 18.2,
-        'debt_to_equity': 0.45,   # Hutang rendah
+        'debt_to_equity': 0.45,
         'roe': 18.5,
         'roa': 10.2,
         'profit_margin': 12.8,
@@ -96,7 +110,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 22.5,
         'pe_ratio': 18.5,
         'pb_ratio': 3.4,
+        'peg_ratio': 0.82,  # MURAH!
         'market_cap': 135e12,
+        'avg_volume': 5_000_000,
+        'free_float_pct': 19,
     },
     {
         'ticker': 'INDF.JK',
@@ -114,7 +131,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 12.3,
         'pe_ratio': 8.5,
         'pb_ratio': 1.2,
+        'peg_ratio': 0.69,  # SANGAT MURAH!
         'market_cap': 60e12,
+        'avg_volume': 8_000_000,
+        'free_float_pct': 50,
     },
     {
         'ticker': 'KLBF.JK',
@@ -123,16 +143,19 @@ SAMPLE_STOCK_DATA = [
         'industry': 'Drug Manufacturers',
         'current_price': 1620,
         'price_change_1y': 5.2,
-        'debt_to_equity': 0.18,   # Hutang sangat rendah
+        'debt_to_equity': 0.18,
         'roe': 15.8,
         'roa': 12.5,
         'profit_margin': 11.2,
         'dividend_yield': 3.5,
-        'current_ratio': 4.2,     # Likuiditas sangat baik
+        'current_ratio': 4.2,
         'earnings_growth': 8.5,
         'pe_ratio': 22.5,
         'pb_ratio': 3.5,
+        'peg_ratio': 2.65,  # Agak mahal
         'market_cap': 76e12,
+        'avg_volume': 15_000_000,
+        'free_float_pct': 43,
     },
     {
         'ticker': 'SIDO.JK',
@@ -141,16 +164,19 @@ SAMPLE_STOCK_DATA = [
         'industry': 'Drug Manufacturers',
         'current_price': 680,
         'price_change_1y': 15.2,
-        'debt_to_equity': 0.05,   # Hampir tidak ada hutang!
-        'roe': 28.5,              # ROE sangat tinggi
+        'debt_to_equity': 0.05,
+        'roe': 28.5,
         'roa': 24.2,
-        'profit_margin': 25.8,    # Margin sangat tinggi
-        'dividend_yield': 5.8,    # Dividend tinggi
+        'profit_margin': 25.8,
+        'dividend_yield': 5.8,
         'current_ratio': 5.8,
         'earnings_growth': 18.2,
         'pe_ratio': 14.5,
         'pb_ratio': 4.1,
+        'peg_ratio': 0.80,  # MURAH!
         'market_cap': 20e12,
+        'avg_volume': 12_000_000,
+        'free_float_pct': 19,
     },
     {
         'ticker': 'MYOR.JK',
@@ -168,7 +194,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 25.8,
         'pe_ratio': 15.2,
         'pb_ratio': 3.5,
+        'peg_ratio': 0.59,  # SANGAT MURAH!
         'market_cap': 55e12,
+        'avg_volume': 3_500_000,
+        'free_float_pct': 67,
     },
 
     # Telekomunikasi
@@ -178,7 +207,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Communication Services',
         'industry': 'Telecom Services',
         'current_price': 2850,
-        'price_change_1y': -8.5,  # Trend turun
+        'price_change_1y': -8.5,  # TURUN
         'debt_to_equity': 0.55,
         'roe': 18.5,
         'roa': 8.2,
@@ -188,27 +217,33 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': -5.2,
         'pe_ratio': 10.5,
         'pb_ratio': 1.9,
+        'peg_ratio': None,  # Growth negatif
         'market_cap': 280e12,
+        'avg_volume': 50_000_000,
+        'free_float_pct': 48,
     },
 
-    # Mining & Energy
+    # Mining & Energy - STARS!
     {
         'ticker': 'ADRO.JK',
         'name': 'Adaro Energy Indonesia',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
         'current_price': 2780,
-        'price_change_1y': 35.2,  # Naik signifikan
+        'price_change_1y': 35.2,
         'debt_to_equity': 0.35,
         'roe': 32.5,
         'roa': 18.5,
         'profit_margin': 28.5,
-        'dividend_yield': 8.5,    # Dividend sangat tinggi
+        'dividend_yield': 8.5,
         'current_ratio': 2.8,
         'earnings_growth': 45.2,
         'pe_ratio': 5.2,
         'pb_ratio': 1.7,
+        'peg_ratio': 0.12,  # SUPER MURAH!
         'market_cap': 90e12,
+        'avg_volume': 35_000_000,
+        'free_float_pct': 35,
     },
     {
         'ticker': 'ITMG.JK',
@@ -217,16 +252,19 @@ SAMPLE_STOCK_DATA = [
         'industry': 'Thermal Coal',
         'current_price': 26500,
         'price_change_1y': 28.5,
-        'debt_to_equity': 0.25,   # Hutang sangat rendah
-        'roe': 45.2,              # ROE sangat tinggi
+        'debt_to_equity': 0.25,
+        'roe': 45.2,
         'roa': 28.5,
         'profit_margin': 22.5,
-        'dividend_yield': 12.5,   # Dividend sangat tinggi
+        'dividend_yield': 12.5,
         'current_ratio': 3.2,
         'earnings_growth': 35.8,
         'pe_ratio': 4.5,
         'pb_ratio': 2.0,
+        'peg_ratio': 0.13,  # SUPER MURAH!
         'market_cap': 30e12,
+        'avg_volume': 2_500_000,
+        'free_float_pct': 35,
     },
     {
         'ticker': 'PTBA.JK',
@@ -244,7 +282,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 28.5,
         'pe_ratio': 5.8,
         'pb_ratio': 2.2,
+        'peg_ratio': 0.20,  # SUPER MURAH!
         'market_cap': 33e12,
+        'avg_volume': 15_000_000,
+        'free_float_pct': 35,
     },
     {
         'ticker': 'INCO.JK',
@@ -252,8 +293,8 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Basic Materials',
         'industry': 'Nickel',
         'current_price': 4250,
-        'price_change_1y': 42.5,  # Naik sangat tinggi
-        'debt_to_equity': 0.15,   # Hampir tidak ada hutang
+        'price_change_1y': 42.5,
+        'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.8,
         'profit_margin': 22.5,
@@ -262,7 +303,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 55.2,
         'pe_ratio': 12.5,
         'pb_ratio': 2.3,
+        'peg_ratio': 0.23,  # MURAH!
         'market_cap': 42e12,
+        'avg_volume': 18_000_000,
+        'free_float_pct': 21,
     },
     {
         'ticker': 'ANTM.JK',
@@ -280,7 +324,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 32.5,
         'pe_ratio': 10.2,
         'pb_ratio': 1.6,
+        'peg_ratio': 0.31,  # MURAH!
         'market_cap': 45e12,
+        'avg_volume': 45_000_000,
+        'free_float_pct': 35,
     },
 
     # Otomotif & Konglomerasi
@@ -300,7 +347,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 10.2,
         'pe_ratio': 8.5,
         'pb_ratio': 1.3,
+        'peg_ratio': 0.83,  # MURAH!
         'market_cap': 195e12,
+        'avg_volume': 25_000_000,
+        'free_float_pct': 50,
     },
     {
         'ticker': 'UNTR.JK',
@@ -318,7 +368,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 18.5,
         'pe_ratio': 7.5,
         'pb_ratio': 1.4,
+        'peg_ratio': 0.41,  # MURAH!
         'market_cap': 102e12,
+        'avg_volume': 5_000_000,
+        'free_float_pct': 41,
     },
     {
         'ticker': 'AUTO.JK',
@@ -336,7 +389,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 15.2,
         'pe_ratio': 9.5,
         'pb_ratio': 1.2,
+        'peg_ratio': 0.63,  # MURAH!
         'market_cap': 10.5e12,
+        'avg_volume': 1_500_000,
+        'free_float_pct': 20,
     },
 
     # Retail
@@ -347,7 +403,7 @@ SAMPLE_STOCK_DATA = [
         'industry': 'Home Improvement Retail',
         'current_price': 840,
         'price_change_1y': 18.5,
-        'debt_to_equity': 0.08,   # Hampir tidak ada hutang
+        'debt_to_equity': 0.08,
         'roe': 22.5,
         'roa': 15.8,
         'profit_margin': 12.5,
@@ -356,7 +412,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 22.5,
         'pe_ratio': 18.5,
         'pb_ratio': 4.2,
+        'peg_ratio': 0.82,  # MURAH!
         'market_cap': 14e12,
+        'avg_volume': 8_000_000,
+        'free_float_pct': 30,
     },
     {
         'ticker': 'MAPI.JK',
@@ -374,7 +433,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 35.5,
         'pe_ratio': 14.5,
         'pb_ratio': 2.7,
+        'peg_ratio': 0.41,  # MURAH!
         'market_cap': 28e12,
+        'avg_volume': 6_000_000,
+        'free_float_pct': 42,
     },
     {
         'ticker': 'AMRT.JK',
@@ -386,13 +448,16 @@ SAMPLE_STOCK_DATA = [
         'debt_to_equity': 0.85,
         'roe': 28.5,
         'roa': 8.5,
-        'profit_margin': 3.2,   # Retail margin tipis
+        'profit_margin': 3.2,
         'dividend_yield': 1.2,
         'current_ratio': 1.1,
         'earnings_growth': 28.5,
         'pe_ratio': 28.5,
         'pb_ratio': 8.1,
+        'peg_ratio': 1.0,
         'market_cap': 115e12,
+        'avg_volume': 12_000_000,
+        'free_float_pct': 35,
     },
 
     # Properti
@@ -411,8 +476,11 @@ SAMPLE_STOCK_DATA = [
         'current_ratio': 3.5,
         'earnings_growth': 18.5,
         'pe_ratio': 8.5,
-        'pb_ratio': 0.7,
+        'pb_ratio': 0.7,  # SANGAT MURAH P/B
+        'peg_ratio': 0.46,  # MURAH!
         'market_cap': 22e12,
+        'avg_volume': 25_000_000,
+        'free_float_pct': 48,
     },
     {
         'ticker': 'CTRA.JK',
@@ -429,8 +497,11 @@ SAMPLE_STOCK_DATA = [
         'current_ratio': 2.8,
         'earnings_growth': 25.8,
         'pe_ratio': 9.5,
-        'pb_ratio': 0.9,
+        'pb_ratio': 0.9,  # MURAH P/B
+        'peg_ratio': 0.37,  # SANGAT MURAH!
         'market_cap': 21e12,
+        'avg_volume': 15_000_000,
+        'free_float_pct': 42,
     },
 
     # Semen
@@ -440,7 +511,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Basic Materials',
         'industry': 'Building Materials',
         'current_price': 4250,
-        'price_change_1y': -5.2,  # Trend turun
+        'price_change_1y': -5.2,  # TURUN
         'debt_to_equity': 0.72,
         'roe': 8.5,
         'roa': 4.2,
@@ -450,7 +521,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': -8.5,
         'pe_ratio': 12.5,
         'pb_ratio': 1.1,
+        'peg_ratio': None,  # Growth negatif
         'market_cap': 25e12,
+        'avg_volume': 10_000_000,
+        'free_float_pct': 49,
     },
     {
         'ticker': 'INTP.JK',
@@ -468,7 +542,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 5.2,
         'pe_ratio': 18.5,
         'pb_ratio': 1.2,
+        'peg_ratio': 3.56,  # MAHAL!
         'market_cap': 28e12,
+        'avg_volume': 3_000_000,
+        'free_float_pct': 36,
     },
 
     # Tower & Infrastruktur
@@ -479,7 +556,7 @@ SAMPLE_STOCK_DATA = [
         'industry': 'REIT - Specialty',
         'current_price': 885,
         'price_change_1y': 12.5,
-        'debt_to_equity': 1.85,   # Hutang tinggi (capital intensive)
+        'debt_to_equity': 1.85,  # Hutang tinggi
         'roe': 32.5,
         'roa': 8.5,
         'profit_margin': 42.5,
@@ -488,7 +565,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 15.2,
         'pe_ratio': 12.5,
         'pb_ratio': 4.1,
+        'peg_ratio': 0.82,
         'market_cap': 45e12,
+        'avg_volume': 20_000_000,
+        'free_float_pct': 38,
     },
     {
         'ticker': 'TBIG.JK',
@@ -497,7 +577,7 @@ SAMPLE_STOCK_DATA = [
         'industry': 'REIT - Specialty',
         'current_price': 2150,
         'price_change_1y': 8.5,
-        'debt_to_equity': 2.25,
+        'debt_to_equity': 2.25,  # Hutang sangat tinggi
         'roe': 28.5,
         'roa': 5.2,
         'profit_margin': 38.5,
@@ -506,7 +586,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 12.5,
         'pe_ratio': 15.5,
         'pb_ratio': 4.4,
+        'peg_ratio': 1.24,
         'market_cap': 48e12,
+        'avg_volume': 8_000_000,
+        'free_float_pct': 35,
     },
 
     # Poultry/Peternakan
@@ -526,7 +609,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 22.5,
         'pe_ratio': 14.5,
         'pb_ratio': 2.7,
+        'peg_ratio': 0.64,  # MURAH!
         'market_cap': 82e12,
+        'avg_volume': 8_000_000,
+        'free_float_pct': 45,
     },
     {
         'ticker': 'JPFA.JK',
@@ -544,7 +630,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 32.5,
         'pe_ratio': 8.5,
         'pb_ratio': 1.3,
+        'peg_ratio': 0.26,  # SANGAT MURAH!
         'market_cap': 18e12,
+        'avg_volume': 12_000_000,
+        'free_float_pct': 48,
     },
 
     # Media
@@ -554,7 +643,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Communication Services',
         'industry': 'Broadcasting',
         'current_price': 142,
-        'price_change_1y': -25.5,  # Trend turun signifikan
+        'price_change_1y': -25.5,  # TURUN SIGNIFIKAN
         'debt_to_equity': 0.12,
         'roe': 12.5,
         'roa': 8.5,
@@ -564,7 +653,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': -15.2,
         'pe_ratio': 8.5,
         'pb_ratio': 1.1,
-        'market_cap': 2e12,
+        'peg_ratio': None,  # Growth negatif
+        'market_cap': 2e12,  # Kecil - mudah digoreng
+        'avg_volume': 15_000_000,
+        'free_float_pct': 25,
     },
 
     # Keramik
@@ -584,7 +676,10 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 18.5,
         'pe_ratio': 12.5,
         'pb_ratio': 2.8,
-        'market_cap': 4.5e12,
+        'peg_ratio': 0.68,  # MURAH!
+        'market_cap': 4.5e12,  # Agak kecil
+        'avg_volume': 5_000_000,
+        'free_float_pct': 38,
     },
 
     # Elektronik Retail
@@ -594,7 +689,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Consumer Cyclical',
         'industry': 'Electronics & Appliances',
         'current_price': 428,
-        'price_change_1y': 45.5,  # Naik sangat tinggi
+        'price_change_1y': 45.5,
         'debt_to_equity': 0.85,
         'roe': 15.8,
         'roa': 5.2,
@@ -604,6 +699,9 @@ SAMPLE_STOCK_DATA = [
         'earnings_growth': 55.2,
         'pe_ratio': 10.5,
         'pb_ratio': 1.7,
+        'peg_ratio': 0.19,  # SANGAT MURAH!
         'market_cap': 13e12,
+        'avg_volume': 25_000_000,
+        'free_float_pct': 45,
     },
 ]

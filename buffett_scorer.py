@@ -1,5 +1,10 @@
 """
-Sistem Scoring Saham ala Warren Buffett
+Sistem Scoring Saham ala Warren Buffett V2.0
+
+Update:
+- Menambahkan Valuation Score (PEG, P/E, P/B) dengan bobot 25%
+- Menambahkan Liquidity Filter (Volume, Market Cap) untuk anti-goreng
+- Menyesuaikan bobot komponen lainnya
 
 Prinsip-prinsip Warren Buffett yang digunakan:
 1. Cari perusahaan dengan competitive advantage (moat)
@@ -7,18 +12,20 @@ Prinsip-prinsip Warren Buffett yang digunakan:
 3. ROE tinggi - perusahaan yang efisien menggunakan modal
 4. Profit margin tinggi - pricing power
 5. Dividen konsisten - shareholder friendly
-6. Trend harga naik - market mengakui nilai perusahaan
+6. VALUASI WAJAR - beli di harga yang masuk akal (PEG < 1)
+7. LIKUIDITAS TINGGI - saham tidak mudah digoreng
 """
 
 import pandas as pd
 import numpy as np
 from typing import Dict, Tuple
-from config import SCORING_WEIGHTS, MIN_CRITERIA
+from config import SCORING_WEIGHTS, MIN_CRITERIA, LIQUIDITY_CRITERIA, VALUATION_BENCHMARKS
 
 
 class BuffettScorer:
     """
-    Sistem scoring saham berdasarkan prinsip investasi Warren Buffett
+    Sistem scoring saham berdasarkan prinsip investasi Warren Buffett V2.0
+    Dengan Valuation Score dan Liquidity Filter
     """
 
     def __init__(self, weights: Dict = None):
@@ -28,15 +35,6 @@ class BuffettScorer:
                        inverse: bool = False) -> float:
         """
         Normalisasi nilai ke skala 0-100
-
-        Args:
-            value: Nilai yang akan dinormalisasi
-            min_val: Nilai minimum dalam dataset
-            max_val: Nilai maksimum dalam dataset
-            inverse: True jika nilai rendah lebih baik (seperti D/E ratio)
-
-        Returns:
-            Skor dalam skala 0-100
         """
         if pd.isna(value) or value is None:
             return 0
@@ -44,26 +42,164 @@ class BuffettScorer:
         if max_val == min_val:
             return 50
 
-        # Normalisasi ke 0-100
         normalized = (value - min_val) / (max_val - min_val) * 100
 
-        # Jika inverse (rendah lebih baik), balik skornya
         if inverse:
             normalized = 100 - normalized
 
-        # Batasi antara 0-100
         return max(0, min(100, normalized))
+
+    def calculate_valuation_score(self, row: pd.Series) -> float:
+        """
+        Hitung Valuation Score berdasarkan PEG, P/E, dan P/B ratio
+
+        Komponen:
+        - PEG Ratio (40%): < 1 = undervalued, > 2 = overvalued
+        - P/E Ratio (30%): Dibandingkan dengan benchmark sektor
+        - P/B Ratio (30%): < 2 ideal untuk value investing
+
+        Returns:
+            Skor valuasi 0-100
+        """
+        scores = []
+        weights = []
+
+        # 1. PEG Ratio Score (40% dari valuation)
+        peg = row.get('peg_ratio')
+        if pd.notna(peg) and peg is not None and peg > 0:
+            # PEG < 0.5 = 100, PEG = 1 = 50, PEG > 2 = 0
+            if peg <= 0.5:
+                peg_score = 100
+            elif peg <= 1:
+                peg_score = 100 - (peg - 0.5) * 100  # Linear dari 100 ke 50
+            elif peg <= 2:
+                peg_score = 50 - (peg - 1) * 50  # Linear dari 50 ke 0
+            else:
+                peg_score = 0
+            scores.append(peg_score)
+            weights.append(0.4)
+
+        # 2. P/E Ratio Score (30% dari valuation)
+        pe = row.get('pe_ratio')
+        sector = row.get('sector', '')
+        sector_pe = VALUATION_BENCHMARKS['sector_pe'].get(sector, 15)
+
+        if pd.notna(pe) and pe is not None and pe > 0:
+            # P/E di bawah sektor = bagus, di atas = kurang bagus
+            pe_ratio_vs_sector = pe / sector_pe
+            if pe_ratio_vs_sector <= 0.5:
+                pe_score = 100
+            elif pe_ratio_vs_sector <= 1:
+                pe_score = 100 - (pe_ratio_vs_sector - 0.5) * 60
+            elif pe_ratio_vs_sector <= 1.5:
+                pe_score = 70 - (pe_ratio_vs_sector - 1) * 80
+            else:
+                pe_score = max(0, 30 - (pe_ratio_vs_sector - 1.5) * 30)
+            scores.append(pe_score)
+            weights.append(0.3)
+
+        # 3. P/B Ratio Score (30% dari valuation)
+        pb = row.get('pb_ratio')
+        if pd.notna(pb) and pb is not None and pb > 0:
+            # P/B < 1 = 100, P/B = 2 = 50, P/B > 4 = 0
+            if pb <= 1:
+                pb_score = 100
+            elif pb <= 2:
+                pb_score = 100 - (pb - 1) * 50
+            elif pb <= 4:
+                pb_score = 50 - (pb - 2) * 25
+            else:
+                pb_score = 0
+            scores.append(pb_score)
+            weights.append(0.3)
+
+        if not scores:
+            return 50  # Default jika tidak ada data
+
+        # Weighted average
+        total_weight = sum(weights)
+        return sum(s * w for s, w in zip(scores, weights)) / total_weight
+
+    def calculate_liquidity_score(self, row: pd.Series) -> float:
+        """
+        Hitung Liquidity Score untuk menilai seberapa liquid saham
+
+        Komponen:
+        - Average Daily Volume (50%)
+        - Market Cap (30%)
+        - Free Float (20%)
+
+        Returns:
+            Skor likuiditas 0-100
+        """
+        scores = []
+        weights = []
+
+        # 1. Volume Score (50%)
+        avg_vol = row.get('avg_volume')
+        min_vol = LIQUIDITY_CRITERIA['min_avg_volume']
+
+        if pd.notna(avg_vol) and avg_vol is not None:
+            if avg_vol >= min_vol * 10:  # > 10 juta
+                vol_score = 100
+            elif avg_vol >= min_vol * 5:  # > 5 juta
+                vol_score = 80
+            elif avg_vol >= min_vol:  # > 1 juta
+                vol_score = 60
+            elif avg_vol >= min_vol * 0.5:  # > 500k
+                vol_score = 40
+            else:
+                vol_score = 20
+            scores.append(vol_score)
+            weights.append(0.5)
+
+        # 2. Market Cap Score (30%)
+        mcap = row.get('market_cap')
+        min_mcap = LIQUIDITY_CRITERIA['min_market_cap']
+
+        if pd.notna(mcap) and mcap is not None:
+            if mcap >= min_mcap * 20:  # > 100T
+                mcap_score = 100
+            elif mcap >= min_mcap * 10:  # > 50T
+                mcap_score = 80
+            elif mcap >= min_mcap * 2:  # > 10T
+                mcap_score = 60
+            elif mcap >= min_mcap:  # > 5T
+                mcap_score = 40
+            else:
+                mcap_score = 20
+            scores.append(mcap_score)
+            weights.append(0.3)
+
+        # 3. Free Float Score (20%)
+        ff = row.get('free_float_pct')
+        min_ff = LIQUIDITY_CRITERIA['min_free_float_pct']
+
+        if pd.notna(ff) and ff is not None:
+            if ff >= 40:
+                ff_score = 100
+            elif ff >= 30:
+                ff_score = 80
+            elif ff >= min_ff:
+                ff_score = 60
+            else:
+                ff_score = 30
+            scores.append(ff_score)
+            weights.append(0.2)
+
+        if not scores:
+            return 50
+
+        total_weight = sum(weights)
+        return sum(s * w for s, w in zip(scores, weights)) / total_weight
 
     def calculate_individual_scores(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Hitung skor individual untuk setiap metrik
-
-        Returns:
-            DataFrame dengan kolom skor tambahan
         """
         result = df.copy()
 
-        # 1. Skor Trend Harga 1 Tahun (tinggi lebih baik)
+        # 1. Skor Trend Harga 1 Tahun
         if 'price_change_1y' in df.columns:
             min_val = df['price_change_1y'].min()
             max_val = df['price_change_1y'].max()
@@ -73,7 +209,6 @@ class BuffettScorer:
 
         # 2. Skor Debt to Equity (rendah lebih baik)
         if 'debt_to_equity' in df.columns:
-            # Untuk D/E, kita batasi maksimal di 3 untuk normalisasi yang lebih baik
             de_capped = df['debt_to_equity'].clip(upper=3)
             min_val = de_capped.min()
             max_val = de_capped.max()
@@ -81,9 +216,8 @@ class BuffettScorer:
                 lambda x: self.normalize_score(x, min_val, max_val, inverse=True)
             )
 
-        # 3. Skor ROE (tinggi lebih baik)
+        # 3. Skor ROE
         if 'roe' in df.columns:
-            # ROE yang terlalu tinggi (>50%) bisa jadi anomali
             roe_capped = df['roe'].clip(lower=-20, upper=50)
             min_val = roe_capped.min()
             max_val = roe_capped.max()
@@ -91,7 +225,7 @@ class BuffettScorer:
                 lambda x: self.normalize_score(x, min_val, max_val, inverse=False)
             )
 
-        # 4. Skor Profit Margin (tinggi lebih baik)
+        # 4. Skor Profit Margin
         if 'profit_margin' in df.columns:
             margin_capped = df['profit_margin'].clip(lower=-20, upper=50)
             min_val = margin_capped.min()
@@ -100,27 +234,25 @@ class BuffettScorer:
                 lambda x: self.normalize_score(x, min_val, max_val, inverse=False)
             )
 
-        # 5. Skor Dividend Yield (tinggi lebih baik, tapi tidak terlalu tinggi)
+        # 5. Skor Dividend Yield
         if 'dividend_yield' in df.columns:
-            # Dividend yield > 10% bisa jadi warning
-            div_capped = df['dividend_yield'].clip(upper=10)
+            div_capped = df['dividend_yield'].clip(upper=15)
             min_val = 0
             max_val = div_capped.max()
             result['score_dividend'] = div_capped.apply(
                 lambda x: self.normalize_score(x, min_val, max_val, inverse=False)
             )
 
-        # 6. Skor Current Ratio (tinggi lebih baik, tapi tidak terlalu tinggi)
+        # 6. Skor Current Ratio (Liquidity Ratio)
         if 'current_ratio' in df.columns:
-            # Current ratio > 3 tidak memberikan nilai tambah
             cr_capped = df['current_ratio'].clip(upper=3)
             min_val = 0
             max_val = cr_capped.max()
-            result['score_liquidity'] = cr_capped.apply(
+            result['score_current_ratio'] = cr_capped.apply(
                 lambda x: self.normalize_score(x, min_val, max_val, inverse=False)
             )
 
-        # 7. Skor Earnings Growth (tinggi lebih baik)
+        # 7. Skor Earnings Growth
         if 'earnings_growth' in df.columns:
             eg_capped = df['earnings_growth'].clip(lower=-50, upper=100)
             min_val = eg_capped.min()
@@ -129,39 +261,38 @@ class BuffettScorer:
                 lambda x: self.normalize_score(x, min_val, max_val, inverse=False)
             )
 
+        # 8. NEW: Skor Valuation
+        result['score_valuation'] = df.apply(self.calculate_valuation_score, axis=1)
+
+        # 9. NEW: Skor Trading Liquidity
+        result['score_trading_liq'] = df.apply(self.calculate_liquidity_score, axis=1)
+
         return result
 
     def calculate_buffett_score(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Hitung skor total Buffett berdasarkan bobot yang ditentukan
+        Hitung skor total Buffett V2.0 dengan Valuation dan Liquidity
 
-        Formula:
-        Buffett Score = (w1 × Price Trend Score) +
-                       (w2 × Debt Score) +
-                       (w3 × ROE Score) +
-                       (w4 × Margin Score) +
-                       (w5 × Dividend Score) +
-                       (w6 × Liquidity Score) +
-                       (w7 × Growth Score)
-
-        Returns:
-            DataFrame dengan kolom buffett_score
+        Formula V2.0:
+        BUFFETT SCORE = (0.15 × Debt) + (0.15 × ROE) + (0.10 × Trend) +
+                        (0.10 × Margin) + (0.10 × Dividend) + (0.05 × Current Ratio) +
+                        (0.05 × Growth) + (0.25 × Valuation) + (0.05 × Trading Liq)
         """
-        # Hitung skor individual dulu
         result = self.calculate_individual_scores(df)
 
-        # Mapping kolom skor ke bobot
+        # Mapping skor ke bobot
         score_mapping = {
             'score_price_trend': 'price_trend_1y',
             'score_debt': 'debt_to_equity',
             'score_roe': 'roe',
             'score_margin': 'profit_margin',
             'score_dividend': 'dividend_yield',
-            'score_liquidity': 'current_ratio',
-            'score_growth': 'earnings_growth'
+            'score_current_ratio': 'current_ratio',
+            'score_growth': 'earnings_growth',
+            'score_valuation': 'valuation',
+            'score_trading_liq': 'liquidity',
         }
 
-        # Hitung skor total
         total_weight = 0
         result['buffett_score'] = 0
 
@@ -171,153 +302,167 @@ class BuffettScorer:
                 result['buffett_score'] += result[score_col].fillna(0) * weight
                 total_weight += weight
 
-        # Normalisasi jika total bobot tidak sama dengan 1
         if total_weight > 0:
             result['buffett_score'] = result['buffett_score'] / total_weight
 
         return result
 
-    def apply_buffett_filter(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def apply_liquidity_filter(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Filter saham berdasarkan kriteria minimum Warren Buffett
-
-        Returns:
-            Tuple (saham yang lolos filter, saham yang tidak lolos)
+        Filter saham dengan likuiditas rendah (mudah digoreng)
         """
         filtered = df.copy()
-        reasons = []
 
-        # 1. Filter berdasarkan trend harga (harus naik)
+        # Filter Market Cap
+        if 'market_cap' in filtered.columns:
+            min_mcap = LIQUIDITY_CRITERIA['min_market_cap']
+            filtered = filtered[
+                (filtered['market_cap'] >= min_mcap) |
+                (filtered['market_cap'].isna())
+            ]
+
+        # Filter Volume
+        if 'avg_volume' in filtered.columns:
+            min_vol = LIQUIDITY_CRITERIA['min_avg_volume']
+            filtered = filtered[
+                (filtered['avg_volume'] >= min_vol) |
+                (filtered['avg_volume'].isna())
+            ]
+
+        return filtered
+
+    def apply_buffett_filter(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        Filter saham berdasarkan kriteria Warren Buffett + Liquidity
+        """
+        # Apply liquidity filter first
+        filtered = self.apply_liquidity_filter(df)
+
+        # Filter trend harga positif
         mask_trend = filtered['price_change_1y'] > 0
-        filtered.loc[~mask_trend, 'filter_reason'] = 'Trend harga turun'
 
-        # 2. Filter ROE minimum
-        if 'roe' in filtered.columns:
-            mask_roe = (filtered['roe'] >= MIN_CRITERIA['min_roe']) | filtered['roe'].isna()
-            filtered.loc[~mask_roe & mask_trend, 'filter_reason'] = 'ROE terlalu rendah'
-
-        # 3. Filter D/E ratio maksimum
-        if 'debt_to_equity' in filtered.columns:
-            mask_de = (filtered['debt_to_equity'] <= MIN_CRITERIA['max_debt_to_equity']) | filtered['debt_to_equity'].isna()
-            filtered.loc[~mask_de & mask_trend & mask_roe, 'filter_reason'] = 'Hutang terlalu tinggi'
-
-        # 4. Filter profit margin minimum
-        if 'profit_margin' in filtered.columns:
-            mask_margin = (filtered['profit_margin'] >= MIN_CRITERIA['min_profit_margin']) | filtered['profit_margin'].isna()
-
-        # 5. Filter dividend yield minimum
-        if 'dividend_yield' in filtered.columns:
-            mask_div = (filtered['dividend_yield'] >= MIN_CRITERIA['min_dividend_yield']) | filtered['dividend_yield'].isna()
-
-        # Saham yang lolos semua kriteria
-        passed = filtered[
-            (filtered['price_change_1y'] > 0)  # Trend naik
-        ].copy()
-
-        failed = filtered[~filtered.index.isin(passed.index)].copy()
+        passed = filtered[mask_trend].copy()
+        failed = filtered[~mask_trend].copy()
 
         return passed, failed
 
     def get_ranking(self, df: pd.DataFrame, top_n: int = 10) -> pd.DataFrame:
         """
-        Dapatkan ranking top N saham berdasarkan Buffett Score
-
-        Args:
-            df: DataFrame hasil scoring
-            top_n: Jumlah saham teratas yang ingin ditampilkan
-
-        Returns:
-            DataFrame dengan ranking
+        Dapatkan ranking top N saham berdasarkan Buffett Score V2.0
         """
-        # Filter dan hitung skor
         passed, _ = self.apply_buffett_filter(df)
         scored = self.calculate_buffett_score(passed)
 
-        # Sort berdasarkan skor dan ambil top N
         ranked = scored.sort_values('buffett_score', ascending=False).head(top_n)
         ranked['rank'] = range(1, len(ranked) + 1)
 
         return ranked
 
+    def get_valuation_status(self, row: pd.Series) -> str:
+        """
+        Tentukan status valuasi saham
+        """
+        peg = row.get('peg_ratio')
+        pe = row.get('pe_ratio')
+        pb = row.get('pb_ratio')
+
+        if pd.notna(peg) and peg < 1:
+            return "UNDERVALUED"
+        elif pd.notna(peg) and peg < 1.5:
+            return "FAIR VALUE"
+        elif pd.notna(pe) and pe < 10:
+            return "CHEAP P/E"
+        elif pd.notna(pb) and pb < 1:
+            return "BELOW BOOK"
+        elif pd.notna(peg) and peg > 2:
+            return "OVERVALUED"
+        else:
+            return "FAIR"
+
+    def get_liquidity_status(self, row: pd.Series) -> str:
+        """
+        Tentukan status likuiditas saham
+        """
+        mcap = row.get('market_cap', 0) or 0
+        vol = row.get('avg_volume', 0) or 0
+
+        if mcap >= 100e12 and vol >= 20_000_000:
+            return "SANGAT LIQUID"
+        elif mcap >= 20e12 and vol >= 5_000_000:
+            return "LIQUID"
+        elif mcap >= 5e12 and vol >= 1_000_000:
+            return "CUKUP LIQUID"
+        else:
+            return "KURANG LIQUID"
+
 
 def explain_buffett_formula():
     """
-    Menjelaskan formula scoring Warren Buffett
+    Menjelaskan formula scoring Warren Buffett V2.0
     """
     explanation = """
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║              FORMULA SCORING SAHAM ALA WARREN BUFFETT                        ║
+║          FORMULA SCORING SAHAM ALA WARREN BUFFETT V2.0                       ║
+║          (Dengan Valuation Score & Liquidity Filter)                         ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
 ║  BUFFETT SCORE = Σ (Wi × Si)                                                 ║
 ║                                                                              ║
-║  Dimana:                                                                     ║
-║  Wi = Bobot untuk metrik i                                                   ║
-║  Si = Skor ternormalisasi (0-100) untuk metrik i                            ║
-║                                                                              ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
-║  KOMPONEN SCORING:                                                           ║
+║  KOMPONEN SCORING V2.0:                                                      ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
-║  1. TREND HARGA 1 TAHUN (15%)                                               ║
-║     - Mengukur momentum harga dalam 1 tahun terakhir                        ║
-║     - Rumus: ((Harga Akhir - Harga Awal) / Harga Awal) × 100                ║
-║     - Semakin tinggi return, semakin tinggi skor                            ║
+║  1. VALUATION SCORE (25%) ← NEW! BOBOT BESAR                                ║
+║     Komponen:                                                                ║
+║     • PEG Ratio (40%): P/E dibagi Growth Rate                               ║
+║       - PEG < 0.5 = SUPER MURAH (Score 100)                                 ║
+║       - PEG < 1.0 = UNDERVALUED (Score 50-100)                              ║
+║       - PEG 1-2   = FAIR VALUE (Score 0-50)                                 ║
+║       - PEG > 2   = OVERVALUED (Score 0)                                    ║
+║     • P/E Ratio (30%): Dibandingkan dengan P/E sektor                       ║
+║     • P/B Ratio (30%): Price to Book Value                                  ║
+║       - P/B < 1 = BELOW BOOK VALUE (Score 100)                              ║
+║       - P/B < 2 = FAIR (Score 50-100)                                       ║
 ║                                                                              ║
-║  2. DEBT TO EQUITY RATIO (20%)                                              ║
-║     - Mengukur tingkat hutang perusahaan                                    ║
-║     - D/E = Total Hutang / Total Ekuitas                                    ║
-║     - Semakin RENDAH, semakin BAIK (inverse scoring)                        ║
-║     - Warren Buffett suka perusahaan dengan hutang minimal                  ║
+║  2. DEBT TO EQUITY (15%)                                                     ║
+║     - D/E < 0.5 = Sangat Baik                                               ║
+║     - D/E < 1.0 = Baik                                                      ║
+║     - D/E > 1.0 = Perlu perhatian                                           ║
 ║                                                                              ║
-║  3. RETURN ON EQUITY - ROE (20%)                                            ║
-║     - Mengukur efisiensi penggunaan modal                                   ║
-║     - ROE = Laba Bersih / Ekuitas × 100%                                    ║
-║     - Target Buffett: ROE > 15%                                             ║
-║     - Menunjukkan kemampuan perusahaan menghasilkan profit dari modal       ║
+║  3. RETURN ON EQUITY - ROE (15%)                                            ║
+║     - ROE > 20% = Excellent                                                  ║
+║     - ROE > 15% = Good                                                       ║
+║     - ROE < 10% = Poor                                                       ║
 ║                                                                              ║
-║  4. PROFIT MARGIN (15%)                                                      ║
-║     - Mengukur profitabilitas per rupiah penjualan                          ║
-║     - Net Profit Margin = Laba Bersih / Pendapatan × 100%                   ║
-║     - Menunjukkan pricing power dan efisiensi operasional                   ║
-║                                                                              ║
-║  5. DIVIDEND YIELD (15%)                                                     ║
-║     - Mengukur return dari dividen                                          ║
-║     - Dividend Yield = Dividen per Saham / Harga Saham × 100%               ║
-║     - Menunjukkan komitmen perusahaan membagi keuntungan ke pemegang saham  ║
-║                                                                              ║
-║  6. CURRENT RATIO (10%)                                                      ║
-║     - Mengukur kemampuan membayar kewajiban jangka pendek                   ║
-║     - Current Ratio = Aset Lancar / Kewajiban Lancar                        ║
-║     - Idealnya > 1.5                                                         ║
-║                                                                              ║
-║  7. EARNINGS GROWTH (5%)                                                     ║
-║     - Mengukur pertumbuhan laba                                             ║
-║     - Semakin tinggi pertumbuhan, semakin baik                              ║
+║  4. TREND HARGA 1 TAHUN (10%)                                               ║
+║  5. PROFIT MARGIN (10%)                                                      ║
+║  6. DIVIDEND YIELD (10%)                                                     ║
+║  7. CURRENT RATIO (5%)                                                       ║
+║  8. EARNINGS GROWTH (5%)                                                     ║
+║  9. TRADING LIQUIDITY (5%) ← NEW! ANTI-GORENG                               ║
+║     • Average Daily Volume                                                   ║
+║     • Market Cap                                                             ║
+║     • Free Float Percentage                                                  ║
 ║                                                                              ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
-║  KRITERIA FILTER (Syarat Minimum):                                           ║
+║  LIQUIDITY FILTER (Anti-Goreng):                                             ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
-║  ✓ Trend harga 1 tahun: HARUS POSITIF (naik)                                ║
-║  ✓ D/E Ratio: Maksimal 1.0 (hutang tidak melebihi modal)                    ║
-║  ✓ ROE: Minimal 15%                                                          ║
-║  ✓ Profit Margin: Minimal 10%                                                ║
-║  ✓ Dividend Yield: Minimal 1%                                                ║
+║  ✓ Market Cap minimal: Rp 5 Triliun                                         ║
+║  ✓ Avg Daily Volume minimal: 1 Juta lembar/hari                             ║
+║  ✓ Free Float minimal: 15%                                                   ║
+║                                                                              ║
+║  Saham dengan likuiditas rendah mudah DIGORENG (dimanipulasi harga)         ║
 ║                                                                              ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
-║  PRINSIP WARREN BUFFETT YANG DIGUNAKAN:                                     ║
+║  PRINSIP WARREN BUFFETT:                                                     ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
-║  "Rule No. 1: Never lose money. Rule No. 2: Never forget Rule No. 1"        ║
-║  → Fokus pada perusahaan dengan fundamental kuat dan hutang rendah          ║
+║  "Price is what you pay. Value is what you get."                            ║
+║  → Gunakan PEG < 1 untuk cari saham undervalued                             ║
 ║                                                                              ║
-║  "It's far better to buy a wonderful company at a fair price than a fair    ║
-║   company at a wonderful price"                                              ║
-║  → Prioritaskan kualitas perusahaan (ROE, profit margin) di atas valuasi    ║
-║                                                                              ║
-║  "Our favorite holding period is forever"                                    ║
-║  → Cari perusahaan yang bisa memberi dividen konsisten                      ║
+║  "Be fearful when others are greedy, greedy when others are fearful."       ║
+║  → Beli saham bagus saat harga turun (PEG rendah)                           ║
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """
