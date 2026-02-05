@@ -199,11 +199,11 @@ class BuffettScorer:
         """
         result = df.copy()
 
-        # 1. Skor Trend Harga 1 Tahun
-        if 'price_change_1y' in df.columns:
-            min_val = df['price_change_1y'].min()
-            max_val = df['price_change_1y'].max()
-            result['score_price_trend'] = df['price_change_1y'].apply(
+        # 1. Skor Trend Harga 3 TAHUN (lebih reliable untuk menilai performa jangka panjang)
+        if 'price_change_3y' in df.columns:
+            min_val = df['price_change_3y'].min()
+            max_val = df['price_change_3y'].max()
+            result['score_price_trend'] = df['price_change_3y'].apply(
                 lambda x: self.normalize_score(x, min_val, max_val, inverse=False)
             )
 
@@ -282,7 +282,7 @@ class BuffettScorer:
 
         # Mapping skor ke bobot
         score_mapping = {
-            'score_price_trend': 'price_trend_1y',
+            'score_price_trend': 'price_trend_3y',  # Changed to 3 years
             'score_debt': 'debt_to_equity',
             'score_roe': 'roe',
             'score_margin': 'profit_margin',
@@ -338,8 +338,8 @@ class BuffettScorer:
         # Apply liquidity filter first
         filtered = self.apply_liquidity_filter(df)
 
-        # Filter trend harga positif
-        mask_trend = filtered['price_change_1y'] > 0
+        # Filter trend harga 3 TAHUN positif (lebih reliable)
+        mask_trend = filtered['price_change_3y'] > 0
 
         passed = filtered[mask_trend].copy()
         failed = filtered[~mask_trend].copy()
@@ -434,7 +434,7 @@ def explain_buffett_formula():
 ║     - ROE > 15% = Good                                                       ║
 ║     - ROE < 10% = Poor                                                       ║
 ║                                                                              ║
-║  4. TREND HARGA 1 TAHUN (10%)                                               ║
+║  4. TREND HARGA 3 TAHUN (10%)                                               ║
 ║  5. PROFIT MARGIN (10%)                                                      ║
 ║  6. DIVIDEND YIELD (10%)                                                     ║
 ║  7. CURRENT RATIO (5%)                                                       ║

@@ -98,7 +98,7 @@ IHSG_STOCKS = [
 SCORING_WEIGHTS = {
     'debt_to_equity': 0.15,      # Rasio hutang (15%) - rendah lebih baik
     'roe': 0.15,                 # Return on Equity (15%)
-    'price_trend_1y': 0.10,      # Trend harga 1 tahun (10%)
+    'price_trend_3y': 0.10,      # Trend harga 3 TAHUN (10%) - Changed from 1y to 3y
     'profit_margin': 0.10,       # Profit Margin (10%)
     'dividend_yield': 0.10,      # Dividend Yield (10%)
     'current_ratio': 0.05,       # Current Ratio (5%)

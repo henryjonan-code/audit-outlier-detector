@@ -8,7 +8,7 @@ Aplikasi untuk menganalisis saham-saham di IHSG (Bursa Efek Indonesia)
 menggunakan prinsip-prinsip investasi Warren Buffett.
 
 Kriteria yang digunakan:
-1. Trend harga 1 tahun naik
+1. Trend harga 3 tahun naik (lebih reliable)
 2. Hutang rendah (D/E ratio)
 3. Profitabilitas tinggi (ROE, Profit Margin)
 4. Membayar dividen
@@ -57,7 +57,7 @@ def print_criteria():
 │                         KRITERIA SELEKSI SAHAM                               │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
-│   ✓ Trend Harga 1 Tahun: NAIK (positif)                                     │
+│   ✓ Trend Harga 3 TAHUN: NAIK (positif) - lebih reliable                    │
 │   ✓ Hutang Rendah: D/E Ratio < 1.0                                          │
 │   ✓ Profitabilitas: ROE > 15%, Profit Margin > 10%                          │
 │   ✓ Dividen: Membayar dividen (yield > 1%)                                  │
@@ -76,7 +76,7 @@ def print_weights():
 │                                                                              │
 │   • Debt to Equity (Hutang)    : 20%  ← Rendah lebih baik                   │
 │   • Return on Equity (ROE)     : 20%  ← Tinggi lebih baik                   │
-│   • Trend Harga 1 Tahun        : 15%  ← Positif dan tinggi lebih baik       │
+│   • Trend Harga 3 TAHUN        : 15%  ← Positif dan tinggi lebih baik       │
 │   • Profit Margin              : 15%  ← Tinggi lebih baik                   │
 │   • Dividend Yield             : 15%  ← Tinggi lebih baik                   │
 │   • Current Ratio (Likuiditas) : 10%  ← Di atas 1.0 lebih baik              │
