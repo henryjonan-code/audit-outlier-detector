@@ -176,22 +176,23 @@ SAMPLE_STOCK_DATA = [
         'name': 'Sido Muncul Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 680,
-        'price_change_3y': 42.5,  # 3 TAHUN: dari ~480 ke 680
-        'price_change_1y': 15.5,  # 1 TAHUN: steady uptrend - herbal demand stable
+        'current_price': 525,  # FIXED: Harga aktual Feb 2025
+        'price_change_3y': -42.0,  # 3 TAHUN: TURUN dari ~900 (2022) ke 525 - DOWNTREND!
+        'price_change_1y': -22.0,  # 1 TAHUN: TURUN - DOWNTREND!
         'debt_to_equity': 0.05,
-        'roe': 28.5,
-        'roa': 24.2,
-        'profit_margin': 25.8,
-        'dividend_yield': 5.8,
+        'roe': 20.5,  # Turun karena revenue pressure
+        'roa': 18.2,
+        'profit_margin': 22.5,
+        'dividend_yield': 7.5,  # Yield naik karena harga turun
         'current_ratio': 5.8,
-        'earnings_growth': 18.2,
-        'pe_ratio': 14.5,
-        'pb_ratio': 4.1,
-        'peg_ratio': 0.80,
-        'market_cap': 20e12,
+        'earnings_growth': -8.5,  # NEGATIF
+        'pe_ratio': 10.5,
+        'pb_ratio': 2.1,
+        'peg_ratio': None,  # Negative growth
+        'market_cap': 16e12,
         'avg_volume': 12_000_000,
         'free_float_pct': 19,
+        'notes': 'Herbal demand turun, kompetisi tinggi',
     },
     {
         'ticker': 'MYOR.JK',
