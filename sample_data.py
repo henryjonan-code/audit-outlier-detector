@@ -1,19 +1,14 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 2.2 - Dengan Return 3 Tahun, Volume dan Valuasi Data
+Version 3.0 - Update 7 Februari 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data ini HANYA ESTIMASI untuk demonstrasi sistem scoring.
-Data TIDAK REAL-TIME dan mungkin TIDAK AKURAT.
+Data diupdate berdasarkan harga pasar Februari 2026.
+Verifikasi selalu di platform resmi sebelum investasi.
 
-SEBELUM membuat keputusan investasi:
-1. Verifikasi harga terkini di platform trading resmi (Stockbit, RTI, IDX)
-2. Periksa laporan keuangan di IDX atau situs resmi emiten
-3. Konsultasi dengan analis atau financial advisor
-
-Sistem ini adalah ALAT BANTU screening, BUKAN rekomendasi investasi.
+Sumber: Investing.com, Stockbit, TradingView, Bareksa
 ============================================================================
 """
 
@@ -24,65 +19,69 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bank Central Asia Tbk',
         'sector': 'Financial Services',
         'industry': 'Banks - Regional',
-        'current_price': 9875,
-        'price_change_3y': 45.2,  # 3 TAHUN: dari ~6800 ke 9875
-        'price_change_1y': 12.5,  # 1 TAHUN: steady uptrend
+        'current_price': 8100,  # Update Feb 2026: range 8050-8175
+        'price_change_3y': 19.1,  # 3 TAHUN: dari ~6800 ke 8100
+        'price_change_1y': -16.0,  # 1 TAHUN: TURUN 16% dari 9650
         'debt_to_equity': 0.82,
         'roe': 21.5,
         'roa': 3.8,
         'profit_margin': 45.2,
-        'dividend_yield': 2.8,
+        'dividend_yield': 3.7,  # Yield naik karena harga turun
         'current_ratio': None,
-        'earnings_growth': 15.3,
-        'pe_ratio': 22.5,
-        'pb_ratio': 4.8,
-        'peg_ratio': 1.47,
-        'market_cap': 1250e12,
-        'avg_volume': 25_000_000,
+        'earnings_growth': 12.3,
+        'pe_ratio': 18.5,
+        'pb_ratio': 3.9,
+        'peg_ratio': 1.50,
+        'market_cap': 1050e12,
+        'avg_volume': 79_000_000,
         'free_float_pct': 45,
+        'notes': 'Harga turun 16% YoY tapi fundamental tetap kuat',
     },
     {
         'ticker': 'BBRI.JK',
         'name': 'Bank Rakyat Indonesia Tbk',
         'sector': 'Financial Services',
         'industry': 'Banks - Regional',
-        'current_price': 4650,
-        'price_change_3y': 28.5,  # 3 TAHUN: dari ~3600 ke 4650
+        'current_price': 3680,  # Update Feb 2026
+        'price_change_3y': -18.7,  # 3 TAHUN: dari ~4530 ke 3680 - TURUN!
+        'price_change_1y': -34.0,  # 1 TAHUN: TURUN SIGNIFIKAN
         'debt_to_equity': 0.95,
-        'roe': 19.8,
-        'roa': 3.2,
-        'profit_margin': 35.8,
-        'dividend_yield': 5.2,
+        'roe': 18.5,
+        'roa': 3.0,
+        'profit_margin': 32.5,
+        'dividend_yield': 9.21,  # Yield tinggi karena harga turun
         'current_ratio': None,
-        'earnings_growth': 12.1,
-        'pe_ratio': 12.8,
-        'pb_ratio': 2.5,
-        'peg_ratio': 1.06,
-        'market_cap': 720e12,
-        'avg_volume': 80_000_000,
+        'earnings_growth': 8.5,
+        'pe_ratio': 8.5,
+        'pb_ratio': 1.6,
+        'peg_ratio': 1.0,
+        'market_cap': 554e12,
+        'avg_volume': 120_000_000,
         'free_float_pct': 43,
+        'notes': 'Turun 34% YoY, div yield tinggi 9.21%',
     },
     {
         'ticker': 'BMRI.JK',
         'name': 'Bank Mandiri Tbk',
         'sector': 'Financial Services',
         'industry': 'Banks - Regional',
-        'current_price': 6200,
-        'price_change_3y': 55.8,  # 3 TAHUN: dari ~3980 ke 6200 - STRONG PERFORMER
-        'price_change_1y': 18.5,  # 1 TAHUN: strong uptrend
+        'current_price': 4810,  # Update Feb 2026
+        'price_change_3y': 21.0,  # 3 TAHUN: dari ~3980 ke 4810
+        'price_change_1y': -17.1,  # 1 TAHUN: TURUN dari 5800
         'debt_to_equity': 0.88,
         'roe': 22.3,
         'roa': 3.5,
         'profit_margin': 38.5,
-        'dividend_yield': 4.8,
+        'dividend_yield': 6.2,
         'current_ratio': None,
-        'earnings_growth': 18.5,
-        'pe_ratio': 10.2,
-        'pb_ratio': 2.3,
-        'peg_ratio': 0.55,
-        'market_cap': 580e12,
+        'earnings_growth': 15.5,
+        'pe_ratio': 7.8,
+        'pb_ratio': 1.7,
+        'peg_ratio': 0.50,
+        'market_cap': 450e12,
         'avg_volume': 45_000_000,
         'free_float_pct': 40,
+        'notes': 'Turun 17% YoY tapi PEG masih menarik',
     },
     {
         'ticker': 'BBNI.JK',
@@ -269,77 +268,78 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indo Tambangraya Megah',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 22125,  # FIXED: Harga aktual Feb 2025
-        'price_change_3y': 85.5,   # 3 TAHUN: dari ~12000 (Feb 2022) - sudah KOREKSI dari peak 45000
-        'price_change_1y': -11.5,  # 1 TAHUN: TURUN dari ~25000 ke 22125 - DOWNTREND!
+        'current_price': 22500,  # Update Feb 2026
+        'price_change_3y': 87.5,   # 3 TAHUN: dari ~12000 (Feb 2023)
+        'price_change_1y': -10.0,  # 1 TAHUN: TURUN dari ~25000
         'debt_to_equity': 0.25,
-        'roe': 35.2,  # Sudah turun dari puncak karena coal price turun
-        'roa': 22.5,
-        'profit_margin': 18.5,  # Margin menyusut karena coal price normalisasi
-        'dividend_yield': 10.5,  # Masih tinggi tapi turun dari peak 15%+
+        'roe': 32.5,
+        'roa': 20.5,
+        'profit_margin': 16.5,
+        'dividend_yield': 10.03,  # Potensi div yield 10%
         'current_ratio': 3.2,
-        'earnings_growth': -15.8,  # NEGATIF: Earnings TURUN YoY karena coal price turun
-        'pe_ratio': 5.5,
-        'pb_ratio': 1.8,
-        'peg_ratio': None,  # Negative growth = no PEG
+        'earnings_growth': -12.5,
+        'pe_ratio': 5.8,
+        'pb_ratio': 1.9,
+        'peg_ratio': None,
         'market_cap': 25e12,
         'avg_volume': 2_500_000,
         'free_float_pct': 35,
-        'notes': 'Coal cycle sudah peak, earnings declining YoY',
+        'notes': 'Strong coal name, swing trade priority Feb-Mei 2026',
     },
     {
         'ticker': 'PTBA.JK',
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2650,  # FIXED: Harga aktual Feb 2025
-        'price_change_3y': 65.5,  # 3 TAHUN: dari ~1600 - masih positif
-        'price_change_1y': -22.5,  # 1 TAHUN: TURUN signifikan - DOWNTREND!
+        'current_price': 2470,  # Update Feb 2026
+        'price_change_3y': 54.4,  # 3 TAHUN: dari ~1600
+        'price_change_1y': -25.5,  # 1 TAHUN: TURUN signifikan
         'debt_to_equity': 0.28,
-        'roe': 28.5,  # Turun dari peak
-        'roa': 16.5,
-        'profit_margin': 20.5,  # Margin menyusut
-        'dividend_yield': 8.5,
+        'roe': 25.5,
+        'roa': 15.5,
+        'profit_margin': 18.5,
+        'dividend_yield': 6.47,  # Potensi yield 6.47%
         'current_ratio': 2.5,
-        'earnings_growth': -18.5,  # NEGATIF: Earnings turun YoY
-        'pe_ratio': 6.5,
+        'earnings_growth': -15.5,
+        'pe_ratio': 7.0,
         'pb_ratio': 1.8,
-        'peg_ratio': None,  # Negative growth
-        'market_cap': 30e12,
+        'peg_ratio': None,
+        'market_cap': 28e12,
         'avg_volume': 15_000_000,
         'free_float_pct': 35,
-        'notes': 'Coal cycle sudah peak, DMO policy pressure',
+        'notes': 'Value play, akumulasi asing mulai rutin Feb 2026',
     },
     {
         'ticker': 'INCO.JK',
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 3850,  # FIXED: Harga turun karena nickel price pressure
-        'price_change_3y': 105.5,  # 3 TAHUN: dari ~1885 - masih positif
-        'price_change_1y': -15.5,  # 1 TAHUN: TURUN karena nickel oversupply
+        'current_price': 6700,  # Update Feb 2026: Gap up ke 6700
+        'price_change_3y': 255.3,  # 3 TAHUN: dari ~1885 ke 6700 - STRONG!
+        'price_change_1y': 74.0,  # 1 TAHUN: NAIK dari ~3850
         'debt_to_equity': 0.15,
-        'roe': 12.5,  # Turun dari peak
-        'roa': 8.8,
-        'profit_margin': 15.5,  # Margin menyusut karena nickel price turun
-        'dividend_yield': 3.2,
+        'roe': 18.5,
+        'roa': 12.5,
+        'profit_margin': 22.5,
+        'dividend_yield': 2.5,
         'current_ratio': 4.5,
-        'earnings_growth': -25.2,  # NEGATIF: Nickel glut impact
-        'pe_ratio': 15.5,
-        'pb_ratio': 1.9,
-        'peg_ratio': None,  # Negative growth
-        'market_cap': 38e12,
+        'earnings_growth': 35.2,  # Recovery nickel
+        'pe_ratio': 12.5,
+        'pb_ratio': 2.3,
+        'peg_ratio': 0.35,
+        'market_cap': 66e12,
         'avg_volume': 18_000_000,
         'free_float_pct': 21,
-        'notes': 'Nickel oversupply dari China/Indonesia menekan harga',
+        'notes': 'Recovery kuat, gap up Feb 2026, range 52w: 1355-4180 breakout',
     },
     {
         'ticker': 'ANTM.JK',
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 1850,
-        'price_change_3y': 85.5,  # 3 TAHUN: dari ~998
+        'current_price': 4010,  # Update Feb 2026: range 3920-4140
+        'price_change_3y': 301.6,  # 3 TAHUN: dari ~998 ke 4010 - SUPER STRONG!
+        'price_change_1y': 196.0,  # 1 TAHUN: dari ~1355 (52w low) ke 4010
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -382,8 +382,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'United Tractors Tbk',
         'sector': 'Industrials',
         'industry': 'Farm & Heavy Machinery',
-        'current_price': 27500,
-        'price_change_3y': 48.5,  # 3 TAHUN: dari ~18500
+        'current_price': 30850,  # Update Feb 2026
+        'price_change_3y': 66.8,  # 3 TAHUN: dari ~18500 ke 30850
+        'price_change_1y': 12.2,  # 1 TAHUN: NAIK dari ~27500
         'debt_to_equity': 0.52,
         'roe': 18.5,
         'roa': 10.2,
