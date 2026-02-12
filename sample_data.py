@@ -1,12 +1,12 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 3.1 - Update 11 Februari 2026
+Version 3.2 - Update 12 Februari 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 11 Februari 2026.
-IHSG: 8.290,96 (+1.96%)
+Data diupdate berdasarkan harga pasar 12 Februari 2026.
+IHSG: 8.265,35 (-0.31%)
 
 Sumber: Investing.com, Stockbit, TradingView, Bisnis.com
 ============================================================================
@@ -19,32 +19,32 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bank Central Asia Tbk',
         'sector': 'Financial Services',
         'industry': 'Banks - Regional',
-        'current_price': 7500,  # Update 11 Feb 2026: turun ke 7475-7500
-        'price_change_3y': 10.3,  # 3 TAHUN: dari ~6800 ke 7500
-        'price_change_1y': -22.3,  # 1 TAHUN: TURUN dari 9650
+        'current_price': 7325,  # Update 12 Feb 2026: -1.68%
+        'price_change_3y': 7.7,  # 3 TAHUN: dari ~6800 ke 7325
+        'price_change_1y': -24.1,  # 1 TAHUN: TURUN dari 9650
         'debt_to_equity': 0.82,
         'roe': 21.5,
         'roa': 3.8,
         'profit_margin': 45.2,
-        'dividend_yield': 4.0,  # Yield naik karena harga turun
+        'dividend_yield': 4.1,  # Yield naik karena harga turun
         'current_ratio': None,
         'earnings_growth': 12.3,
-        'pe_ratio': 16.5,
-        'pb_ratio': 3.5,
-        'peg_ratio': 1.34,
-        'market_cap': 970e12,
+        'pe_ratio': 16.0,
+        'pb_ratio': 3.4,
+        'peg_ratio': 1.30,
+        'market_cap': 948e12,
         'avg_volume': 79_000_000,
         'free_float_pct': 45,
-        'notes': 'Turun 22% YoY, terendah 2026 di 6925 (Jan)',
+        'notes': 'Turun 24% YoY, nilai transaksi tertinggi Rp1.7T',
     },
     {
         'ticker': 'BBRI.JK',
         'name': 'Bank Rakyat Indonesia Tbk',
         'sector': 'Financial Services',
         'industry': 'Banks - Regional',
-        'current_price': 3780,  # Update 11 Feb 2026: stagnan
-        'price_change_3y': -16.5,  # 3 TAHUN: dari ~4530 ke 3780 - TURUN!
-        'price_change_1y': -32.1,  # 1 TAHUN: TURUN SIGNIFIKAN
+        'current_price': 3790,  # Update 12 Feb 2026: -0.26%
+        'price_change_3y': -16.3,  # 3 TAHUN: dari ~4530 ke 3790 - TURUN!
+        'price_change_1y': -31.9,  # 1 TAHUN: TURUN SIGNIFIKAN
         'debt_to_equity': 0.95,
         'roe': 18.5,
         'roa': 3.0,
@@ -55,10 +55,10 @@ SAMPLE_STOCK_DATA = [
         'pe_ratio': 8.2,
         'pb_ratio': 1.5,
         'peg_ratio': 0.96,
-        'market_cap': 569e12,
+        'market_cap': 570e12,
         'avg_volume': 120_000_000,
         'free_float_pct': 43,
-        'notes': 'Stagnan hari ini, div yield 9.21%',
+        'notes': 'Turun 0.26% hari ini, div yield 9.21%',
     },
     {
         'ticker': 'BMRI.JK',
@@ -198,9 +198,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Mayora Indah Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 2360,  # Update 11 Feb 2026: -5.22% kemarin
-        'price_change_3y': 62.1,  # 3 TAHUN
-        'price_change_1y': 18.5,  # 1 TAHUN: masih positif tapi volatile
+        'current_price': 2420,  # Update 12 Feb 2026: +5.22% rebound
+        'price_change_3y': 66.2,  # 3 TAHUN
+        'price_change_1y': 21.5,  # 1 TAHUN: rebound kuat
         'debt_to_equity': 0.72,
         'roe': 22.8,
         'roa': 9.5,
@@ -314,9 +314,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 6275,  # Update 11 Feb 2026: +2.87% dari 9 Feb
-        'price_change_3y': 232.8,  # 3 TAHUN: dari ~1885 ke 6275 - STRONG!
-        'price_change_1y': 63.0,  # 1 TAHUN: NAIK 63%
+        'current_price': 7100,  # Update 12 Feb 2026: +3.65% STRONG!
+        'price_change_3y': 276.6,  # 3 TAHUN: dari ~1885 ke 7100 - SUPER STRONG!
+        'price_change_1y': 84.4,  # 1 TAHUN: NAIK 84%!
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
@@ -382,9 +382,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'United Tractors Tbk',
         'sector': 'Industrials',
         'industry': 'Farm & Heavy Machinery',
-        'current_price': 29500,  # Update 11 Feb 2026: range 29300-29625
-        'price_change_3y': 59.5,  # 3 TAHUN: dari ~18500 ke 29500
-        'price_change_1y': 7.3,  # 1 TAHUN: masih positif
+        'current_price': 29175,  # Update 12 Feb 2026: +2.55%
+        'price_change_3y': 57.7,  # 3 TAHUN: dari ~18500 ke 29175
+        'price_change_1y': 6.1,  # 1 TAHUN: masih positif
         'debt_to_equity': 0.52,
         'roe': 18.5,
         'roa': 10.2,
