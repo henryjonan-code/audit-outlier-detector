@@ -1,14 +1,14 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 3.2 - Update 12 Februari 2026
+Version 3.3 - Update 13-14 Februari 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 12 Februari 2026.
-IHSG: 8.265,35 (-0.31%)
+Data diupdate berdasarkan harga pasar 13-14 Februari 2026.
+16 Feb 2026 = Libur, pasar tutup.
 
-Sumber: Investing.com, Stockbit, TradingView, Bisnis.com
+Sumber: Investing.com, Stockbit, TradingView, Bisnis.com, Liputan6
 ============================================================================
 """
 
@@ -19,14 +19,14 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bank Central Asia Tbk',
         'sector': 'Financial Services',
         'industry': 'Banks - Regional',
-        'current_price': 7325,  # Update 12 Feb 2026: -1.68%
+        'current_price': 7325,  # Update 12-13 Feb 2026
         'price_change_3y': 7.7,  # 3 TAHUN: dari ~6800 ke 7325
         'price_change_1y': -24.1,  # 1 TAHUN: TURUN dari 9650
         'debt_to_equity': 0.82,
         'roe': 21.5,
         'roa': 3.8,
         'profit_margin': 45.2,
-        'dividend_yield': 4.1,  # Yield naik karena harga turun
+        'dividend_yield': 4.1,
         'current_ratio': None,
         'earnings_growth': 12.3,
         'pe_ratio': 16.0,
@@ -35,21 +35,21 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 948e12,
         'avg_volume': 79_000_000,
         'free_float_pct': 45,
-        'notes': 'Turun 24% YoY, nilai transaksi tertinggi Rp1.7T',
+        'notes': 'Turun 24% YoY, nilai transaksi Rp1.7T',
     },
     {
         'ticker': 'BBRI.JK',
         'name': 'Bank Rakyat Indonesia Tbk',
         'sector': 'Financial Services',
         'industry': 'Banks - Regional',
-        'current_price': 3790,  # Update 12 Feb 2026: -0.26%
-        'price_change_3y': -16.3,  # 3 TAHUN: dari ~4530 ke 3790 - TURUN!
+        'current_price': 3790,  # Update 12-13 Feb 2026
+        'price_change_3y': -16.3,  # 3 TAHUN: TURUN!
         'price_change_1y': -31.9,  # 1 TAHUN: TURUN SIGNIFIKAN
         'debt_to_equity': 0.95,
         'roe': 18.5,
         'roa': 3.0,
         'profit_margin': 32.5,
-        'dividend_yield': 9.21,  # Yield tinggi karena harga turun
+        'dividend_yield': 9.21,
         'current_ratio': None,
         'earnings_growth': 8.5,
         'pe_ratio': 8.2,
@@ -58,7 +58,7 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 570e12,
         'avg_volume': 120_000_000,
         'free_float_pct': 43,
-        'notes': 'Turun 0.26% hari ini, div yield 9.21%',
+        'notes': 'Div yield 9.21%, 52w range: 3290-4450',
     },
     {
         'ticker': 'BMRI.JK',
@@ -198,9 +198,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Mayora Indah Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 2420,  # Update 12 Feb 2026: +5.22% rebound
-        'price_change_3y': 66.2,  # 3 TAHUN
-        'price_change_1y': 21.5,  # 1 TAHUN: rebound kuat
+        'current_price': 2250,  # Update 13-15 Feb 2026: turun dari 2310
+        'price_change_3y': 54.8,  # 3 TAHUN
+        'price_change_1y': 12.8,  # 1 TAHUN: 52w range: 1820-2610
         'debt_to_equity': 0.72,
         'roe': 22.8,
         'roa': 9.5,
@@ -291,9 +291,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2300,  # Update 11 Feb 2026: range 2280-2310
-        'price_change_3y': 43.8,  # 3 TAHUN: dari ~1600
-        'price_change_1y': -14.0,  # 1 TAHUN: TURUN 14%, 52w range: 2170-3070
+        'current_price': 2580,  # Update 10-13 Feb 2026
+        'price_change_3y': 61.3,  # 3 TAHUN: dari ~1600 ke 2580
+        'price_change_1y': -3.4,  # 1 TAHUN: 52w range: 2170-3070
         'debt_to_equity': 0.28,
         'roe': 25.5,
         'roa': 15.5,
@@ -382,9 +382,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'United Tractors Tbk',
         'sector': 'Industrials',
         'industry': 'Farm & Heavy Machinery',
-        'current_price': 29175,  # Update 12 Feb 2026: +2.55%
-        'price_change_3y': 57.7,  # 3 TAHUN: dari ~18500 ke 29175
-        'price_change_1y': 6.1,  # 1 TAHUN: masih positif
+        'current_price': 29400,  # Update 13 Feb 2026: menyelamatkan IHSG
+        'price_change_3y': 58.9,  # 3 TAHUN: dari ~18500 ke 29400
+        'price_change_1y': 6.9,  # 1 TAHUN: masih positif, 52w: 20025-32000
         'debt_to_equity': 0.52,
         'roe': 18.5,
         'roa': 10.2,
