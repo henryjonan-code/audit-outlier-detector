@@ -1,7 +1,12 @@
 """
-Sistem Scoring Saham ala Warren Buffett V2.0
+Sistem Scoring Saham ala Warren Buffett V3.0
 
-Update:
+Update V3.0:
+- FIXED: Bank menggunakan metrik khusus (CAR, NPL, NIM) bukan D/E ratio
+- FIXED: Uptrend sekarang HARD FILTER - eliminasi, bukan scoring
+- Saham dengan 1Y return negatif langsung didiskualifikasi
+
+Update V2.0:
 - Menambahkan Valuation Score (PEG, P/E, P/B) dengan bobot 25%
 - Menambahkan Liquidity Filter (Volume, Market Cap) untuk anti-goreng
 - Menyesuaikan bobot komponen lainnya
@@ -14,6 +19,7 @@ Prinsip-prinsip Warren Buffett yang digunakan:
 5. Dividen konsisten - shareholder friendly
 6. VALUASI WAJAR - beli di harga yang masuk akal (PEG < 1)
 7. LIKUIDITAS TINGGI - saham tidak mudah digoreng
+8. TREND POSITIF - harga HARUS naik (bukan cuma fundamental bagus)
 """
 
 import pandas as pd
@@ -48,6 +54,101 @@ class BuffettScorer:
             normalized = 100 - normalized
 
         return max(0, min(100, normalized))
+
+    def is_bank(self, row: pd.Series) -> bool:
+        """
+        Cek apakah saham adalah bank
+        """
+        if row.get('is_bank', False):
+            return True
+        industry = row.get('industry', '')
+        return 'Bank' in str(industry)
+
+    def calculate_bank_health_score(self, row: pd.Series) -> float:
+        """
+        Hitung skor kesehatan bank berdasarkan metrik khusus bank
+
+        Metrik Bank (BUKAN D/E ratio!):
+        - CAR (Capital Adequacy Ratio): min 8%, ideal >20% (bobot 30%)
+        - NPL (Non Performing Loan): max 5%, ideal <2% (bobot 30%)
+        - NIM (Net Interest Margin): ideal >4% (bobot 20%)
+        - Cost to Income Ratio: ideal <50% (bobot 20%)
+
+        Returns:
+            Skor kesehatan bank 0-100
+        """
+        scores = []
+        weights = []
+
+        # 1. CAR Score (30%) - Capital Adequacy Ratio
+        car = row.get('car')
+        if pd.notna(car) and car is not None:
+            if car >= 25:
+                car_score = 100
+            elif car >= 20:
+                car_score = 80
+            elif car >= 15:
+                car_score = 60
+            elif car >= 8:  # Minimum requirement
+                car_score = 40
+            else:
+                car_score = 0  # Di bawah minimum!
+            scores.append(car_score)
+            weights.append(0.3)
+
+        # 2. NPL Score (30%) - Non Performing Loan (INVERSE - rendah lebih baik)
+        npl = row.get('npl')
+        if pd.notna(npl) and npl is not None:
+            if npl <= 1:
+                npl_score = 100
+            elif npl <= 2:
+                npl_score = 80
+            elif npl <= 3:
+                npl_score = 60
+            elif npl <= 5:  # Maximum allowed
+                npl_score = 40
+            else:
+                npl_score = 0  # Di atas maximum!
+            scores.append(npl_score)
+            weights.append(0.3)
+
+        # 3. NIM Score (20%) - Net Interest Margin
+        nim = row.get('nim')
+        if pd.notna(nim) and nim is not None:
+            if nim >= 6:
+                nim_score = 100
+            elif nim >= 5:
+                nim_score = 80
+            elif nim >= 4:
+                nim_score = 60
+            elif nim >= 3:
+                nim_score = 40
+            else:
+                nim_score = 20
+            scores.append(nim_score)
+            weights.append(0.2)
+
+        # 4. Cost to Income Score (20%) - INVERSE - rendah lebih baik
+        cti = row.get('cost_to_income')
+        if pd.notna(cti) and cti is not None:
+            if cti <= 30:
+                cti_score = 100
+            elif cti <= 40:
+                cti_score = 80
+            elif cti <= 50:
+                cti_score = 60
+            elif cti <= 60:
+                cti_score = 40
+            else:
+                cti_score = 20
+            scores.append(cti_score)
+            weights.append(0.2)
+
+        if not scores:
+            return 50  # Default jika tidak ada data
+
+        total_weight = sum(weights)
+        return sum(s * w for s, w in zip(scores, weights)) / total_weight
 
     def calculate_valuation_score(self, row: pd.Series) -> float:
         """
@@ -207,14 +308,17 @@ class BuffettScorer:
                 lambda x: self.normalize_score(x, min_val, max_val, inverse=False)
             )
 
-        # 2. Skor Debt to Equity (rendah lebih baik)
-        if 'debt_to_equity' in df.columns:
-            de_capped = df['debt_to_equity'].clip(upper=3)
-            min_val = de_capped.min()
-            max_val = de_capped.max()
-            result['score_debt'] = de_capped.apply(
-                lambda x: self.normalize_score(x, min_val, max_val, inverse=True)
-            )
+        # 2. Skor Debt/Health (berbeda untuk bank vs non-bank!)
+        # Bank: gunakan bank_health_score (CAR, NPL, NIM)
+        # Non-Bank: gunakan debt_to_equity
+        result['score_debt'] = df.apply(
+            lambda row: self.calculate_bank_health_score(row) if self.is_bank(row)
+            else self.normalize_score(
+                row.get('debt_to_equity', 1),
+                0, 3, inverse=True
+            ) if pd.notna(row.get('debt_to_equity')) else 50,
+            axis=1
+        )
 
         # 3. Skor ROE
         if 'roe' in df.columns:
@@ -334,12 +438,43 @@ class BuffettScorer:
     def apply_buffett_filter(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
         Filter saham berdasarkan kriteria Warren Buffett + Liquidity
+
+        HARD FILTER V3.0:
+        Saham HARUS memenuhi SALAH SATU kriteria ini:
+        1. 3Y return > 0 DAN 1Y return > 0 (ideal - uptrend konsisten)
+        2. 3Y return > 50% (uptrend kuat jangka panjang, toleransi koreksi 1Y)
+        3. 1Y return > 30% (momentum kuat, bisa recovery dari 3Y flat)
+
+        Saham dengan 1Y return < -15% langsung DIDISKUALIFIKASI
+        (menghindari "value trap" - murah tapi terus turun)
         """
         # Apply liquidity filter first
         filtered = self.apply_liquidity_filter(df)
 
-        # Filter trend harga 3 TAHUN positif (lebih reliable)
-        mask_trend = filtered['price_change_3y'] > 0
+        # HARD FILTER: Multiple criteria for uptrend
+        has_3y = 'price_change_3y' in filtered.columns
+        has_1y = 'price_change_1y' in filtered.columns
+
+        if has_3y and has_1y:
+            # Kriteria 1: Keduanya positif (ideal)
+            both_positive = (filtered['price_change_3y'] > 0) & (filtered['price_change_1y'] > 0)
+
+            # Kriteria 2: 3Y sangat kuat (>50%), toleransi 1Y koreksi tapi tidak parah
+            strong_3y = (filtered['price_change_3y'] > 50) & (filtered['price_change_1y'] > -15)
+
+            # Kriteria 3: 1Y sangat kuat (>30%), bisa recovery
+            strong_1y = filtered['price_change_1y'] > 30
+
+            # DISQUALIFY: 1Y return terlalu jelek (< -15%) - VALUE TRAP warning
+            not_value_trap = filtered['price_change_1y'] > -15
+
+            mask_trend = (both_positive | strong_3y | strong_1y) & not_value_trap
+        elif has_3y:
+            # Fallback: hanya cek 3Y
+            mask_trend = filtered['price_change_3y'] > 0
+        else:
+            # No trend data - let everything through
+            mask_trend = pd.Series([True] * len(filtered), index=filtered.index)
 
         passed = filtered[mask_trend].copy()
         failed = filtered[~mask_trend].copy()

@@ -13,16 +13,28 @@ Sumber: Investing.com, Stockbit, TradingView, Bisnis.com, Liputan6
 """
 
 SAMPLE_STOCK_DATA = [
-    # Bank - Perbankan (High Liquidity)
+    # =========================================================================
+    # BANK - Perbankan (METRIK KHUSUS: CAR, NPL, NIM - bukan D/E!)
+    # Catatan: Bank punya struktur modal berbeda, DPK = liabilitas
+    # D/E bank normal 5-7x, jadi gunakan metrik CAR, NPL, NIM
+    # =========================================================================
     {
         'ticker': 'BBCA.JK',
         'name': 'Bank Central Asia Tbk',
         'sector': 'Financial Services',
-        'industry': 'Banks - Regional',
+        'industry': 'Banks',
+        'is_bank': True,  # FLAG untuk identifikasi bank
         'current_price': 7325,  # Update 12-13 Feb 2026
         'price_change_3y': 7.7,  # 3 TAHUN: dari ~6800 ke 7325
-        'price_change_1y': -24.1,  # 1 TAHUN: TURUN dari 9650
-        'debt_to_equity': 0.82,
+        'price_change_1y': -24.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
+        # METRIK KHUSUS BANK (bukan D/E!)
+        'car': 28.5,  # Capital Adequacy Ratio (min 8%, ideal >20%)
+        'npl': 1.8,   # Non Performing Loan (max 5%, ideal <3%)
+        'nim': 5.2,   # Net Interest Margin (ideal >4%)
+        'ldr': 78.5,  # Loan to Deposit Ratio (ideal 80-92%)
+        'cost_to_income': 32.5,  # Cost to Income Ratio (ideal <50%)
+        # Metrik standar
+        'debt_to_equity': None,  # TIDAK RELEVAN untuk bank!
         'roe': 21.5,
         'roa': 3.8,
         'profit_margin': 45.2,
@@ -35,17 +47,25 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 948e12,
         'avg_volume': 79_000_000,
         'free_float_pct': 45,
-        'notes': 'Turun 24% YoY, nilai transaksi Rp1.7T',
+        'notes': 'Turun 24% YoY - DOWNTREND meski fundamental bagus',
     },
     {
         'ticker': 'BBRI.JK',
         'name': 'Bank Rakyat Indonesia Tbk',
         'sector': 'Financial Services',
-        'industry': 'Banks - Regional',
+        'industry': 'Banks',
+        'is_bank': True,
         'current_price': 3790,  # Update 12-13 Feb 2026
-        'price_change_3y': -16.3,  # 3 TAHUN: TURUN!
-        'price_change_1y': -31.9,  # 1 TAHUN: TURUN SIGNIFIKAN
-        'debt_to_equity': 0.95,
+        'price_change_3y': -16.3,  # 3 TAHUN: TURUN! - DOWNTREND PARAH
+        'price_change_1y': -31.9,  # 1 TAHUN: TURUN 32%! - DOWNTREND PARAH
+        # METRIK KHUSUS BANK
+        'car': 25.8,
+        'npl': 2.8,   # NPL agak tinggi
+        'nim': 7.2,   # NIM tinggi (fokus mikro)
+        'ldr': 85.2,
+        'cost_to_income': 38.5,
+        # Metrik standar
+        'debt_to_equity': None,
         'roe': 18.5,
         'roa': 3.0,
         'profit_margin': 32.5,
@@ -58,17 +78,25 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 570e12,
         'avg_volume': 120_000_000,
         'free_float_pct': 43,
-        'notes': 'Div yield 9.21%, 52w range: 3290-4450',
+        'notes': 'DOWNTREND 3Y! Div yield 9.21% tapi harga turun terus',
     },
     {
         'ticker': 'BMRI.JK',
         'name': 'Bank Mandiri Tbk',
         'sector': 'Financial Services',
-        'industry': 'Banks - Regional',
+        'industry': 'Banks',
+        'is_bank': True,
         'current_price': 4810,  # Update Feb 2026
-        'price_change_3y': 21.0,  # 3 TAHUN: dari ~3980 ke 4810
-        'price_change_1y': -17.1,  # 1 TAHUN: TURUN dari 5800
-        'debt_to_equity': 0.88,
+        'price_change_3y': 21.0,  # 3 TAHUN: UPTREND lemah
+        'price_change_1y': -17.1,  # 1 TAHUN: TURUN 17% - DOWNTREND!
+        # METRIK KHUSUS BANK
+        'car': 24.2,
+        'npl': 1.5,   # NPL rendah (bagus)
+        'nim': 5.8,
+        'ldr': 88.5,
+        'cost_to_income': 35.2,
+        # Metrik standar
+        'debt_to_equity': None,
         'roe': 22.3,
         'roa': 3.5,
         'profit_margin': 38.5,
@@ -81,16 +109,25 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 450e12,
         'avg_volume': 45_000_000,
         'free_float_pct': 40,
-        'notes': 'Turun 17% YoY tapi PEG masih menarik',
+        'notes': '3Y uptrend tapi 1Y downtrend - MIXED SIGNAL',
     },
     {
         'ticker': 'BBNI.JK',
         'name': 'Bank Negara Indonesia Tbk',
         'sector': 'Financial Services',
-        'industry': 'Banks - Regional',
+        'industry': 'Banks',
+        'is_bank': True,
         'current_price': 4850,
-        'price_change_3y': 18.5,  # 3 TAHUN: lebih lambat dari peers
-        'debt_to_equity': 0.92,
+        'price_change_3y': 18.5,  # 3 TAHUN: UPTREND lemah
+        'price_change_1y': -12.5,  # 1 TAHUN: TURUN - DOWNTREND!
+        # METRIK KHUSUS BANK
+        'car': 22.8,
+        'npl': 2.2,
+        'nim': 4.8,
+        'ldr': 92.5,  # LDR agak tinggi
+        'cost_to_income': 42.5,
+        # Metrik standar
+        'debt_to_equity': None,
         'roe': 15.2,
         'roa': 2.8,
         'profit_margin': 28.5,
@@ -103,6 +140,7 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 180e12,
         'avg_volume': 35_000_000,
         'free_float_pct': 40,
+        'notes': '3Y uptrend tapi 1Y downtrend - MIXED SIGNAL',
     },
 
     # Consumer Goods
