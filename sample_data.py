@@ -1,14 +1,13 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 3.3 - Update 13-14 Februari 2026
+Version 3.4 - Update 20 Februari 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 13-14 Februari 2026.
-16 Feb 2026 = Libur, pasar tutup.
+Data diupdate berdasarkan harga pasar 20 Februari 2026.
 
-Sumber: Investing.com, Stockbit, TradingView, Bisnis.com, Liputan6
+Sumber: Investing.com, Stockbit, TradingView, Yahoo Finance
 ============================================================================
 """
 
@@ -236,9 +235,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Mayora Indah Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 2250,  # Update 13-15 Feb 2026: turun dari 2310
-        'price_change_3y': 54.8,  # 3 TAHUN
-        'price_change_1y': 12.8,  # 1 TAHUN: 52w range: 1820-2610
+        'current_price': 2280,  # Update 20 Feb 2026: range 2210-2320
+        'price_change_3y': 55.2,  # 3 TAHUN
+        'price_change_1y': 11.2,  # 1 TAHUN: 52w range: 1820-2610
         'debt_to_equity': 0.72,
         'roe': 22.8,
         'roa': 9.5,
@@ -249,9 +248,10 @@ SAMPLE_STOCK_DATA = [
         'pe_ratio': 15.2,
         'pb_ratio': 3.5,
         'peg_ratio': 0.59,
-        'market_cap': 55e12,
+        'market_cap': 47.03e12,  # Update from web
         'avg_volume': 3_500_000,
         'free_float_pct': 67,
+        'notes': 'Update 20 Feb: range 2210-2320, mcap turun 3.18% weekly',
     },
 
     # Telekomunikasi
@@ -329,55 +329,55 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2580,  # Update 10-13 Feb 2026
-        'price_change_3y': 61.3,  # 3 TAHUN: dari ~1600 ke 2580
-        'price_change_1y': -3.4,  # 1 TAHUN: 52w range: 2170-3070
+        'current_price': 2550,  # Update 20 Feb 2026
+        'price_change_3y': 59.4,  # 3 TAHUN: dari ~1600 ke 2550
+        'price_change_1y': -4.5,  # 1 TAHUN: 52w range: 2170-3070
         'debt_to_equity': 0.28,
         'roe': 25.5,
         'roa': 15.5,
         'profit_margin': 18.5,
-        'dividend_yield': 6.47,  # Potensi yield 6.47%
+        'dividend_yield': 13.04,  # Update: Div yield TTM 13.04%!
         'current_ratio': 2.5,
         'earnings_growth': -15.5,
         'pe_ratio': 7.0,
         'pb_ratio': 1.8,
         'peg_ratio': None,
-        'market_cap': 28e12,
+        'market_cap': 29.36e12,  # Update from web
         'avg_volume': 15_000_000,
         'free_float_pct': 35,
-        'notes': 'Value play, akumulasi asing mulai rutin Feb 2026',
+        'notes': 'Div yield 13%! Value play, 52w: 2170-3070',
     },
     {
         'ticker': 'INCO.JK',
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 7100,  # Update 12 Feb 2026: +3.65% STRONG!
-        'price_change_3y': 276.6,  # 3 TAHUN: dari ~1885 ke 7100 - SUPER STRONG!
-        'price_change_1y': 84.4,  # 1 TAHUN: NAIK 84%!
+        'current_price': 6300,  # Update 20 Feb 2026: -4.55% dari kemarin
+        'price_change_3y': 234.4,  # 3 TAHUN: dari ~1885 ke 6300 - STILL STRONG
+        'price_change_1y': 121.05,  # 1 TAHUN: NAIK 121%! (validated from investing.com)
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
         'profit_margin': 22.5,
         'dividend_yield': 2.5,
         'current_ratio': 4.5,
-        'earnings_growth': 35.2,  # Recovery nickel
+        'earnings_growth': 35.2,
         'pe_ratio': 12.5,
         'pb_ratio': 2.3,
         'peg_ratio': 0.35,
-        'market_cap': 66e12,
+        'market_cap': 69.56e12,  # Update from web
         'avg_volume': 18_000_000,
         'free_float_pct': 21,
-        'notes': 'Recovery kuat, gap up Feb 2026, range 52w: 1355-4180 breakout',
+        'notes': 'Update 20 Feb: koreksi -4.55%, tapi 1Y return masih +121%',
     },
     {
         'ticker': 'ANTM.JK',
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 4010,  # Update Feb 2026: range 3920-4140
-        'price_change_3y': 301.6,  # 3 TAHUN: dari ~998 ke 4010 - SUPER STRONG!
-        'price_change_1y': 196.0,  # 1 TAHUN: dari ~1355 (52w low) ke 4010
+        'current_price': 3240,  # Update 20 Feb 2026: koreksi dari ATH 4970
+        'price_change_3y': 224.6,  # 3 TAHUN: dari ~998 ke 3240 - STILL STRONG
+        'price_change_1y': 133.0,  # 1 TAHUN: 52w low ~1390, high 4970, now 3240
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -388,9 +388,10 @@ SAMPLE_STOCK_DATA = [
         'pe_ratio': 10.2,
         'pb_ratio': 1.6,
         'peg_ratio': 0.31,
-        'market_cap': 45e12,
+        'market_cap': 95.88e12,  # Update from web
         'avg_volume': 45_000_000,
         'free_float_pct': 35,
+        'notes': 'Koreksi dari ATH 4970 (Jan 26), masih +133% YoY',
     },
 
     # Otomotif & Konglomerasi
@@ -507,9 +508,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Sumber Alfaria Trijaya',
         'sector': 'Consumer Defensive',
         'industry': 'Grocery Stores',
-        'current_price': 2850,
-        'price_change_3y': 112.5,  # 3 TAHUN: dari ~1340 - STRONG PERFORMER
-        'price_change_1y': 35.5,   # 1 TAHUN: STRONG UPTREND - ekspansi agresif
+        'current_price': 1770,  # Update 20 Feb 2026: CRASH dari 2850!
+        'price_change_3y': 32.1,  # 3 TAHUN: dari ~1340 ke 1770 (masih positif tapi lemah)
+        'price_change_1y': -37.68,  # 1 TAHUN: DOWNTREND PARAH! -37.68%
         'debt_to_equity': 0.85,
         'roe': 28.5,
         'roa': 8.5,
@@ -520,9 +521,10 @@ SAMPLE_STOCK_DATA = [
         'pe_ratio': 28.5,
         'pb_ratio': 8.1,
         'peg_ratio': 1.0,
-        'market_cap': 115e12,
+        'market_cap': 71.84e12,  # Update from web
         'avg_volume': 12_000_000,
         'free_float_pct': 35,
+        'notes': 'KOREKSI PARAH! -37.68% YoY, -12.38% bulanan',
     },
 
     # Properti
