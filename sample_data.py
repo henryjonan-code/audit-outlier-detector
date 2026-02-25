@@ -1,13 +1,15 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 3.4 - Update 20 Februari 2026
+Version 3.5 - Update 25 Februari 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 20 Februari 2026.
+Data diupdate berdasarkan harga pasar 25 Februari 2026 (intraday).
 
-Sumber: Investing.com, Stockbit, TradingView, Yahoo Finance
+IHSG: 8.357,03 (+0.92%)
+
+Sumber: Bisnis.com, Investing.com, TradingView, Stockbit
 ============================================================================
 """
 
@@ -23,9 +25,9 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 7325,  # Update 12-13 Feb 2026
-        'price_change_3y': 7.7,  # 3 TAHUN: dari ~6800 ke 7325
-        'price_change_1y': -24.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
+        'current_price': 7225,  # Update 25 Feb 2026: -1.03% (target jual asing)
+        'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
+        'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
         'car': 28.5,  # Capital Adequacy Ratio (min 8%, ideal >20%)
         'npl': 1.8,   # Non Performing Loan (max 5%, ideal <3%)
@@ -54,9 +56,9 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3790,  # Update 12-13 Feb 2026
-        'price_change_3y': -16.3,  # 3 TAHUN: TURUN! - DOWNTREND PARAH
-        'price_change_1y': -31.9,  # 1 TAHUN: TURUN 32%! - DOWNTREND PARAH
+        'current_price': 3870,  # Update 25 Feb 2026: +1.56% hari ini
+        'price_change_3y': -14.6,  # 3 TAHUN: masih TURUN
+        'price_change_1y': -6.0,  # 1 TAHUN: membaik dari -32% (52w: 3290-4450)
         # METRIK KHUSUS BANK
         'car': 25.8,
         'npl': 2.8,   # NPL agak tinggi
@@ -85,9 +87,9 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 4810,  # Update Feb 2026
-        'price_change_3y': 21.0,  # 3 TAHUN: UPTREND lemah
-        'price_change_1y': -17.1,  # 1 TAHUN: TURUN 17% - DOWNTREND!
+        'current_price': 5375,  # Update 25 Feb 2026: RECOVERY! +0.95% hari ini
+        'price_change_3y': 35.0,  # 3 TAHUN: dari ~3980 ke 5375 - membaik
+        'price_change_1y': -7.3,  # 1 TAHUN: membaik dari -17.1% (recovery!)
         # METRIK KHUSUS BANK
         'car': 24.2,
         'npl': 1.5,   # NPL rendah (bagus)
@@ -105,10 +107,10 @@ SAMPLE_STOCK_DATA = [
         'pe_ratio': 7.8,
         'pb_ratio': 1.7,
         'peg_ratio': 0.50,
-        'market_cap': 450e12,
+        'market_cap': 491.89e12,  # Update from web
         'avg_volume': 45_000_000,
         'free_float_pct': 40,
-        'notes': '3Y uptrend tapi 1Y downtrend - MIXED SIGNAL',
+        'notes': 'RECOVERY! +6.93% bulanan, +3.52% weekly - masih DOWNTREND 1Y tapi membaik',
     },
     {
         'ticker': 'BBNI.JK',
@@ -235,9 +237,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Mayora Indah Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 2280,  # Update 20 Feb 2026: range 2210-2320
-        'price_change_3y': 55.2,  # 3 TAHUN
-        'price_change_1y': 11.2,  # 1 TAHUN: 52w range: 1820-2610
+        'current_price': 2180,  # Update 25 Feb 2026: +1.87% hari ini, mcap Rp49.7T
+        'price_change_3y': 48.6,  # 3 TAHUN: dari ~1465 ke 2180
+        'price_change_1y': 6.3,   # 1 TAHUN: 52w range: 1820-2610
         'debt_to_equity': 0.72,
         'roe': 22.8,
         'roa': 9.5,
@@ -329,9 +331,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2550,  # Update 20 Feb 2026
-        'price_change_3y': 59.4,  # 3 TAHUN: dari ~1600 ke 2550
-        'price_change_1y': -4.5,  # 1 TAHUN: 52w range: 2170-3070
+        'current_price': 2570,  # Update 25 Feb 2026: range 2540-2590
+        'price_change_3y': 60.6,  # 3 TAHUN: dari ~1600 ke 2570
+        'price_change_1y': -2.6,  # 1 TAHUN: membaik, 52w range: 2170-3070
         'debt_to_equity': 0.28,
         'roe': 25.5,
         'roa': 15.5,
@@ -352,9 +354,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 6300,  # Update 20 Feb 2026: -4.55% dari kemarin
-        'price_change_3y': 234.4,  # 3 TAHUN: dari ~1885 ke 6300 - STILL STRONG
-        'price_change_1y': 121.05,  # 1 TAHUN: NAIK 121%! (validated from investing.com)
+        'current_price': 7350,  # Update 25 Feb 2026: +5.00% STRONG! rilis laporan hari ini
+        'price_change_3y': 290.0,  # 3 TAHUN: dari ~1885 ke 7350 - SUPER STRONG!
+        'price_change_1y': 157.9,  # 1 TAHUN: dari ~2850 ke 7350 - EXPLOSIVE!
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
@@ -375,7 +377,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3240,  # Update 20 Feb 2026: koreksi dari ATH 4970
+        'current_price': 3240,  # Update 25 Feb 2026: range 3180-3290, stabil
         'price_change_3y': 224.6,  # 3 TAHUN: dari ~998 ke 3240 - STILL STRONG
         'price_change_1y': 133.0,  # 1 TAHUN: 52w low ~1390, high 4970, now 3240
         'debt_to_equity': 0.42,
@@ -421,9 +423,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'United Tractors Tbk',
         'sector': 'Industrials',
         'industry': 'Farm & Heavy Machinery',
-        'current_price': 29400,  # Update 13 Feb 2026: menyelamatkan IHSG
-        'price_change_3y': 58.9,  # 3 TAHUN: dari ~18500 ke 29400
-        'price_change_1y': 6.9,  # 1 TAHUN: masih positif, 52w: 20025-32000
+        'current_price': 29550,  # Update 25 Feb 2026: range 29300-29625, rilis laba 26 Feb
+        'price_change_3y': 59.7,  # 3 TAHUN: dari ~18500 ke 29550
+        'price_change_1y': 7.5,  # 1 TAHUN: 52w: 20025-32000, mcap Rp111.59T
         'debt_to_equity': 0.52,
         'roe': 18.5,
         'roa': 10.2,
