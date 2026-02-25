@@ -59,7 +59,9 @@ class BuffettScorer:
         """
         Cek apakah saham adalah bank
         """
-        if row.get('is_bank', False):
+        is_bank_field = row.get('is_bank')
+        # Handle nan/None values properly
+        if pd.notna(is_bank_field) and is_bank_field == True:
             return True
         industry = row.get('industry', '')
         return 'Bank' in str(industry)
@@ -437,47 +439,70 @@ class BuffettScorer:
 
     def apply_buffett_filter(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
-        Filter saham berdasarkan kriteria Warren Buffett + Liquidity
+        Filter saham berdasarkan kriteria KETAT user:
 
-        HARD FILTER V3.0:
-        Saham HARUS memenuhi SALAH SATU kriteria ini:
-        1. 3Y return > 0 DAN 1Y return > 0 (ideal - uptrend konsisten)
-        2. 3Y return > 50% (uptrend kuat jangka panjang, toleransi koreksi 1Y)
-        3. 1Y return > 30% (momentum kuat, bisa recovery dari 3Y flat)
+        HARD FILTER V4.0:
+        1. Trend 1 TAHUN: HARUS NAIK (price_change_1y > 0)
+        2. Trend 2 TAHUN: HARUS NAIK (price_change_2y > 0)
+        3. D/E Ratio < 50% (0.5) - untuk non-bank
+        4. Bagi dividen (dividend_yield > 0)
+        5. Untung (ROE > 0 atau profit_margin > 0)
 
-        Saham dengan 1Y return < -15% langsung DIDISKUALIFIKASI
-        (menghindari "value trap" - murah tapi terus turun)
+        Tidak ada toleransi - semua kriteria HARUS terpenuhi!
         """
         # Apply liquidity filter first
         filtered = self.apply_liquidity_filter(df)
 
-        # HARD FILTER: Multiple criteria for uptrend
-        has_3y = 'price_change_3y' in filtered.columns
+        # HARD FILTER 1: Trend 1Y HARUS positif
         has_1y = 'price_change_1y' in filtered.columns
-
-        if has_3y and has_1y:
-            # Kriteria 1: Keduanya positif (ideal)
-            both_positive = (filtered['price_change_3y'] > 0) & (filtered['price_change_1y'] > 0)
-
-            # Kriteria 2: 3Y sangat kuat (>50%), toleransi 1Y koreksi tapi tidak parah
-            strong_3y = (filtered['price_change_3y'] > 50) & (filtered['price_change_1y'] > -15)
-
-            # Kriteria 3: 1Y sangat kuat (>30%), bisa recovery
-            strong_1y = filtered['price_change_1y'] > 30
-
-            # DISQUALIFY: 1Y return terlalu jelek (< -15%) - VALUE TRAP warning
-            not_value_trap = filtered['price_change_1y'] > -15
-
-            mask_trend = (both_positive | strong_3y | strong_1y) & not_value_trap
-        elif has_3y:
-            # Fallback: hanya cek 3Y
-            mask_trend = filtered['price_change_3y'] > 0
+        if has_1y:
+            mask_1y = filtered['price_change_1y'] > 0
         else:
-            # No trend data - let everything through
-            mask_trend = pd.Series([True] * len(filtered), index=filtered.index)
+            mask_1y = pd.Series([True] * len(filtered), index=filtered.index)
 
-        passed = filtered[mask_trend].copy()
-        failed = filtered[~mask_trend].copy()
+        # HARD FILTER 2: Trend 2Y HARUS positif (gunakan 3Y jika 2Y tidak ada)
+        has_2y = 'price_change_2y' in filtered.columns
+        has_3y = 'price_change_3y' in filtered.columns
+        if has_2y:
+            mask_2y = filtered['price_change_2y'] > 0
+        elif has_3y:
+            # Fallback: gunakan 3Y sebagai proxy
+            mask_2y = filtered['price_change_3y'] > 0
+        else:
+            mask_2y = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # HARD FILTER 3: D/E < 0.5 (50%) untuk NON-BANK
+        # Bank punya struktur modal berbeda, skip filter ini untuk bank
+        if 'debt_to_equity' in filtered.columns:
+            is_bank = filtered.apply(lambda row: self.is_bank(row), axis=1)
+            de_ok = (filtered['debt_to_equity'] < 0.5) | filtered['debt_to_equity'].isna()
+            mask_de = is_bank | de_ok  # Bank lolos, non-bank harus D/E < 0.5
+        else:
+            mask_de = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # HARD FILTER 4: Bagi dividen
+        if 'dividend_yield' in filtered.columns:
+            mask_div = filtered['dividend_yield'] > 0
+        else:
+            mask_div = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # HARD FILTER 5: Untung (ROE > 0 atau profit_margin > 0)
+        has_roe = 'roe' in filtered.columns
+        has_margin = 'profit_margin' in filtered.columns
+        if has_roe and has_margin:
+            mask_profit = (filtered['roe'] > 0) | (filtered['profit_margin'] > 0)
+        elif has_roe:
+            mask_profit = filtered['roe'] > 0
+        elif has_margin:
+            mask_profit = filtered['profit_margin'] > 0
+        else:
+            mask_profit = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # GABUNGKAN SEMUA FILTER - SEMUA HARUS LOLOS
+        mask_all = mask_1y & mask_2y & mask_de & mask_div & mask_profit
+
+        passed = filtered[mask_all].copy()
+        failed = filtered[~mask_all].copy()
 
         return passed, failed
 
