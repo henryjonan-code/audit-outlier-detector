@@ -1,15 +1,17 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 3.5 - Update 25 Februari 2026
+Version 3.6 - Update 25 Februari 2026 (Penutupan)
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 25 Februari 2026 (intraday).
+Data diupdate berdasarkan harga pasar 25 Februari 2026 (closing).
 
-IHSG: 8.357,03 (+0.92%)
+IHSG: 8.322,23 (+0.50%)
+Context: IHSG YTD 2026 = -3.66% (terlemah di dunia per Bloomberg)
+Asing net sell: BBCA Rp16.2T, BMRI Rp1.36T
 
-Sumber: Bisnis.com, Investing.com, TradingView, Stockbit
+Sumber: Bisnis.com, Investing.com, IDXChannel, Vibiznews
 ============================================================================
 """
 
@@ -237,9 +239,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Mayora Indah Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 2180,  # Update 25 Feb 2026: +1.87% hari ini, mcap Rp49.7T
-        'price_change_3y': 48.6,  # 3 TAHUN: dari ~1465 ke 2180
-        'price_change_1y': 6.3,   # 1 TAHUN: 52w range: 1820-2610
+        'current_price': 2360,  # Update 25 Feb 2026 CLOSING: +2.17%, mcap Rp49.7T
+        'price_change_3y': 61.1,  # 3 TAHUN: dari ~1465 ke 2360
+        'price_change_1y': 15.1,  # 1 TAHUN: naik dari 6.3% ke 15.1% - KUAT!
         'debt_to_equity': 0.72,
         'roe': 22.8,
         'roa': 9.5,
@@ -250,10 +252,10 @@ SAMPLE_STOCK_DATA = [
         'pe_ratio': 15.2,
         'pb_ratio': 3.5,
         'peg_ratio': 0.59,
-        'market_cap': 47.03e12,  # Update from web
+        'market_cap': 53.8e12,
         'avg_volume': 3_500_000,
         'free_float_pct': 67,
-        'notes': 'Update 20 Feb: range 2210-2320, mcap turun 3.18% weekly',
+        'notes': 'Update 25 Feb closing: +2.17%, saham konsumer unjuk gigi saat IHSG naik',
     },
 
     # Telekomunikasi
@@ -331,23 +333,23 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2570,  # Update 25 Feb 2026: range 2540-2590
-        'price_change_3y': 60.6,  # 3 TAHUN: dari ~1600 ke 2570
-        'price_change_1y': -2.6,  # 1 TAHUN: membaik, 52w range: 2170-3070
+        'current_price': 2300,  # Update 25 Feb 2026 CLOSING: range 2280-2310 - DROP!
+        'price_change_3y': 43.8,  # 3 TAHUN: dari ~1600 ke 2300 (turun dari 60%)
+        'price_change_1y': -14.0,  # 1 TAHUN: -14%! 52w range: 2170-3070
         'debt_to_equity': 0.28,
         'roe': 25.5,
         'roa': 15.5,
         'profit_margin': 18.5,
-        'dividend_yield': 13.04,  # Update: Div yield TTM 13.04%!
+        'dividend_yield': 13.04,  # Div yield TTM 13.04% (tapi harga makin turun)
         'current_ratio': 2.5,
         'earnings_growth': -15.5,
-        'pe_ratio': 7.0,
-        'pb_ratio': 1.8,
+        'pe_ratio': 6.3,
+        'pb_ratio': 1.6,
         'peg_ratio': None,
-        'market_cap': 29.36e12,  # Update from web
+        'market_cap': 26.5e12,
         'avg_volume': 15_000_000,
         'free_float_pct': 35,
-        'notes': 'Div yield 13%! Value play, 52w: 2170-3070',
+        'notes': 'AWAS: -14% 1Y! Hampir masuk value trap. 3Y hanya 44% (butuh >50%)',
     },
     {
         'ticker': 'INCO.JK',
