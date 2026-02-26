@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIGENSEE - AI Film Storyboard Generator Ver1.1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #f5c518;
+      --yellow-dim: #c9a214;
+      --yellow-glow: rgba(245, 197, 24, 0.18);
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --bg4: #222222;
+      --border: #2a2a2a;
+      --border2: #333333;
+      --text: #f0f0f0;
+      --text-dim: #888888;
+      --text-muted: #555555;
+      --red: #e53e3e;
+      --teal: #38b2ac;
+      --purple: #805ad5;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ---- SCROLLBAR ---- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--yellow-dim); border-radius: 3px; }
+
+    /* ---- HEADER ---- */
+    header {
+      background: linear-gradient(180deg, #000 0%, #0d0d0d 100%);
+      border-bottom: 1px solid var(--border2);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--yellow);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #000;
+      flex-shrink: 0;
+      box-shadow: 0 0 18px rgba(245, 197, 24, 0.45);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 900;
+      color: var(--yellow);
+      letter-spacing: 0.12em;
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(245, 197, 24, 0.4);
+    }
+
+    .logo-subtitle {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .header-badge {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .header-badge span { color: var(--yellow); }
+
+    /* ---- MAIN LAYOUT ---- */
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ---- PANEL ---- */
+    .panel {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: linear-gradient(90deg, #151515 0%, #121212 100%);
+      border-bottom: 1px solid var(--border2);
+      padding: 1rem 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-header-icon {
+      color: var(--yellow);
+      font-size: 1rem;
+    }
+
+    .panel-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .panel-body { padding: 1.4rem; }
+
+    /* ---- FORM ---- */
+    .form-group { margin-bottom: 1.3rem; }
+
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 500;
+      padding: 10px 13px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    .form-control::placeholder { color: var(--text-muted); }
+
+    .form-control:focus {
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 3px var(--yellow-glow);
+    }
+
+    textarea.form-control {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    select.form-control {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    select.form-control option { background: var(--bg3); color: var(--text); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* ---- GENRE GRID ---- */
+    .genre-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .genre-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      color: var(--text-dim);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 11px;
+      cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.05em;
+      user-select: none;
+    }
+
+    .genre-btn:hover {
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+
+    .genre-btn.selected {
+      background: rgba(245, 197, 24, 0.12);
+      border-color: var(--yellow);
+      color: var(--yellow);
+      box-shadow: 0 0 8px rgba(245, 197, 24, 0.2);
+    }
+
+    /* ---- BUTTONS ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .btn-primary {
+      background: var(--yellow);
+      color: #000;
+      font-size: 0.97rem;
+      padding: 13px 20px;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(245, 197, 24, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: #ffd428;
+      box-shadow: 0 6px 30px rgba(245, 197, 24, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      padding: 10px 16px;
+      width: 100%;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--yellow);
+      color: var(--yellow);
+      background: var(--yellow-glow);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 1.5rem;
+    }
+
+    /* ---- RESULTS AREA ---- */
+    #results-area {
+      display: none;
+    }
+
+    #results-area.visible {
+      display: block;
+      animation: fadeInUp 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- LOADING ---- */
+    #loading-overlay {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      gap: 1.5rem;
+    }
+
+    #loading-overlay.visible { display: flex; }
+
+    .film-reel {
+      width: 70px;
+      height: 70px;
+      animation: spinReel 1s linear infinite;
+    }
+
+    @keyframes spinReel {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--yellow);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    .loading-sub {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .loading-bar {
+      width: 260px;
+      height: 3px;
+      background: var(--bg4);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .loading-bar-fill {
+      height: 100%;
+      background: var(--yellow);
+      border-radius: 3px;
+      animation: loadBar 2.2s ease-in-out infinite;
+    }
+
+    @keyframes loadBar {
+      0% { width: 0%; }
+      60% { width: 80%; }
+      90% { width: 95%; }
+      100% { width: 100%; }
+    }
+
+    /* ---- TABS ---- */
+    .tabs-bar {
+      display: flex;
+      border-bottom: 1px solid var(--border2);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .tabs-bar::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 14px 20px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+
+    .tab-btn.active {
+      color: var(--yellow);
+      border-bottom-color: var(--yellow);
+    }
+
+    .tab-content { padding: 1.8rem; display: none; }
+    .tab-content.active { display: block; animation: fadeInUp 0.3s ease; }
+
+    /* ---- SECTION TITLE ---- */
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border2);
+    }
+
+    /* ---- CONCEPT TAB ---- */
+    .film-title-display {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--yellow);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.6rem;
+      text-shadow: 0 0 30px rgba(245, 197, 24, 0.3);
+    }
+
+    .genre-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.6rem; }
+
+    .tag {
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .tag-yellow { background: rgba(245, 197, 24, 0.15); border: 1px solid rgba(245, 197, 24, 0.4); color: var(--yellow); }
+    .tag-teal { background: rgba(56, 178, 172, 0.12); border: 1px solid rgba(56, 178, 172, 0.35); color: var(--teal); }
+    .tag-purple { background: rgba(128, 90, 213, 0.12); border: 1px solid rgba(128, 90, 213, 0.35); color: var(--purple); }
+    .tag-red { background: rgba(229, 62, 62, 0.12); border: 1px solid rgba(229, 62, 62, 0.35); color: var(--red); }
+
+    .logline-box {
+      background: var(--bg3);
+      border-left: 3px solid var(--yellow);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.3rem;
+      margin-bottom: 1.8rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    .acts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .act-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 1.2rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .act-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .act-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--yellow);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .act-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .act-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .act-num {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      background: var(--yellow);
+      border-radius: 50%;
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 900;
+      text-align: center;
+      line-height: 28px;
+      margin-bottom: 10px;
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+
+    .info-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 1.2rem;
+    }
+
+    .info-card-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .themes-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+
+    .themes-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .themes-list li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--yellow);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .visual-style-text {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* ---- CASTING TAB ---- */
+    .cast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .cast-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cast-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      border-color: var(--border2);
+    }
+
+    .cast-img-wrapper {
+      position: relative;
+      overflow: hidden;
+      height: 220px;
+    }
+
+    .cast-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s;
+    }
+
+    .cast-card:hover .cast-img-wrapper img { transform: scale(1.06); }
+
+    .cast-role-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.75);
+      border: 1px solid var(--yellow);
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--yellow);
+      padding: 3px 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      backdrop-filter: blur(4px);
+    }
+
+    .cast-info { padding: 1rem; }
+
+    .cast-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.05em;
+      margin-bottom: 5px;
+    }
+
+    .cast-desc {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+
+    .cast-traits { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    .trait-pill {
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      color: var(--text-dim);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+    }
+
+    /* ---- SHOTLIST TAB ---- */
+    .shot-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    .shot-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 1.3rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      align-items: start;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .shot-card:hover {
+      border-color: rgba(245, 197, 24, 0.3);
+      box-shadow: 0 4px 20px rgba(245, 197, 24, 0.05);
+    }
+
+    .shot-num {
+      width: 44px;
+      height: 44px;
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--yellow);
+      flex-shrink: 0;
+    }
+
+    .shot-body { min-width: 0; }
+
+    .shot-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .shot-desc {
+      font-size: 0.87rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .shot-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .shot-badge {
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      border-radius: 5px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      letter-spacing: 0.06em;
+    }
+
+    .shot-badge.type { color: var(--teal); border-color: rgba(56,178,172,0.3); }
+    .shot-badge.angle { color: var(--purple); border-color: rgba(128,90,213,0.3); }
+    .shot-badge.lighting { color: #ed8936; border-color: rgba(237,137,54,0.3); }
+
+    .shot-mood {
+      flex-shrink: 0;
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+
+    .mood-dark { background: rgba(229,62,62,0.12); border: 1px solid rgba(229,62,62,0.3); color: var(--red); }
+    .mood-tense { background: rgba(237,137,54,0.12); border: 1px solid rgba(237,137,54,0.3); color: #ed8936; }
+    .mood-mysterious { background: rgba(128,90,213,0.12); border: 1px solid rgba(128,90,213,0.3); color: var(--purple); }
+    .mood-action { background: rgba(245,197,24,0.12); border: 1px solid rgba(245,197,24,0.3); color: var(--yellow); }
+    .mood-emotional { background: rgba(56,178,172,0.12); border: 1px solid rgba(56,178,172,0.3); color: var(--teal); }
+
+    /* ---- ACTORS TAB ---- */
+    .actors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .actor-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 1.3rem;
+      display: flex;
+      gap: 1.1rem;
+      align-items: flex-start;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .actor-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.4);
+    }
+
+    .actor-img {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid var(--border2);
+    }
+
+    .actor-info { flex: 1; min-width: 0; }
+
+    .actor-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .actor-role {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--yellow);
+      margin-bottom: 8px;
+    }
+
+    .actor-why {
+      font-size: 0.83rem;
+      color: var(--text-dim);
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+
+    .actor-works {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ---- LOCATIONS TAB ---- */
+    .locations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .location-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .location-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+    }
+
+    .location-img-wrap {
+      height: 160px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .location-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s;
+    }
+
+    .location-card:hover .location-img-wrap img { transform: scale(1.06); }
+
+    .location-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+    }
+
+    .location-body { padding: 1.1rem; }
+
+    .location-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .location-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .location-traits { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    /* ---- ELEMENTS TAB ---- */
+    .elements-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+    }
+
+    .element-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 1.3rem;
+    }
+
+    .element-card.full { grid-column: 1 / -1; }
+
+    .element-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .element-title i { color: var(--yellow); }
+
+    .palette-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .swatch-color {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .swatch-label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+
+    .props-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .prop-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.87rem;
+      color: var(--text);
+    }
+
+    .prop-item i {
+      color: var(--yellow);
+      width: 16px;
+      flex-shrink: 0;
+    }
+
+    .sound-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .sound-item {
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      padding: 10px 12px;
+    }
+
+    .sound-item-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--yellow);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .sound-item-value {
+      font-size: 0.83rem;
+      color: var(--text-dim);
+    }
+
+    .costume-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .costume-item {
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      padding: 10px 12px;
+    }
+
+    .costume-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .costume-desc {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    /* ---- EMPTY STATE ---- */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      gap: 1.2rem;
+      text-align: center;
+    }
+
+    .empty-icon {
+      font-size: 3.5rem;
+      color: var(--border2);
+    }
+
+    .empty-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .empty-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 320px;
+      line-height: 1.6;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border2);
+      padding: 1.2rem 2rem;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-text span { color: var(--yellow); }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 1100px) {
+      .layout-grid { grid-template-columns: 360px 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      .layout-grid { grid-template-columns: 1fr; }
+      .acts-grid { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .elements-grid { grid-template-columns: 1fr; }
+      .element-card.full { grid-column: 1; }
+      .sound-grid { grid-template-columns: 1fr; }
+      .film-title-display { font-size: 1.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner { height: 60px; }
+      .logo-title { font-size: 1.2rem; }
+      .logo-subtitle { display: none; }
+      .main-container { padding: 1.5rem 1rem 3rem; }
+      .tab-btn { font-size: 0.7rem; padding: 12px 14px; }
+      .cast-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .actors-grid { grid-template-columns: 1fr; }
+      .locations-grid { grid-template-columns: 1fr; }
+      .shot-card { grid-template-columns: auto 1fr; }
+      .shot-mood { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-group">
+      <div class="logo-icon">
+        <i class="fas fa-film"></i>
+      </div>
+      <div class="logo-text">
+        <span class="logo-title">AIGENSEE</span>
+        <span class="logo-subtitle">AI Film Storyboard Generator Ver1.1</span>
+      </div>
+    </div>
+    <div class="header-badge">Powered by <span>AI</span></div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main-container">
+  <div class="layout-grid">
+
+    <!-- LEFT: INPUT FORM -->
+    <aside>
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-header-icon"><i class="fas fa-sliders"></i></span>
+          <h2>Story Parameters</h2>
+        </div>
+        <div class="panel-body">
+
+          <div class="form-group">
+            <label class="form-label" for="filmTitle"><i class="fas fa-clapperboard" style="margin-right:5px;color:var(--yellow)"></i>Film Title</label>
+            <input id="filmTitle" class="form-control" type="text" placeholder="Enter your film title..." />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="logline"><i class="fas fa-scroll" style="margin-right:5px;color:var(--yellow)"></i>Logline / Premise</label>
+            <textarea id="logline" class="form-control" placeholder="Describe your story premise..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="emotion"><i class="fas fa-heart-pulse" style="margin-right:5px;color:var(--yellow)"></i>Main Emotional Message</label>
+            <input id="emotion" class="form-control" type="text" placeholder="What emotion should the audience feel?" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="duration"><i class="fas fa-clock" style="margin-right:5px;color:var(--yellow)"></i>Duration</label>
+              <select id="duration" class="form-control">
+                <option value="5">5 min</option>
+                <option value="10">10 min</option>
+                <option value="15">15 min</option>
+                <option value="20">20 min</option>
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60" selected>60 min</option>
+                <option value="90">90 min</option>
+                <option value="120">120 min</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="mood"><i class="fas fa-masks-theater" style="margin-right:5px;color:var(--yellow)"></i>Main Mood</label>
+              <select id="mood" class="form-control">
+                <option value="dark">Dark &amp; Gritty</option>
+                <option value="uplifting">Uplifting</option>
+                <option value="mysterious">Mysterious</option>
+                <option value="romantic">Romantic</option>
+                <option value="intense">Intense</option>
+                <option value="melancholic">Melancholic</option>
+                <option value="comedic">Comedic</option>
+                <option value="epic">Epic</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-tag" style="margin-right:5px;color:var(--yellow)"></i>Genre</label>
+            <div class="genre-grid" id="genreGrid">
+              <button class="genre-btn" data-genre="Sci-Fi">Sci-Fi</button>
+              <button class="genre-btn" data-genre="Film Noir">Film Noir</button>
+              <button class="genre-btn" data-genre="Fantasy">Fantasy</button>
+              <button class="genre-btn" data-genre="Action/Adventure">Action</button>
+              <button class="genre-btn" data-genre="Horror">Horror</button>
+              <button class="genre-btn" data-genre="Documentary">Documentary</button>
+              <button class="genre-btn" data-genre="Romance">Romance</button>
+              <button class="genre-btn" data-genre="Cyberpunk">Cyberpunk</button>
+              <button class="genre-btn" data-genre="Historical Drama">Historical</button>
+              <button class="genre-btn" data-genre="Psychological Thriller">Psych Thriller</button>
+              <button class="genre-btn" data-genre="Mystery">Mystery</button>
+              <button class="genre-btn" data-genre="Dark Comedy">Dark Comedy</button>
+              <button class="genre-btn" data-genre="Surrealism">Surrealism</button>
+              <button class="genre-btn" data-genre="Biography">Biography</button>
+              <button class="genre-btn" data-genre="Family Film">Family Film</button>
+              <button class="genre-btn" data-genre="1980s">1980s</button>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary" id="randomBtn">
+              <i class="fas fa-dice"></i> Random Idea
+            </button>
+            <button class="btn btn-primary" id="generateBtn">
+              <i class="fas fa-wand-magic-sparkles"></i> Generate Concept
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: RESULTS -->
+    <div id="right-panel">
+
+      <!-- Empty state -->
+      <div class="panel" id="emptyState">
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fas fa-film"></i></div>
+          <div class="empty-title">Awaiting Your Vision</div>
+          <div class="empty-sub">Fill in the story parameters on the left and hit "Generate Concept" to bring your film idea to life.</div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="panel" id="loadingPanel">
+        <div id="loading-overlay">
+          <svg class="film-reel" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#222" stroke-width="8"/>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#f5c518" stroke-width="8"
+              stroke-dasharray="70 212" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="20" fill="#111" stroke="#333" stroke-width="3"/>
+            <circle cx="50" cy="50" r="6" fill="#f5c518"/>
+            <circle cx="50" cy="18" r="8" fill="#1a1a1a" stroke="#f5c518" stroke-width="2"/>
+            <circle cx="50" cy="82" r="8" fill="#1a1a1a" stroke="#f5c518" stroke-width="2"/>
+            <circle cx="18" cy="50" r="8" fill="#1a1a1a" stroke="#f5c518" stroke-width="2"/>
+            <circle cx="82" cy="50" r="8" fill="#1a1a1a" stroke="#f5c518" stroke-width="2"/>
+          </svg>
+          <div class="loading-text">Generating Storyboard</div>
+          <div class="loading-sub" id="loadingStep">Analyzing narrative structure...</div>
+          <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="results-area">
+        <div class="panel">
+          <!-- TABS -->
+          <div class="tabs-bar">
+            <button class="tab-btn active" data-tab="concept"><i class="fas fa-lightbulb"></i> Concept</button>
+            <button class="tab-btn" data-tab="casting"><i class="fas fa-users"></i> Casting</button>
+            <button class="tab-btn" data-tab="shotlist"><i class="fas fa-camera"></i> Shotlist</button>
+            <button class="tab-btn" data-tab="actors"><i class="fas fa-star"></i> Actors</button>
+            <button class="tab-btn" data-tab="locations"><i class="fas fa-map-pin"></i> Locations</button>
+            <button class="tab-btn" data-tab="elements"><i class="fas fa-palette"></i> Elements</button>
+          </div>
+
+          <!-- CONCEPT TAB -->
+          <div class="tab-content active" id="tab-concept">
+            <div class="film-title-display" id="res-title"></div>
+            <div class="genre-tags" id="res-genres"></div>
+            <div class="section-title">Logline</div>
+            <div class="logline-box" id="res-logline"></div>
+            <div class="section-title">Three-Act Structure</div>
+            <div class="acts-grid" id="res-acts"></div>
+            <div class="two-col">
+              <div>
+                <div class="section-title">Themes</div>
+                <div class="info-card">
+                  <ul class="themes-list" id="res-themes"></ul>
+                </div>
+              </div>
+              <div>
+                <div class="section-title">Visual Style</div>
+                <div class="info-card">
+                  <p class="visual-style-text" id="res-visual"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CASTING TAB -->
+          <div class="tab-content" id="tab-casting">
+            <div class="section-title">Principal Cast</div>
+            <div class="cast-grid" id="res-cast"></div>
+          </div>
+
+          <!-- SHOTLIST TAB -->
+          <div class="tab-content" id="tab-shotlist">
+            <div class="section-title">Scene Breakdown</div>
+            <div class="shot-list" id="res-shots"></div>
+          </div>
+
+          <!-- ACTORS TAB -->
+          <div class="tab-content" id="tab-actors">
+            <div class="section-title">Suggested Real Actors</div>
+            <div class="actors-grid" id="res-actors"></div>
+          </div>
+
+          <!-- LOCATIONS TAB -->
+          <div class="tab-content" id="tab-locations">
+            <div class="section-title">Key Filming Locations</div>
+            <div class="locations-grid" id="res-locations"></div>
+          </div>
+
+          <!-- ELEMENTS TAB -->
+          <div class="tab-content" id="tab-elements">
+            <div class="section-title">Production Design</div>
+            <div class="elements-grid" id="res-elements"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-text">
+    <span>AIGENSEE</span> &mdash; AI Film Storyboard Generator Ver1.1 &mdash; &copy; 2026
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   MOCK DATA LIBRARY
+   ========================================================= */
+
+const MOCK_DATA = {
+  cyberpunk: {
+    title: "NEON REQUIEM",
+    genres: ["Cyberpunk","Psychological Thriller","Sci-Fi","Film Noir"],
+    logline: "In the rain-drenched megalopolis of Neo-Kyoto 2089, a disgraced memory architect discovers that her latest client's stolen memories contain proof of a corporate conspiracy that could either save humanity — or erase the last remnants of what it means to be human.",
+    emotion: "Existential dread laced with desperate hope",
+    duration: "120",
+    mood: "dark",
+    acts: [
+      {
+        num: "I",
+        label: "Act 1",
+        subtitle: "Setup — The Architect",
+        desc: "We meet KIRA SOLEN, a memory splicer living in the underbelly of Neo-Kyoto. After botching a corporate extraction job, she takes a shady off-the-books commission from a dying man — retrieving fragmented memories that turn out to be far more than nostalgia."
+      },
+      {
+        num: "II",
+        label: "Act 2",
+        subtitle: "Confrontation — The Unraveling",
+        desc: "As Kira dives deeper into the stolen memory architecture, the line between her identity and her client's begins to dissolve. AXIOM Corp's kill-squad closes in while Kira races to decode the truth hidden inside corrupted engrams — and realizes she may be a planted memory herself."
+      },
+      {
+        num: "III",
+        label: "Act 3",
+        subtitle: "Resolution — The Last Upload",
+        desc: "Kira must choose: upload the incriminating memory-proof to the global mesh and sacrifice her own existence, or preserve herself and let the megacorporation win. She chooses humanity. The final frame shows Neo-Kyoto lit by dawn — and a ghost-signal carrying her name."
+      }
+    ],
+    themes: [
+      "Identity vs. Manufactured Memory",
+      "Corporate Surveillance & Control",
+      "What Defines Consciousness",
+      "Sacrifice and Moral Courage",
+      "The Fragility of Truth in the Digital Age"
+    ],
+    visualStyle: "Rain-soaked ultraviolet neon against pitch-black brutalist concrete. Every interior bathed in sickly green holographic readouts. Handheld digital-grain cinematography. Inspired by Blade Runner 2049, Enter the Void, and Ghost in the Shell. Lens flares used sparingly — only when a memory intrudes on reality.",
+    cast: [
+      { name: "KIRA SOLEN", role: "Protagonist", desc: "Late 30s. Haunted eyes, shaved left temple with neural port scar. Wears a weathered duster and AR visor. Former AXIOM memory surgeon turned freelance splicer.", traits: ["Analytical","Isolated","Morally conflicted","Brilliant"], img: 1 },
+      { name: "RHYS VAEL", role: "Antagonist", desc: "50s. Immaculate silver suit. AXIOM's Head of Memory Compliance. Calm to the point of menace. Believes human emotion is the last inefficiency to be optimized.", traits: ["Cold","Strategic","Charismatic","Ruthless"], img: 2 },
+      { name: "ZERO", role: "Ally / Hacker", desc: "Non-binary, 20s. Covered in bioluminescent tattoos that pulse with data. Lives in a server rig the size of a studio apartment. The only person Kira trusts.", traits: ["Reckless","Loyal","Witty","Paranoid"], img: 3 },
+      { name: "DAVAN MORSE", role: "Client / Mystery", desc: "60s. Dying black-market archivist. The man whose memories started everything. Appears only in fragmented flashbacks — but holds the key to Kira's own origin.", traits: ["Secretive","Desperate","Wise","Broken"], img: 4 },
+      { name: "INARA", role: "AXIOM Enforcer", desc: "30s. Augmented combat specialist with a sub-dermal weapon array. Torn between her loyalty to AXIOM and a growing suspicion that her own memories have been spliced.", traits: ["Precise","Dangerous","Conflicted","Silent"], img: 5 }
+    ],
+    shots: [
+      { num: "01", scene: "S01 — Establishing Neo-Kyoto", type: "Extreme Wide Shot", angle: "Drone Aerial", lighting: "Neon Pollution / Overcast", desc: "A rain-drenched megalopolis viewed from 300 meters up. Holographic advertisements cascade down 500-meter towers. Smog halos every light source. Camera slowly descends into the labyrinth of lower streets.", mood: "dark", moodLabel: "Foreboding" },
+      { num: "02", scene: "S02 — Kira's Workshop", type: "Dolly Push-In", angle: "Eye Level", lighting: "Practical Green Holo-light", desc: "Kira sits in a neural rig throne, eyes white with digital activity. The room hums with hard drives. We push slowly toward her face as data streams flood her corneas.", mood: "mysterious", moodLabel: "Mysterious" },
+      { num: "03", scene: "S05 — Memory Extraction", type: "POV / First Person", angle: "Subjective", lighting: "Overexposed White — Memory Flash", desc: "We are INSIDE a memory. A sun-drenched seaside town that feels eerily reconstructed. Details bleed at the edges. Kira's disembodied hands reach for a memory object — a pocket watch.", mood: "emotional", moodLabel: "Dreamlike" },
+      { num: "04", scene: "S08 — Rooftop Chase", type: "Handheld Running Shot", angle: "Dutch Tilt 15°", lighting: "Mixed Neon / Strobing Police Drones", desc: "Kira sprints across a rain-slick rooftop garden. A squad of AXIOM drones swarm behind her. Camera jerks and tilts — disorienting, breathless. The city yawns 80 floors below.", mood: "action", moodLabel: "Intense" },
+      { num: "05", scene: "S14 — Confrontation in Memory Space", type: "Static Wide", angle: "Low Angle", lighting: "Single Source — Pale White Ceiling", desc: "Kira and a memory-ghost version of Rhys Vael face each other in a perfect white room. No shadows. The silence is deafening. He smiles.", mood: "tense", moodLabel: "Tense" },
+      { num: "06", scene: "S18 — The Upload Sacrifice", type: "Close-Up — Extreme", angle: "Eye Level to Dutch Tilt — Slow Rotation", lighting: "Yellow data-burst glow building to white", desc: "Kira's face as she initiates the upload. A single tear reflects cascading code. The camera slowly rotates 90° as her neural port flares gold. Her expression shifts from fear to peace.", mood: "emotional", moodLabel: "Cathartic" }
+    ],
+    actors: [
+      { name: "Ana de Armas", role: "KIRA SOLEN", why: "Her Blade Runner 2049 presence and ability to convey vulnerability beneath a hard exterior make her ideal for Kira's layered emotional arc.", works: "Blade Runner 2049, Knives Out, No Time to Die", img: 10 },
+      { name: "Mads Mikkelsen", role: "RHYS VAEL", why: "Mikkelsen's innate ability to portray restrained, intellectual menace without ever overplaying it is precisely what Rhys demands. His silences are louder than most actors' monologues.", works: "Hannibal, Rogue One, Doctor Strange", img: 11 },
+      { name: "Brian Tyree Henry", role: "ZERO", why: "Henry brings irreverent warmth and unpredictability — making Zero feel real and grounded amid the film's heightened digital surrealism.", works: "Atlanta, Eternals, Bullet Train", img: 12 },
+      { name: "Cho Youn-jeong", role: "INARA", why: "Physically commanding, emotionally precise, and capable of extraordinary stillness — her performance in The Menu demonstrated a rare ability to be threatening and sympathetic simultaneously.", works: "The Menu, Parasite, Minari", img: 13 }
+    ],
+    locations: [
+      { name: "Lower Neo-Kyoto — Market Underbelly", desc: "A labyrinthine street market operating beneath the elevated highway network. Thousands of vendor stalls selling black-market neural mods, synthetic food, and pirated memories. Perpetual artificial twilight.", traits: ["Crowded","Neon-lit","Claustrophobic","Alive"], img: 20 },
+      { name: "AXIOM Memory Vaults — Tower 88", desc: "An immaculate brutalist corporate tower. Interior is clinical white with 30-meter ceilings and floating holographic security grids. Every sound echoes. Feels like an operating theater and a prison.", traits: ["Sterile","Imposing","Cold","Surveilled"], img: 21 },
+      { name: "Zero's Server Apartment", desc: "A converted industrial space filled floor-to-ceiling with humming server racks and tangled data-cables. Blue-white monitor light. Makeshift living quarters carved into the equipment. Warmly chaotic.", traits: ["Cramped","Blue-lit","Technical","Personal"], img: 22 },
+      { name: "Memory Construct — The Beach Town", desc: "A too-perfect reconstruction of a 1960s coastal village, existing only inside a memory archive. Warm golden light. But the sky is slightly wrong — one shade off. Details dissolve at the edges.", traits: ["Uncanny","Warm","Liminal","Surreal"], img: 23 },
+      { name: "The Mesh Relay Tower — City Outskirts", desc: "A decommissioned broadcast tower on the city's edge, now home to illegal signal amplifiers. Exposed to the full force of the mega-storm. Wind howls through its steel skeleton.", traits: ["Isolated","Industrial","Dramatic","Dangerous"], img: 24 }
+    ],
+    elements: {
+      palette: [
+        { color: "#0a0a12", label: "Deep Void" },
+        { color: "#f5c518", label: "Memory Gold" },
+        { color: "#00e5ff", label: "Holo Cyan" },
+        { color: "#9b00ff", label: "Signal Violet" },
+        { color: "#ff2d55", label: "Danger Red" },
+        { color: "#1a3a1a", label: "Toxic Green" }
+      ],
+      props: [
+        { icon: "fa-microchip", text: "Kira's Neural Extraction Rig — custom-built headset with copper leads and amber diodes" },
+        { icon: "fa-clock", text: "Davan's Pocket Watch — analog, 1940s, contains a micro-drive in the casing" },
+        { icon: "fa-glasses", text: "AR Visor — Kira's primary interface tool, cracked left lens from a prior job" },
+        { icon: "fa-syringe", text: "Memory Vials — amethyst-glass containers housing extracted engram data" },
+        { icon: "fa-bolt", text: "AXIOM Kill-switch Beacon — elegant brushed steel device no larger than a thumb drive" },
+        { icon: "fa-compact-disc", text: "Zero's custom 'ghost-signal' transmitter — built from salvaged satellite parts" }
+      ],
+      costumes: [
+        { name: "Kira — Field Outfit", desc: "Weathered indigo duster over dark tactical underlayer. Neural port exposed at left temple. AR visor worn around neck when off. Worn boots, utility belt with vial holsters." },
+        { name: "Rhys Vael — AXIOM Formal", desc: "Immaculate bone-white suit with embedded micro-display panels in lapels. No tie. Shoes mirror-polished. Zero ornamentation — power expressed through restraint." },
+        { name: "Zero — Home Ensemble", desc: "Bioluminescent tattoo underlayer visible through mesh top. Cargo pants modified with USB pockets. Bare feet in their own space. Sensory-overload aesthetic." },
+        { name: "Inara — Combat Rig", desc: "Matte black tactical composite armor over a form-fitting data-reactive underlayer that pulses red when weapons activate. AXIOM sigil embossed on shoulder plate." }
+      ],
+      sound: [
+        { label: "Score Style", value: "Synthwave / Industrial ambient — Arca meets Vangelis" },
+        { label: "Key Motif", value: "A single degraded piano note that loops and distorts deeper into the film" },
+        { label: "World Sound", value: "Perpetual rain, distant drone hum, glitched audio artifacts" },
+        { label: "Memory Sound", value: "Warm vinyl crackle — sounds cleaner than real life, uncannily so" },
+        { label: "AXIOM Sound", value: "Sub-bass hum, perfectly engineered silence, click of heels on marble" },
+        { label: "Climax Audio", value: "Full orchestral swell collapsing into pure digital noise, then silence" }
+      ]
+    }
+  }
+};
+
+const RANDOM_POOL = [
+  {
+    title: "THE LIGHTHOUSE KEEPER'S DAUGHTER",
+    logline: "In 1890s coastal Maine, a lighthouse keeper's daughter discovers her father has been secretly communicating with beings beneath the ocean — and must decide whether to reveal them to a world that would destroy them.",
+    emotion: "Awe, loneliness, and the courage to protect what others would fear",
+    duration: "90",
+    mood: "mysterious",
+    genres: ["Mystery","Historical Drama","Surrealism"]
+  },
+  {
+    title: "CHROMATIC",
+    logline: "A synesthetic composer who sees emotions as colors loses her sight in an accident — and must navigate a world stripped of color while pursuing the one piece of music that could restore her vision.",
+    emotion: "Grief transforming into transcendence",
+    duration: "120",
+    mood: "melancholic",
+    genres: ["Romance","Surrealism","Drama"]
+  },
+  {
+    title: "IRON LATITUDE",
+    logline: "A retired boxer turned schoolteacher in 1975 Detroit is drawn back into the underground fight world when one of his students is kidnapped by the crime syndicate he spent twenty years trying to escape.",
+    emotion: "Righteous fury tempered by hard-won wisdom",
+    duration: "90",
+    mood: "intense",
+    genres: ["Action/Adventure","Film Noir","1980s"]
+  },
+  {
+    title: "PARALLAX",
+    logline: "A quantum physicist discovers she has been unconsciously switching between parallel timelines her entire life — and that in every version of reality, she makes the same fatal choice.",
+    emotion: "Vertigo and the terrifying freedom of determinism",
+    duration: "120",
+    mood: "dark",
+    genres: ["Sci-Fi","Psychological Thriller","Surrealism"]
+  },
+  {
+    title: "LAST BLOOM",
+    logline: "In a near-future Earth where human reproduction has ceased, an elderly botanist and a teenage orphan embark on a cross-country journey to deliver the last viable seed bank to a remote sanctuary.",
+    emotion: "Quiet devastation and stubborn, irrational hope",
+    duration: "120",
+    mood: "melancholic",
+    genres: ["Sci-Fi","Drama","Family Film"]
+  }
+];
+
+/* =========================================================
+   GENRE TOGGLE
+   ========================================================= */
+document.querySelectorAll('.genre-btn').forEach(btn => {
+  btn.addEventListener('click', () => btn.classList.toggle('selected'));
+});
+
+/* =========================================================
+   RANDOM IDEA
+   ========================================================= */
+document.getElementById('randomBtn').addEventListener('click', () => {
+  const idea = RANDOM_POOL[Math.floor(Math.random() * RANDOM_POOL.length)];
+  document.getElementById('filmTitle').value = idea.title;
+  document.getElementById('logline').value = idea.logline;
+  document.getElementById('emotion').value = idea.emotion;
+  document.getElementById('duration').value = idea.duration;
+  document.getElementById('mood').value = idea.mood;
+
+  // reset genres
+  document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('selected'));
+  idea.genres.forEach(g => {
+    document.querySelectorAll('.genre-btn').forEach(b => {
+      if (b.dataset.genre === g) b.classList.add('selected');
+    });
+  });
+});
+
+/* =========================================================
+   GENERATE CONCEPT
+   ========================================================= */
+const LOADING_STEPS = [
+  "Analyzing narrative structure...",
+  "Building three-act architecture...",
+  "Generating character profiles...",
+  "Composing shot list...",
+  "Selecting filming locations...",
+  "Designing production elements...",
+  "Finalizing your storyboard..."
+];
+
+document.getElementById('generateBtn').addEventListener('click', () => {
+  const title = document.getElementById('filmTitle').value.trim();
+  if (!title) {
+    document.getElementById('filmTitle').focus();
+    document.getElementById('filmTitle').style.borderColor = '#e53e3e';
+    setTimeout(() => document.getElementById('filmTitle').style.borderColor = '', 1500);
+    return;
+  }
+
+  // Show loading
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('loadingPanel').style.display = 'block';
+  document.getElementById('loading-overlay').classList.add('visible');
+  document.getElementById('results-area').classList.remove('visible');
+
+  let stepIdx = 0;
+  const stepEl = document.getElementById('loadingStep');
+  const stepInterval = setInterval(() => {
+    stepIdx = (stepIdx + 1) % LOADING_STEPS.length;
+    stepEl.textContent = LOADING_STEPS[stepIdx];
+  }, 320);
+
+  setTimeout(() => {
+    clearInterval(stepInterval);
+    document.getElementById('loadingPanel').style.display = 'none';
+    document.getElementById('loading-overlay').classList.remove('visible');
+    renderResults(MOCK_DATA.cyberpunk);
+    document.getElementById('results-area').classList.add('visible');
+    document.getElementById('results-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 2400);
+});
+
+/* =========================================================
+   RENDER RESULTS
+   ========================================================= */
+function renderResults(data) {
+  // Title
+  document.getElementById('res-title').textContent = data.title;
+
+  // Genres
+  const genreColors = ['tag-yellow','tag-teal','tag-purple','tag-red'];
+  document.getElementById('res-genres').innerHTML = data.genres
+    .map((g, i) => `<span class="tag ${genreColors[i % genreColors.length]}">${g}</span>`)
+    .join('');
+
+  // Logline
+  document.getElementById('res-logline').textContent = data.logline;
+
+  // Acts
+  document.getElementById('res-acts').innerHTML = data.acts.map(a => `
+    <div class="act-card">
+      <div class="act-num">${a.num}</div>
+      <div class="act-label">${a.label}</div>
+      <div class="act-title">${a.subtitle}</div>
+      <div class="act-desc">${a.desc}</div>
+    </div>
+  `).join('');
+
+  // Themes
+  document.getElementById('res-themes').innerHTML = data.themes
+    .map(t => `<li>${t}</li>`).join('');
+
+  // Visual Style
+  document.getElementById('res-visual').textContent = data.visualStyle;
+
+  // Cast
+  document.getElementById('res-cast').innerHTML = data.cast.map(c => `
+    <div class="cast-card">
+      <div class="cast-img-wrapper">
+        <img src="https://picsum.photos/200/300?random=${c.img}" alt="${c.name}" loading="lazy" />
+        <span class="cast-role-badge">${c.role}</span>
+      </div>
+      <div class="cast-info">
+        <div class="cast-name">${c.name}</div>
+        <div class="cast-desc">${c.desc}</div>
+        <div class="cast-traits">${c.traits.map(t => `<span class="trait-pill">${t}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Shots
+  const moodMap = {dark:'mood-dark',tense:'mood-tense',mysterious:'mood-mysterious',action:'mood-action',emotional:'mood-emotional'};
+  document.getElementById('res-shots').innerHTML = data.shots.map(s => `
+    <div class="shot-card">
+      <div class="shot-num">${s.num}</div>
+      <div class="shot-body">
+        <div class="shot-title">${s.scene}</div>
+        <div class="shot-desc">${s.desc}</div>
+        <div class="shot-meta">
+          <span class="shot-badge type"><i class="fas fa-video" style="margin-right:4px"></i>${s.type}</span>
+          <span class="shot-badge angle"><i class="fas fa-compass" style="margin-right:4px"></i>${s.angle}</span>
+          <span class="shot-badge lighting"><i class="fas fa-sun" style="margin-right:4px"></i>${s.lighting}</span>
+        </div>
+      </div>
+      <span class="shot-mood ${moodMap[s.mood] || 'mood-dark'}">${s.moodLabel}</span>
+    </div>
+  `).join('');
+
+  // Actors
+  document.getElementById('res-actors').innerHTML = data.actors.map(a => `
+    <div class="actor-card">
+      <img class="actor-img" src="https://picsum.photos/72/72?random=${a.img}" alt="${a.name}" loading="lazy" />
+      <div class="actor-info">
+        <div class="actor-name">${a.name}</div>
+        <div class="actor-role">as ${a.role}</div>
+        <div class="actor-why">${a.why}</div>
+        <div class="actor-works"><i class="fas fa-film" style="margin-right:5px;color:var(--yellow)"></i>${a.works}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Locations
+  document.getElementById('res-locations').innerHTML = data.locations.map(l => `
+    <div class="location-card">
+      <div class="location-img-wrap">
+        <img src="https://picsum.photos/400/200?random=${l.img}" alt="${l.name}" loading="lazy" />
+        <div class="location-overlay"></div>
+      </div>
+      <div class="location-body">
+        <div class="location-name">${l.name}</div>
+        <div class="location-desc">${l.desc}</div>
+        <div class="location-traits">${l.traits.map(t => `<span class="tag tag-yellow">${t}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Elements
+  renderElements(data.elements);
+
+  // Reset to first tab
+  activateTab('concept');
+}
+
+function renderElements(el) {
+  const swatches = el.palette.map(p => `
+    <div class="swatch">
+      <div class="swatch-color" style="background:${p.color}"></div>
+      <span class="swatch-label">${p.label}</span>
+    </div>
+  `).join('');
+
+  const props = el.props.map(p => `
+    <div class="prop-item">
+      <i class="fas ${p.icon}"></i>
+      <span>${p.text}</span>
+    </div>
+  `).join('');
+
+  const costumes = el.costumes.map(c => `
+    <div class="costume-item">
+      <div class="costume-name">${c.name}</div>
+      <div class="costume-desc">${c.desc}</div>
+    </div>
+  `).join('');
+
+  const soundItems = el.sound.map(s => `
+    <div class="sound-item">
+      <div class="sound-item-label">${s.label}</div>
+      <div class="sound-item-value">${s.value}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('res-elements').innerHTML = `
+    <div class="element-card full">
+      <div class="element-title"><i class="fas fa-palette"></i> Color Palette</div>
+      <div class="palette-row">${swatches}</div>
+    </div>
+    <div class="element-card">
+      <div class="element-title"><i class="fas fa-box"></i> Key Props</div>
+      <div class="props-list">${props}</div>
+    </div>
+    <div class="element-card">
+      <div class="element-title"><i class="fas fa-shirt"></i> Costume Design</div>
+      <div class="costume-list">${costumes}</div>
+    </div>
+    <div class="element-card full">
+      <div class="element-title"><i class="fas fa-music"></i> Sound Design</div>
+      <div class="sound-grid">${soundItems}</div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+function activateTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tabName);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => {
+    c.classList.toggle('active', c.id === 'tab-' + tabName);
+  });
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+});
+
+/* =========================================================
+   TITLE INPUT BORDER RESET
+   ========================================================= */
+document.getElementById('filmTitle').addEventListener('input', function() {
+  this.style.borderColor = '';
+});
+</script>
+
+</body>
+</html>
