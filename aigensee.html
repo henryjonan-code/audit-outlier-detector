@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AIGENSEE — AI Film Storyboard Generator. Build cyberpunk film concepts, characters, shotlists, and production elements powered by AI." />
   <title>AIGENSEE - AI Film Storyboard Generator Ver1.1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,19 +23,21 @@
       --border: #2a2a2a;
       --border2: #333333;
       --text: #f0f0f0;
-      --text-dim: #888888;
-      --text-muted: #555555;
+      --text-dim: #999999;
+      --text-muted: #6a6a6a;
       --red: #e53e3e;
       --teal: #38b2ac;
       --purple: #805ad5;
     }
+
+    :root { scrollbar-width: thin; scrollbar-color: var(--yellow-dim) var(--bg2); }
 
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Rajdhani', 'Segoe UI', Tahoma, sans-serif;
       font-size: 16px;
       line-height: 1.6;
       min-height: 100vh;
@@ -90,7 +93,7 @@
     }
 
     .logo-title {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 1.55rem;
       font-weight: 900;
       color: var(--yellow);
@@ -100,7 +103,7 @@
     }
 
     .logo-subtitle {
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Rajdhani', 'Segoe UI', Tahoma, sans-serif;
       font-size: 0.72rem;
       font-weight: 500;
       color: var(--text-dim);
@@ -160,7 +163,7 @@
     }
 
     .panel-header h2 {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.8rem;
       font-weight: 700;
       color: var(--text);
@@ -189,7 +192,7 @@
       border: 1px solid var(--border2);
       border-radius: 8px;
       color: var(--text);
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Rajdhani', 'Segoe UI', Tahoma, sans-serif;
       font-size: 0.97rem;
       font-weight: 500;
       padding: 10px 13px;
@@ -211,6 +214,7 @@
 
     select.form-control {
       cursor: pointer;
+      -webkit-appearance: none;
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
@@ -238,13 +242,14 @@
       border: 1px solid var(--border2);
       border-radius: 6px;
       color: var(--text-dim);
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Rajdhani', 'Segoe UI', Tahoma, sans-serif;
       font-size: 0.8rem;
       font-weight: 600;
       padding: 6px 11px;
       cursor: pointer;
       transition: all 0.18s;
       letter-spacing: 0.05em;
+      -webkit-user-select: none;
       user-select: none;
     }
 
@@ -269,7 +274,7 @@
       border: none;
       border-radius: 9px;
       cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Rajdhani', 'Segoe UI', Tahoma, sans-serif;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -293,6 +298,9 @@
     }
 
     .btn-primary:active { transform: translateY(0); }
+
+    .btn:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+    .genre-btn:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
 
     .btn-secondary {
       background: transparent;
@@ -332,6 +340,8 @@
     }
 
     /* ---- LOADING ---- */
+    #loadingPanel { display: none; }
+
     #loading-overlay {
       display: none;
       flex-direction: column;
@@ -355,7 +365,7 @@
     }
 
     .loading-text {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.8rem;
       font-weight: 700;
       color: var(--yellow);
@@ -370,7 +380,7 @@
     }
 
     .loading-bar {
-      width: 260px;
+      width: min(260px, 80%);
       height: 3px;
       background: var(--bg4);
       border-radius: 3px;
@@ -381,14 +391,15 @@
       height: 100%;
       background: var(--yellow);
       border-radius: 3px;
+      transform-origin: left;
       animation: loadBar 2.2s ease-in-out infinite;
     }
 
     @keyframes loadBar {
-      0% { width: 0%; }
-      60% { width: 80%; }
-      90% { width: 95%; }
-      100% { width: 100%; }
+      0% { transform: scaleX(0); }
+      60% { transform: scaleX(0.8); }
+      90% { transform: scaleX(0.95); }
+      100% { transform: scaleX(1); }
     }
 
     /* ---- TABS ---- */
@@ -407,7 +418,7 @@
       border-bottom: 2px solid transparent;
       color: var(--text-dim);
       cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Rajdhani', 'Segoe UI', Tahoma, sans-serif;
       font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 0.15em;
@@ -433,7 +444,7 @@
 
     /* ---- SECTION TITLE ---- */
     .section-title {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-dim);
@@ -454,7 +465,7 @@
 
     /* ---- CONCEPT TAB ---- */
     .film-title-display {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 2rem;
       font-weight: 900;
       color: var(--yellow);
@@ -513,7 +524,7 @@
     }
 
     .act-label {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.62rem;
       font-weight: 700;
       color: var(--yellow);
@@ -542,7 +553,7 @@
       background: var(--yellow);
       border-radius: 50%;
       color: #000;
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.75rem;
       font-weight: 900;
       text-align: center;
@@ -642,13 +653,14 @@
       padding: 3px 9px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
     }
 
     .cast-info { padding: 1rem; }
 
     .cast-name {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.82rem;
       font-weight: 700;
       color: var(--text);
@@ -704,7 +716,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.8rem;
       font-weight: 700;
       color: var(--yellow);
@@ -796,7 +808,7 @@
     .actor-info { flex: 1; min-width: 0; }
 
     .actor-name {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.82rem;
       font-weight: 700;
       color: var(--text);
@@ -867,7 +879,7 @@
     .location-body { padding: 1.1rem; }
 
     .location-name {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.82rem;
       font-weight: 700;
       color: var(--text);
@@ -913,6 +925,13 @@
     }
 
     .element-title i { color: var(--yellow); }
+
+    .element-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border2);
+    }
 
     .palette-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -1014,7 +1033,7 @@
     }
 
     .empty-title {
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Orbitron', 'Courier New', monospace;
       font-size: 0.9rem;
       font-weight: 700;
       color: var(--text-dim);
@@ -1048,6 +1067,7 @@
     /* ---- RESPONSIVE ---- */
     @media (max-width: 1100px) {
       .layout-grid { grid-template-columns: 360px 1fr; }
+      .acts-grid { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 900px) {
