@@ -1084,13 +1084,14 @@
       .header-inner { height: 60px; }
       .logo-title { font-size: 1.2rem; }
       .logo-subtitle { display: none; }
+      .header-badge { display: none; }
       .main-container { padding: 1.5rem 1rem 3rem; }
       .tab-btn { font-size: 0.7rem; padding: 12px 14px; }
       .cast-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
       .actors-grid { grid-template-columns: 1fr; }
       .locations-grid { grid-template-columns: 1fr; }
-      .shot-card { grid-template-columns: auto 1fr; }
-      .shot-mood { display: none; }
+      .shot-card { grid-template-columns: auto 1fr; grid-template-rows: auto auto; }
+      .shot-mood { grid-column: 2; margin-top: 8px; align-self: flex-start; }
       .form-row { grid-template-columns: 1fr; }
     }
   </style>
@@ -1118,7 +1119,7 @@
   <div class="layout-grid">
 
     <!-- LEFT: INPUT FORM -->
-    <aside>
+    <section aria-label="Story Parameters">
       <div class="panel">
         <div class="panel-header">
           <span class="panel-header-icon"><i class="fas fa-sliders"></i></span>
@@ -1176,39 +1177,39 @@
             <div class="form-label" id="genre-label"><i class="fas fa-tag" style="margin-right:5px;color:var(--yellow)"></i>Genre</div>
             <div role="group" aria-labelledby="genre-label">
             <div class="genre-grid" id="genreGrid">
-              <button class="genre-btn" data-genre="Sci-Fi">Sci-Fi</button>
-              <button class="genre-btn" data-genre="Film Noir">Film Noir</button>
-              <button class="genre-btn" data-genre="Fantasy">Fantasy</button>
-              <button class="genre-btn" data-genre="Action/Adventure">Action</button>
-              <button class="genre-btn" data-genre="Horror">Horror</button>
-              <button class="genre-btn" data-genre="Documentary">Documentary</button>
-              <button class="genre-btn" data-genre="Romance">Romance</button>
-              <button class="genre-btn" data-genre="Cyberpunk">Cyberpunk</button>
-              <button class="genre-btn" data-genre="Historical Drama">Historical</button>
-              <button class="genre-btn" data-genre="Psychological Thriller">Psych Thriller</button>
-              <button class="genre-btn" data-genre="Mystery">Mystery</button>
-              <button class="genre-btn" data-genre="Dark Comedy">Dark Comedy</button>
-              <button class="genre-btn" data-genre="Surrealism">Surrealism</button>
-              <button class="genre-btn" data-genre="Biography">Biography</button>
-              <button class="genre-btn" data-genre="Family Film">Family Film</button>
-              <button class="genre-btn" data-genre="1980s">1980s</button>
+              <button class="genre-btn" type="button" data-genre="Sci-Fi">Sci-Fi</button>
+              <button class="genre-btn" type="button" data-genre="Film Noir">Film Noir</button>
+              <button class="genre-btn" type="button" data-genre="Fantasy">Fantasy</button>
+              <button class="genre-btn" type="button" data-genre="Action/Adventure">Action</button>
+              <button class="genre-btn" type="button" data-genre="Horror">Horror</button>
+              <button class="genre-btn" type="button" data-genre="Documentary">Documentary</button>
+              <button class="genre-btn" type="button" data-genre="Romance">Romance</button>
+              <button class="genre-btn" type="button" data-genre="Cyberpunk">Cyberpunk</button>
+              <button class="genre-btn" type="button" data-genre="Historical Drama">Historical</button>
+              <button class="genre-btn" type="button" data-genre="Psychological Thriller">Psych Thriller</button>
+              <button class="genre-btn" type="button" data-genre="Mystery">Mystery</button>
+              <button class="genre-btn" type="button" data-genre="Dark Comedy">Dark Comedy</button>
+              <button class="genre-btn" type="button" data-genre="Surrealism">Surrealism</button>
+              <button class="genre-btn" type="button" data-genre="Biography">Biography</button>
+              <button class="genre-btn" type="button" data-genre="Family Film">Family Film</button>
+              <button class="genre-btn" type="button" data-genre="1980s">1980s</button>
               <button class="genre-btn" type="button" data-genre="Drama">Drama</button>
             </div>
             </div>
           </div>
 
           <div class="btn-row">
-            <button class="btn btn-secondary" id="randomBtn">
+            <button class="btn btn-secondary" type="button" id="randomBtn">
               <i class="fas fa-dice"></i> Random Idea
             </button>
-            <button class="btn btn-primary" id="generateBtn">
+            <button class="btn btn-primary" type="button" id="generateBtn">
               <i class="fas fa-wand-magic-sparkles"></i> Generate Concept
             </button>
           </div>
 
         </div>
       </div>
-    </aside>
+    </section>
 
     <!-- RIGHT: RESULTS -->
     <div id="right-panel">
@@ -1237,7 +1238,7 @@
             <circle cx="82" cy="50" r="8" fill="#1a1a1a" stroke="#f5c518" stroke-width="2"/>
           </svg>
           <div class="loading-text">Generating Storyboard</div>
-          <div class="loading-sub" id="loadingStep">Analyzing narrative structure...</div>
+          <div class="loading-sub" id="loadingStep"></div>
           <div class="loading-bar"><div class="loading-bar-fill"></div></div>
         </div>
       </div>
@@ -1324,6 +1325,19 @@
 
 <script>
 /* =========================================================
+   SANITIZATION HELPER
+   ========================================================= */
+function sanitize(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/* =========================================================
    MOCK DATA LIBRARY
    ========================================================= */
 
@@ -1382,7 +1396,8 @@ const MOCK_DATA = {
       { name: "Ana de Armas", role: "KIRA SOLEN", why: "Her Blade Runner 2049 presence and ability to convey vulnerability beneath a hard exterior make her ideal for Kira's layered emotional arc.", works: "Blade Runner 2049, Knives Out, No Time to Die", img: 10 },
       { name: "Mads Mikkelsen", role: "RHYS VAEL", why: "Mikkelsen's innate ability to portray restrained, intellectual menace without ever overplaying it is precisely what Rhys demands. His silences are louder than most actors' monologues.", works: "Hannibal, Rogue One, Doctor Strange", img: 11 },
       { name: "Brian Tyree Henry", role: "ZERO", why: "Henry brings irreverent warmth and unpredictability — making Zero feel real and grounded amid the film's heightened digital surrealism.", works: "Atlanta, Eternals, Bullet Train", img: 12 },
-      { name: "Cho Youn-jeong", role: "INARA", why: "Physically commanding, emotionally precise, and capable of extraordinary stillness — her performance in The Menu demonstrated a rare ability to be threatening and sympathetic simultaneously.", works: "The Menu, Parasite, Minari", img: 13 }
+      { name: "Cho Youn-jeong", role: "INARA", why: "Physically commanding, emotionally precise, and capable of extraordinary stillness — her performance in The Menu demonstrated a rare ability to be threatening and sympathetic simultaneously.", works: "The Menu, Parasite, Minari", img: 13 },
+      { name: "Koji Yakusho", role: "DAVAN MORSE", why: "Yakusho's weathered gravitas and ability to convey decades of hidden sorrow in a single glance makes him the ideal embodiment of Davan Morse — a man who carries the weight of buried secrets in every fragmented memory.", works: "Perfect Days, Babel, 13 Assassins", img: 14 }
     ],
     locations: [
       { name: "Lower Neo-Kyoto — Market Underbelly", desc: "A labyrinthine street market operating beneath the elevated highway network. Thousands of vendor stalls selling black-market neural mods, synthetic food, and pirated memories. Perpetual artificial twilight.", traits: ["Crowded","Neon-lit","Claustrophobic","Alive"], img: 20 },
@@ -1562,7 +1577,7 @@ function renderResults(data) {
   // Genres
   const genreColors = ['tag-yellow','tag-teal','tag-purple','tag-red'];
   document.getElementById('res-genres').innerHTML = data.genres
-    .map((g, i) => `<span class="tag ${genreColors[i % genreColors.length]}">${g}</span>`)
+    .map((g, i) => `<span class="tag ${genreColors[i % genreColors.length]}">${sanitize(g)}</span>`)
     .join('');
 
   // Logline
@@ -1571,16 +1586,16 @@ function renderResults(data) {
   // Acts
   document.getElementById('res-acts').innerHTML = data.acts.map(a => `
     <div class="act-card">
-      <div class="act-num">${a.num}</div>
-      <div class="act-label">${a.label}</div>
-      <div class="act-title">${a.subtitle}</div>
-      <div class="act-desc">${a.desc}</div>
+      <div class="act-num">${sanitize(a.num)}</div>
+      <div class="act-label">${sanitize(a.label)}</div>
+      <div class="act-title">${sanitize(a.subtitle)}</div>
+      <div class="act-desc">${sanitize(a.desc)}</div>
     </div>
   `).join('');
 
   // Themes
   document.getElementById('res-themes').innerHTML = data.themes
-    .map(t => `<li>${t}</li>`).join('');
+    .map(t => `<li>${sanitize(t)}</li>`).join('');
 
   // Visual Style
   document.getElementById('res-visual').textContent = data.visualStyle;
@@ -1589,13 +1604,13 @@ function renderResults(data) {
   document.getElementById('res-cast').innerHTML = data.cast.map(c => `
     <div class="cast-card">
       <div class="cast-img-wrapper">
-        <img src="https://picsum.photos/200/300?random=${c.img}" alt="${c.name}" loading="lazy" />
-        <span class="cast-role-badge">${c.role}</span>
+        <img src="https://picsum.photos/200/300?random=${sanitize(String(c.img))}" alt="${sanitize(c.name)}" loading="lazy" />
+        <span class="cast-role-badge">${sanitize(c.role)}</span>
       </div>
       <div class="cast-info">
-        <div class="cast-name">${c.name}</div>
-        <div class="cast-desc">${c.desc}</div>
-        <div class="cast-traits">${c.traits.map(t => `<span class="trait-pill">${t}</span>`).join('')}</div>
+        <div class="cast-name">${sanitize(c.name)}</div>
+        <div class="cast-desc">${sanitize(c.desc)}</div>
+        <div class="cast-traits">${c.traits.map(t => `<span class="trait-pill">${sanitize(t)}</span>`).join('')}</div>
       </div>
     </div>
   `).join('');
@@ -1604,29 +1619,29 @@ function renderResults(data) {
   const moodMap = {dark:'mood-dark',tense:'mood-tense',mysterious:'mood-mysterious',action:'mood-action',emotional:'mood-emotional'};
   document.getElementById('res-shots').innerHTML = data.shots.map(s => `
     <div class="shot-card">
-      <div class="shot-num">${s.num}</div>
+      <div class="shot-num">${sanitize(s.num)}</div>
       <div class="shot-body">
-        <div class="shot-title">${s.scene}</div>
-        <div class="shot-desc">${s.desc}</div>
+        <div class="shot-title">${sanitize(s.scene)}</div>
+        <div class="shot-desc">${sanitize(s.desc)}</div>
         <div class="shot-meta">
-          <span class="shot-badge type"><i class="fas fa-video" style="margin-right:4px"></i>${s.type}</span>
-          <span class="shot-badge angle"><i class="fas fa-compass" style="margin-right:4px"></i>${s.angle}</span>
-          <span class="shot-badge lighting"><i class="fas fa-sun" style="margin-right:4px"></i>${s.lighting}</span>
+          <span class="shot-badge type"><i class="fas fa-video" style="margin-right:4px"></i>${sanitize(s.type)}</span>
+          <span class="shot-badge angle"><i class="fas fa-compass" style="margin-right:4px"></i>${sanitize(s.angle)}</span>
+          <span class="shot-badge lighting"><i class="fas fa-sun" style="margin-right:4px"></i>${sanitize(s.lighting)}</span>
         </div>
       </div>
-      <span class="shot-mood ${moodMap[s.mood] || 'mood-dark'}">${s.moodLabel}</span>
+      <span class="shot-mood ${moodMap[s.mood] || 'mood-dark'}">${sanitize(s.moodLabel)}</span>
     </div>
   `).join('');
 
   // Actors
   document.getElementById('res-actors').innerHTML = data.actors.map(a => `
     <div class="actor-card">
-      <img class="actor-img" src="https://picsum.photos/72/72?random=${a.img}" alt="${a.name}" loading="lazy" />
+      <img class="actor-img" src="https://picsum.photos/72/72?random=${sanitize(String(a.img))}" alt="${sanitize(a.name)}" loading="lazy" />
       <div class="actor-info">
-        <div class="actor-name">${a.name}</div>
-        <div class="actor-role">as ${a.role}</div>
-        <div class="actor-why">${a.why}</div>
-        <div class="actor-works"><i class="fas fa-film" style="margin-right:5px;color:var(--yellow)"></i>${a.works}</div>
+        <div class="actor-name">${sanitize(a.name)}</div>
+        <div class="actor-role">as ${sanitize(a.role)}</div>
+        <div class="actor-why">${sanitize(a.why)}</div>
+        <div class="actor-works"><i class="fas fa-film" style="margin-right:5px;color:var(--yellow)"></i>${sanitize(a.works)}</div>
       </div>
     </div>
   `).join('');
@@ -1635,13 +1650,13 @@ function renderResults(data) {
   document.getElementById('res-locations').innerHTML = data.locations.map(l => `
     <div class="location-card">
       <div class="location-img-wrap">
-        <img src="https://picsum.photos/400/200?random=${l.img}" alt="${l.name}" loading="lazy" />
+        <img src="https://picsum.photos/400/200?random=${sanitize(String(l.img))}" alt="${sanitize(l.name)}" loading="lazy" />
         <div class="location-overlay"></div>
       </div>
       <div class="location-body">
-        <div class="location-name">${l.name}</div>
-        <div class="location-desc">${l.desc}</div>
-        <div class="location-traits">${l.traits.map(t => `<span class="tag tag-yellow">${t}</span>`).join('')}</div>
+        <div class="location-name">${sanitize(l.name)}</div>
+        <div class="location-desc">${sanitize(l.desc)}</div>
+        <div class="location-traits">${l.traits.map(t => `<span class="tag tag-yellow">${sanitize(t)}</span>`).join('')}</div>
       </div>
     </div>
   `).join('');
@@ -1656,29 +1671,29 @@ function renderResults(data) {
 function renderElements(el) {
   const swatches = el.palette.map(p => `
     <div class="swatch">
-      <div class="swatch-color" style="background:${p.color}"></div>
-      <span class="swatch-label">${p.label}</span>
+      <div class="swatch-color" style="background:${sanitize(p.color)}"></div>
+      <span class="swatch-label">${sanitize(p.label)}</span>
     </div>
   `).join('');
 
   const props = el.props.map(p => `
     <div class="prop-item">
-      <i class="fas ${p.icon}"></i>
-      <span>${p.text}</span>
+      <i class="fas ${sanitize(p.icon)}"></i>
+      <span>${sanitize(p.text)}</span>
     </div>
   `).join('');
 
   const costumes = el.costumes.map(c => `
     <div class="costume-item">
-      <div class="costume-name">${c.name}</div>
-      <div class="costume-desc">${c.desc}</div>
+      <div class="costume-name">${sanitize(c.name)}</div>
+      <div class="costume-desc">${sanitize(c.desc)}</div>
     </div>
   `).join('');
 
   const soundItems = el.sound.map(s => `
     <div class="sound-item">
-      <div class="sound-item-label">${s.label}</div>
-      <div class="sound-item-value">${s.value}</div>
+      <div class="sound-item-label">${sanitize(s.label)}</div>
+      <div class="sound-item-value">${sanitize(s.value)}</div>
     </div>
   `).join('');
 
