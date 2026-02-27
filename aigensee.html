@@ -1128,6 +1128,12 @@
         <div class="panel-body">
 
           <div class="form-group">
+            <label class="form-label" for="apiKey"><i class="fas fa-key" style="margin-right:5px;color:var(--yellow)"></i>Gemini API Key</label>
+            <input id="apiKey" class="form-control" type="password" placeholder="Masukkan Gemini API Key kamu..." autocomplete="off" />
+            <div style="font-size:11px;color:#666;margin-top:4px;">Dapatkan gratis di <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--yellow)">aistudio.google.com</a></div>
+          </div>
+
+          <div class="form-group">
             <label class="form-label" for="filmTitle"><i class="fas fa-clapperboard" style="margin-right:5px;color:var(--yellow)"></i>Film Title</label>
             <input id="filmTitle" class="form-control" type="text" placeholder="Enter your film title..." />
           </div>
@@ -1337,6 +1343,8 @@ function sanitize(str) {
     .replace(/'/g, '&#39;');
 }
 
+const MODEL_NAME = "gemini-2.5-flash-preview-04-17";
+
 /* =========================================================
    MOCK DATA LIBRARY
    ========================================================= */
@@ -1512,21 +1520,84 @@ document.getElementById('randomBtn').addEventListener('click', () => {
 });
 
 /* =========================================================
+   API HELPERS
+   ========================================================= */
+function showError(msg) {
+  document.getElementById('loadingPanel').style.display = 'none';
+  document.getElementById('loading-overlay').classList.remove('visible');
+  document.getElementById('emptyState').style.display = '';
+  document.getElementById('emptyState').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon" style="color:#e53e3e"><i class="fas fa-triangle-exclamation"></i></div>
+      <div class="empty-title" style="color:#e53e3e">Error</div>
+      <div class="empty-sub">${sanitize(msg)}</div>
+      <button class="btn btn-secondary" style="margin-top:16px" onclick="document.getElementById('emptyState').innerHTML='';document.getElementById('emptyState').style.display='none';">Tutup</button>
+    </div>
+  `;
+  document.getElementById('generateBtn').disabled = false;
+}
+
+async function fetchWithRetry(url, options, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      if (response.status === 429) throw new Error("API sedang sibuk. Tunggu sebentar lalu coba lagi.");
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        const errMsg = errBody?.error?.message || `Server error (Status: ${response.status})`;
+        throw new Error(errMsg);
+      }
+      return await response.json();
+    } catch (err) {
+      if (i === maxRetries - 1) throw err;
+      await new Promise(res => setTimeout(res, 1000 * Math.pow(2, i)));
+    }
+  }
+}
+
+function extractJson(str) {
+  try {
+    const jsonStart = str.indexOf('{');
+    const jsonEnd = str.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      return JSON.parse(str.substring(jsonStart, jsonEnd + 1));
+    }
+    throw new Error("Format JSON tidak ditemukan.");
+  } catch (e) {
+    console.error("JSON Parse Error:", e);
+    throw new Error("Gagal memproses data dari AI. Coba ulangi lagi.");
+  }
+}
+
+/* =========================================================
    GENERATE CONCEPT
    ========================================================= */
 const LOADING_STEPS = [
-  "Analyzing narrative structure...",
-  "Building three-act architecture...",
-  "Generating character profiles...",
-  "Composing shot list...",
-  "Selecting filming locations...",
-  "Designing production elements...",
-  "Finalizing your storyboard..."
+  "Menganalisis premis cerita...",
+  "Menyusun struktur tiga babak...",
+  "Menciptakan profil karakter...",
+  "Merancang shot list...",
+  "Memilih lokasi syuting...",
+  "Mendesain elemen produksi...",
+  "Finalisasi storyboard..."
 ];
 
 const generateBtn = document.getElementById('generateBtn');
-generateBtn.addEventListener('click', () => {
+generateBtn.addEventListener('click', async () => {
+  const apiKey = document.getElementById('apiKey').value.trim();
   const title = document.getElementById('filmTitle').value.trim();
+  const logline = document.getElementById('logline').value.trim();
+  const emotion = document.getElementById('emotion').value.trim();
+  const duration = document.getElementById('duration').value;
+  const mood = document.getElementById('mood').value;
+  const genres = [...document.querySelectorAll('.genre-btn.selected')].map(b => b.dataset.genre);
+
+  if (!apiKey) {
+    document.getElementById('apiKey').focus();
+    document.getElementById('apiKey').style.borderColor = '#e53e3e';
+    setTimeout(() => document.getElementById('apiKey').style.borderColor = '', 1500);
+    return;
+  }
   if (!title) {
     document.getElementById('filmTitle').focus();
     document.getElementById('filmTitle').style.borderColor = '#e53e3e';
@@ -1534,10 +1605,7 @@ generateBtn.addEventListener('click', () => {
     return;
   }
 
-  // Debounce: disable button
   generateBtn.disabled = true;
-
-  // Show loading
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('results-area').style.display = 'none';
   document.getElementById('loadingPanel').style.display = 'block';
@@ -1550,21 +1618,115 @@ generateBtn.addEventListener('click', () => {
   const stepInterval = setInterval(() => {
     stepIdx = (stepIdx + 1) % LOADING_STEPS.length;
     stepEl.textContent = LOADING_STEPS[stepIdx];
-  }, 320);
+  }, 1200);
 
-  setTimeout(() => {
+  const systemPrompt = `Kamu adalah Pakar Produksi Film Profesional. Buat storyboard film lengkap dalam bahasa Indonesia yang lugas dan manusiawi. Output: JSON murni saja, tanpa markdown, tanpa penjelasan tambahan.`;
+
+  const userPrompt = `Buat storyboard film untuk: "${title}".
+Logline: "${logline || 'Tentukan sendiri berdasarkan judul dan genre'}".
+Emosi yang ingin disampaikan: "${emotion || 'Sesuaikan dengan mood dan genre'}".
+Genre: ${genres.length ? genres.join(', ') : 'Drama'}.
+Mood: ${mood}.
+Durasi: ${duration} menit.
+
+Kirim JSON dengan struktur PERSIS seperti ini (isi semua field, jangan ada yang kosong):
+{
+  "title": "${sanitize(title).replace(/"/g, '\\"')}",
+  "genres": ${JSON.stringify(genres.length ? genres : ['Drama'])},
+  "logline": "Satu kalimat logline yang kuat...",
+  "visualStyle": "Deskripsi gaya visual sinematik yang detail...",
+  "acts": [
+    {"num": "I", "label": "Act 1", "subtitle": "Judul Babak Pertama", "desc": "Deskripsi babak pertama yang detail..."},
+    {"num": "II", "label": "Act 2", "subtitle": "Judul Babak Kedua", "desc": "Deskripsi babak kedua yang detail..."},
+    {"num": "III", "label": "Act 3", "subtitle": "Judul Babak Ketiga", "desc": "Deskripsi babak ketiga yang detail..."}
+  ],
+  "themes": ["Tema utama 1", "Tema 2", "Tema 3", "Tema 4"],
+  "cast": [
+    {"name": "NAMA KARAKTER", "role": "Protagonist", "desc": "Deskripsi karakter lengkap", "traits": ["Sifat1", "Sifat2", "Sifat3"]},
+    {"name": "NAMA ANTAGONIS", "role": "Antagonist", "desc": "Deskripsi karakter", "traits": ["Sifat1", "Sifat2", "Sifat3"]},
+    {"name": "NAMA ALLY", "role": "Ally", "desc": "Deskripsi karakter", "traits": ["Sifat1", "Sifat2"]},
+    {"name": "NAMA SUPPORTING", "role": "Supporting", "desc": "Deskripsi karakter", "traits": ["Sifat1", "Sifat2"]}
+  ],
+  "shots": [
+    {"num": "01", "scene": "S01 - Nama Scene", "type": "Extreme Wide Shot", "angle": "Drone Aerial", "lighting": "Natural / Overcast", "desc": "Deskripsi visual shot ini...", "mood": "dark", "moodLabel": "Foreboding"},
+    {"num": "02", "scene": "S02 - Nama Scene", "type": "Close-Up", "angle": "Eye Level", "lighting": "Soft Natural", "desc": "Deskripsi visual...", "mood": "emotional", "moodLabel": "Intimate"},
+    {"num": "03", "scene": "S03 - Nama Scene", "type": "Medium Shot", "angle": "Low Angle", "lighting": "High Contrast", "desc": "Deskripsi visual...", "mood": "tense", "moodLabel": "Tense"},
+    {"num": "04", "scene": "S04 - Nama Scene", "type": "Handheld Running Shot", "angle": "Dutch Tilt", "lighting": "Strobing", "desc": "Deskripsi visual...", "mood": "action", "moodLabel": "Intense"},
+    {"num": "05", "scene": "S05 - Nama Scene", "type": "Static Wide", "angle": "High Angle", "lighting": "Dim / Moody", "desc": "Deskripsi visual...", "mood": "mysterious", "moodLabel": "Mysterious"},
+    {"num": "06", "scene": "S06 - Nama Scene", "type": "Dolly Push-In", "angle": "Eye Level", "lighting": "Golden Hour", "desc": "Deskripsi visual...", "mood": "emotional", "moodLabel": "Cathartic"}
+  ],
+  "actors": [
+    {"name": "Nama Aktor Terkenal 1", "role": "Nama Karakter", "why": "Alasan mengapa aktor ini cocok untuk peran ini", "works": "Film Terkenal A, Film B"},
+    {"name": "Nama Aktor 2", "role": "Nama Karakter 2", "why": "Alasan casting", "works": "Film X, Film Y"},
+    {"name": "Nama Aktor 3", "role": "Nama Karakter 3", "why": "Alasan casting", "works": "Film P, Film Q"},
+    {"name": "Nama Aktor 4", "role": "Nama Karakter 4", "why": "Alasan casting", "works": "Film M, Film N"}
+  ],
+  "locations": [
+    {"name": "Nama Lokasi 1", "desc": "Deskripsi lokasi yang detail...", "traits": ["Sifat1", "Sifat2", "Sifat3"]},
+    {"name": "Nama Lokasi 2", "desc": "Deskripsi lokasi...", "traits": ["Sifat1", "Sifat2"]},
+    {"name": "Nama Lokasi 3", "desc": "Deskripsi lokasi...", "traits": ["Sifat1", "Sifat2"]}
+  ],
+  "elements": {
+    "palette": [
+      {"color": "#hexcode", "label": "Nama Warna 1"},
+      {"color": "#hexcode", "label": "Nama Warna 2"},
+      {"color": "#hexcode", "label": "Nama Warna 3"},
+      {"color": "#hexcode", "label": "Nama Warna 4"},
+      {"color": "#hexcode", "label": "Nama Warna 5"}
+    ],
+    "props": [
+      {"icon": "fa-microchip", "text": "Deskripsi properti kunci 1"},
+      {"icon": "fa-clock", "text": "Deskripsi properti 2"},
+      {"icon": "fa-film", "text": "Deskripsi properti 3"},
+      {"icon": "fa-camera", "text": "Deskripsi properti 4"}
+    ],
+    "costumes": [
+      {"name": "Nama Karakter — Kostum Utama", "desc": "Deskripsi kostum yang detail"},
+      {"name": "Nama Karakter 2 — Kostum", "desc": "Deskripsi kostum"},
+      {"name": "Nama Karakter 3 — Kostum", "desc": "Deskripsi kostum"}
+    ],
+    "sound": [
+      {"label": "Score Style", "value": "Deskripsi gaya musik skor film"},
+      {"label": "Key Motif", "value": "Motif musik utama yang berulang"},
+      {"label": "World Sound", "value": "Suara-suara dunia dalam film ini"},
+      {"label": "Climax Audio", "value": "Deskripsi audio di klimaks cerita"}
+    ]
+  }
+}
+PENTING: Nilai "mood" di setiap shot HARUS salah satu dari: dark, tense, mysterious, action, emotional`;
+
+  try {
+    const result = await fetchWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ parts: [{ text: userPrompt }] }],
+          generationConfig: { responseMimeType: "application/json", temperature: 1.0 }
+        })
+      }
+    );
+
     clearInterval(stepInterval);
+    const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText) throw new Error("AI tidak memberikan respons. Coba ulangi lagi.");
+
+    const data = extractJson(rawText);
     document.getElementById('loadingPanel').style.display = 'none';
     document.getElementById('loading-overlay').classList.remove('visible');
-    renderResults(MOCK_DATA.cyberpunk);
+    renderResults(data);
     document.getElementById('results-area').style.display = '';
     document.getElementById('results-area').classList.add('visible');
     requestAnimationFrame(() => {
       document.getElementById('results-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-    // Re-enable button after timeout
     generateBtn.disabled = false;
-  }, 2400);
+  } catch (err) {
+    clearInterval(stepInterval);
+    showError(err.message || "Terjadi kesalahan tidak diketahui. Coba ulangi.");
+  }
 });
 
 /* =========================================================
@@ -1604,7 +1766,7 @@ function renderResults(data) {
   document.getElementById('res-cast').innerHTML = data.cast.map(c => `
     <div class="cast-card">
       <div class="cast-img-wrapper">
-        <img src="https://picsum.photos/200/300?random=${sanitize(String(c.img))}" alt="${sanitize(c.name)}" loading="lazy" />
+        <img src="https://picsum.photos/seed/${encodeURIComponent(c.name)}/200/300" alt="${sanitize(c.name)}" loading="lazy" />
         <span class="cast-role-badge">${sanitize(c.role)}</span>
       </div>
       <div class="cast-info">
@@ -1636,7 +1798,7 @@ function renderResults(data) {
   // Actors
   document.getElementById('res-actors').innerHTML = data.actors.map(a => `
     <div class="actor-card">
-      <img class="actor-img" src="https://picsum.photos/72/72?random=${sanitize(String(a.img))}" alt="${sanitize(a.name)}" loading="lazy" />
+      <img class="actor-img" src="https://picsum.photos/seed/${encodeURIComponent(a.name)}/72/72" alt="${sanitize(a.name)}" loading="lazy" />
       <div class="actor-info">
         <div class="actor-name">${sanitize(a.name)}</div>
         <div class="actor-role">as ${sanitize(a.role)}</div>
@@ -1650,7 +1812,7 @@ function renderResults(data) {
   document.getElementById('res-locations').innerHTML = data.locations.map(l => `
     <div class="location-card">
       <div class="location-img-wrap">
-        <img src="https://picsum.photos/400/200?random=${sanitize(String(l.img))}" alt="${sanitize(l.name)}" loading="lazy" />
+        <img src="https://picsum.photos/seed/${encodeURIComponent(l.name)}/400/200" alt="${sanitize(l.name)}" loading="lazy" />
         <div class="location-overlay"></div>
       </div>
       <div class="location-body">
