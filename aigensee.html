@@ -1173,7 +1173,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label"><i class="fas fa-tag" style="margin-right:5px;color:var(--yellow)"></i>Genre</label>
+            <div class="form-label" id="genre-label"><i class="fas fa-tag" style="margin-right:5px;color:var(--yellow)"></i>Genre</div>
+            <div role="group" aria-labelledby="genre-label">
             <div class="genre-grid" id="genreGrid">
               <button class="genre-btn" data-genre="Sci-Fi">Sci-Fi</button>
               <button class="genre-btn" data-genre="Film Noir">Film Noir</button>
@@ -1191,6 +1192,8 @@
               <button class="genre-btn" data-genre="Biography">Biography</button>
               <button class="genre-btn" data-genre="Family Film">Family Film</button>
               <button class="genre-btn" data-genre="1980s">1980s</button>
+              <button class="genre-btn" type="button" data-genre="Drama">Drama</button>
+            </div>
             </div>
           </div>
 
@@ -1506,7 +1509,8 @@ const LOADING_STEPS = [
   "Finalizing your storyboard..."
 ];
 
-document.getElementById('generateBtn').addEventListener('click', () => {
+const generateBtn = document.getElementById('generateBtn');
+generateBtn.addEventListener('click', () => {
   const title = document.getElementById('filmTitle').value.trim();
   if (!title) {
     document.getElementById('filmTitle').focus();
@@ -1515,14 +1519,19 @@ document.getElementById('generateBtn').addEventListener('click', () => {
     return;
   }
 
+  // Debounce: disable button
+  generateBtn.disabled = true;
+
   // Show loading
   document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('results-area').style.display = 'none';
   document.getElementById('loadingPanel').style.display = 'block';
   document.getElementById('loading-overlay').classList.add('visible');
   document.getElementById('results-area').classList.remove('visible');
 
   let stepIdx = 0;
   const stepEl = document.getElementById('loadingStep');
+  stepEl.textContent = LOADING_STEPS[0];
   const stepInterval = setInterval(() => {
     stepIdx = (stepIdx + 1) % LOADING_STEPS.length;
     stepEl.textContent = LOADING_STEPS[stepIdx];
@@ -1533,8 +1542,13 @@ document.getElementById('generateBtn').addEventListener('click', () => {
     document.getElementById('loadingPanel').style.display = 'none';
     document.getElementById('loading-overlay').classList.remove('visible');
     renderResults(MOCK_DATA.cyberpunk);
+    document.getElementById('results-area').style.display = '';
     document.getElementById('results-area').classList.add('visible');
-    document.getElementById('results-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    requestAnimationFrame(() => {
+      document.getElementById('results-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    // Re-enable button after timeout
+    generateBtn.disabled = false;
   }, 2400);
 });
 
