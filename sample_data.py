@@ -1,17 +1,17 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 3.6 - Update 25 Februari 2026 (Penutupan)
+Version 3.7 - Update 27 Februari 2026 (Penutupan)
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 25 Februari 2026 (closing).
+Data diupdate berdasarkan harga pasar 27 Februari 2026 (closing).
 
-IHSG: 8.322,23 (+0.50%)
-Context: IHSG YTD 2026 = -3.66% (terlemah di dunia per Bloomberg)
-Asing net sell: BBCA Rp16.2T, BMRI Rp1.36T
+IHSG: 8.235,49 (+0.00%)
+Context: IHSG YTD 2026 masih negatif, 52w range: 5,882 - 9,174
+ANTM naik +30%, INCO koreksi -14% dari minggu lalu
 
-Sumber: Bisnis.com, Investing.com, IDXChannel, Vibiznews
+Sumber: Yahoo Finance, Investing.com, TradingView
 ============================================================================
 """
 
@@ -27,7 +27,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 7225,  # Update 25 Feb 2026: -1.03% (target jual asing)
+        'current_price': 7175,  # Update 27 Feb 2026: -1.71%
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -58,7 +58,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3870,  # Update 25 Feb 2026: +1.56% hari ini
+        'current_price': 3950,  # Update 27 Feb 2026: -0.50%
         'price_change_3y': -14.6,  # 3 TAHUN: masih TURUN
         'price_change_1y': -6.0,  # 1 TAHUN: membaik dari -32% (52w: 3290-4450)
         # METRIK KHUSUS BANK
@@ -264,7 +264,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Telkom Indonesia Tbk',
         'sector': 'Communication Services',
         'industry': 'Telecom Services',
-        'current_price': 2850,
+        'current_price': 3540,  # Update 27 Feb 2026: -3.01%
         'price_change_3y': -28.5,  # 3 TAHUN: TURUN SIGNIFIKAN dari ~4000
         'debt_to_equity': 0.55,
         'roe': 18.5,
@@ -356,46 +356,46 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 7350,  # Update 25 Feb 2026: +5.00% STRONG! rilis laporan hari ini
-        'price_change_3y': 290.0,  # 3 TAHUN: dari ~1885 ke 7350 - SUPER STRONG!
-        'price_change_1y': 157.9,  # 1 TAHUN: dari ~2850 ke 7350 - EXPLOSIVE!
+        'current_price': 6300,  # Update 27 Feb 2026: -4.55% koreksi
+        'price_change_3y': 234.4,  # 3 TAHUN: dari ~1885 ke 6300 - masih STRONG
+        'price_change_1y': 121.1,  # 1 TAHUN: dari ~2850 ke 6300 - masih UPTREND!
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
         'profit_margin': 22.5,
-        'dividend_yield': 2.5,
+        'dividend_yield': 3.4,  # Yield naik karena harga turun
         'current_ratio': 4.5,
         'earnings_growth': 35.2,
-        'pe_ratio': 12.5,
-        'pb_ratio': 2.3,
-        'peg_ratio': 0.35,
-        'market_cap': 69.56e12,  # Update from web
+        'pe_ratio': 10.7,  # P/E turun karena harga turun
+        'pb_ratio': 2.0,
+        'peg_ratio': 0.30,
+        'market_cap': 59.6e12,  # Turun dari 69.56T
         'avg_volume': 18_000_000,
         'free_float_pct': 21,
-        'notes': 'Update 20 Feb: koreksi -4.55%, tapi 1Y return masih +121%',
+        'notes': 'Update 27 Feb: koreksi -14% dari peak, tapi 1Y return masih +121%',
     },
     {
         'ticker': 'ANTM.JK',
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3240,  # Update 25 Feb 2026: range 3180-3290, stabil
-        'price_change_3y': 224.6,  # 3 TAHUN: dari ~998 ke 3240 - STILL STRONG
-        'price_change_1y': 133.0,  # 1 TAHUN: 52w low ~1390, high 4970, now 3240
+        'current_price': 4220,  # Update 27 Feb 2026: +30% dari minggu lalu!
+        'price_change_3y': 322.8,  # 3 TAHUN: dari ~998 ke 4220 - SUPER STRONG
+        'price_change_1y': 203.6,  # 1 TAHUN: dari ~1390 ke 4220 - EXPLOSIVE!
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
         'profit_margin': 12.5,
-        'dividend_yield': 3.8,
+        'dividend_yield': 3.59,  # Update from web
         'current_ratio': 2.2,
         'earnings_growth': 32.5,
-        'pe_ratio': 10.2,
-        'pb_ratio': 1.6,
-        'peg_ratio': 0.31,
-        'market_cap': 95.88e12,  # Update from web
+        'pe_ratio': 13.3,  # P/E naik karena harga naik
+        'pb_ratio': 2.1,
+        'peg_ratio': 0.41,
+        'market_cap': 101.42e12,  # Update from web
         'avg_volume': 45_000_000,
         'free_float_pct': 35,
-        'notes': 'Koreksi dari ATH 4970 (Jan 26), masih +133% YoY',
+        'notes': 'Update 27 Feb: RALLY +30%! Mendekati ATH 4970, YoY +203%',
     },
 
     # Otomotif & Konglomerasi
