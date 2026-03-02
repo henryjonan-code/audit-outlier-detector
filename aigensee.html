@@ -291,12 +291,6 @@
       box-shadow: 0 4px 20px rgba(245, 197, 24, 0.3);
     }
 
-    .btn-primary:hover {
-      background: #ffd428;
-      box-shadow: 0 6px 30px rgba(245, 197, 24, 0.5);
-      transform: translateY(-1px);
-    }
-
     .btn-primary:active { transform: translateY(0); }
 
     .btn:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
@@ -315,6 +309,19 @@
       border-color: var(--yellow);
       color: var(--yellow);
       background: var(--yellow-glow);
+    }
+
+    .btn:disabled,
+    .btn[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .btn-primary:not(:disabled):hover {
+      background: #ffd428;
+      box-shadow: 0 6px 30px rgba(245, 197, 24, 0.5);
+      transform: translateY(-1px);
     }
 
     .btn-row {
@@ -392,13 +399,14 @@
       background: var(--yellow);
       border-radius: 3px;
       transform-origin: left;
-      animation: loadBar 2.2s ease-in-out infinite;
+      animation: loadBar 2.4s ease-out forwards;
     }
 
     @keyframes loadBar {
-      0% { transform: scaleX(0); }
-      60% { transform: scaleX(0.8); }
-      90% { transform: scaleX(0.95); }
+      0%   { transform: scaleX(0); }
+      50%  { transform: scaleX(0.6); }
+      80%  { transform: scaleX(0.85); }
+      95%  { transform: scaleX(0.95); }
       100% { transform: scaleX(1); }
     }
 
@@ -1525,12 +1533,17 @@ const LOADING_STEPS = [
 ];
 
 const generateBtn = document.getElementById('generateBtn');
+let validationTimeout = null;
+
 generateBtn.addEventListener('click', () => {
   const title = document.getElementById('filmTitle').value.trim();
   if (!title) {
     document.getElementById('filmTitle').focus();
     document.getElementById('filmTitle').style.borderColor = '#e53e3e';
-    setTimeout(() => document.getElementById('filmTitle').style.borderColor = '', 1500);
+    clearTimeout(validationTimeout);
+    validationTimeout = setTimeout(() => {
+      document.getElementById('filmTitle').style.borderColor = '';
+    }, 1500);
     return;
   }
 
@@ -1550,21 +1563,28 @@ generateBtn.addEventListener('click', () => {
   const stepInterval = setInterval(() => {
     stepIdx = (stepIdx + 1) % LOADING_STEPS.length;
     stepEl.textContent = LOADING_STEPS[stepIdx];
-  }, 320);
+  }, 380);
 
   setTimeout(() => {
     clearInterval(stepInterval);
     document.getElementById('loadingPanel').style.display = 'none';
     document.getElementById('loading-overlay').classList.remove('visible');
-    renderResults(MOCK_DATA.cyberpunk);
-    document.getElementById('results-area').style.display = '';
-    document.getElementById('results-area').classList.add('visible');
-    requestAnimationFrame(() => {
-      document.getElementById('results-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-    // Re-enable button after timeout
+    try {
+      renderResults(MOCK_DATA.cyberpunk);
+      document.getElementById('results-area').style.display = '';
+      document.getElementById('results-area').classList.add('visible');
+      requestAnimationFrame(() => {
+        document.getElementById('results-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    } catch (err) {
+      console.error('Render error:', err);
+      document.getElementById('emptyState').style.display = '';
+      document.getElementById('emptyState').querySelector('.empty-title').textContent = 'Something went wrong';
+      document.getElementById('emptyState').querySelector('.empty-sub').textContent = 'Failed to render results. Please try again.';
+    }
+    // Re-enable button
     generateBtn.disabled = false;
-  }, 2400);
+  }, 2500);
 });
 
 /* =========================================================
