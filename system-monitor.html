@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitor & Cleaner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #05070a;
+            color: #e2e8f0;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .stat-card {
+            background: linear-gradient(145deg, #111827, #0f172a);
+            border: 1px solid #1e293b;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+
+        .progress-fill {
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .critical { animation: pulse-red 1s infinite; color: #ef4444; }
+
+        /* Memory sparkline bars */
+        .spark-bar {
+            display: inline-block;
+            width: 6px;
+            border-radius: 2px 2px 0 0;
+            background: #3b82f6;
+            vertical-align: bottom;
+            transition: height 0.5s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 pb-20 max-w-lg mx-auto">
+
+    <!-- Header -->
+    <header class="flex justify-between items-start mb-8 pt-4">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight glow-text">System <span class="text-blue-500">Monitor</span></h1>
+            <p class="text-xs text-slate-500 mono" id="device-model">Mendeteksi perangkat...</p>
+        </div>
+        <div id="battery-status" class="flex flex-col items-end">
+            <div class="flex items-center gap-2">
+                <span id="battery-level" class="font-bold text-lg text-green-400">--%</span>
+                <div class="w-10 h-5 border-2 border-slate-700 rounded-sm relative">
+                    <div id="battery-fill" class="h-full bg-green-500 transition-all duration-1000" style="width:0%"></div>
+                </div>
+            </div>
+            <p id="charging-status" class="text-[10px] text-slate-500 uppercase mt-1">--</p>
+        </div>
+    </header>
+
+    <!-- Dashboard -->
+    <div class="space-y-4">
+
+        <!-- Storage -->
+        <div class="stat-card rounded-3xl p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-semibold text-slate-400">Penyimpanan Browser (Origin)</h3>
+                <span class="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Real-time</span>
+            </div>
+            <div class="flex items-end gap-2 mb-2">
+                <span id="storage-used" class="text-3xl font-bold">0</span>
+                <span class="text-slate-500 mb-1">MB digunakan</span>
+            </div>
+            <!-- Sub-breakdown -->
+            <div class="grid grid-cols-3 gap-2 mb-3">
+                <div class="bg-slate-800/50 rounded-xl p-2 text-center">
+                    <p class="text-[9px] text-slate-500 uppercase">Cache API</p>
+                    <p id="cache-size" class="text-xs font-bold text-blue-400 mono">-- KB</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl p-2 text-center">
+                    <p class="text-[9px] text-slate-500 uppercase">IndexedDB</p>
+                    <p id="idb-count" class="text-xs font-bold text-purple-400 mono">-- DB</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl p-2 text-center">
+                    <p class="text-[9px] text-slate-500 uppercase">LocalStorage</p>
+                    <p id="ls-size" class="text-xs font-bold text-teal-400 mono">-- KB</p>
+                </div>
+            </div>
+            <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden mb-2">
+                <div id="storage-bar" class="bg-blue-500 h-full progress-fill" style="width:0%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] mono text-slate-500 uppercase">
+                <span>Terpakai: <span id="storage-percent">0</span>%</span>
+                <span>Kuota: <span id="storage-total">0</span> GB</span>
+            </div>
+        </div>
+
+        <!-- RAM + Network -->
+        <div class="grid grid-cols-2 gap-4">
+            <div class="stat-card rounded-2xl p-4">
+                <p class="text-xs text-slate-500 mb-1">JS Heap (Tab ini)</p>
+                <p id="ram-usage" class="text-xl font-bold mono">-- MB</p>
+                <p class="text-[9px] text-slate-600 mt-1">Limit: <span id="ram-limit" class="text-slate-500">--</span></p>
+                <!-- Sparkline -->
+                <div id="mem-sparkline" class="flex items-end gap-0.5 mt-2 h-8"></div>
+            </div>
+            <div class="stat-card rounded-2xl p-4">
+                <p class="text-xs text-slate-500 mb-1">Jaringan</p>
+                <p id="ping-status" class="text-xl font-bold mono text-green-400">-- ms</p>
+                <p id="net-downlink" class="text-[9px] text-slate-500 mono mt-1">-- Mbps</p>
+                <p id="net-type" class="text-[9px] text-slate-600 uppercase">--</p>
+            </div>
+        </div>
+
+        <!-- Hardware Info -->
+        <div class="stat-card rounded-2xl p-4">
+            <p class="text-xs text-slate-500 mb-3">Informasi Hardware</p>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <p class="text-[10px] text-slate-600 uppercase">CPU Logical Cores</p>
+                    <p id="cpu-cores" class="font-bold mono text-yellow-400">--</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-600 uppercase">Device RAM</p>
+                    <p id="device-ram" class="font-bold mono text-orange-400">-- GB</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-600 uppercase">Resolusi Layar</p>
+                    <p id="screen-res" class="font-bold mono text-pink-400">--</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-600 uppercase">Color Depth</p>
+                    <p id="color-depth" class="font-bold mono text-cyan-400">-- bit</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Load Timing -->
+        <div class="stat-card rounded-2xl p-4">
+            <p class="text-xs text-slate-500 mb-3">Page Load Timing (Navigation API)</p>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-slate-800/50 rounded-xl p-2 text-center">
+                    <p class="text-[9px] text-slate-500 uppercase">DNS</p>
+                    <p id="timing-dns" class="text-xs font-bold text-blue-400 mono">-- ms</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl p-2 text-center">
+                    <p class="text-[9px] text-slate-500 uppercase">TCP Connect</p>
+                    <p id="timing-tcp" class="text-xs font-bold text-green-400 mono">-- ms</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl p-2 text-center">
+                    <p class="text-[9px] text-slate-500 uppercase">DOM Ready</p>
+                    <p id="timing-dom" class="text-xs font-bold text-yellow-400 mono">-- ms</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optimization Hub -->
+        <div class="bg-blue-600 rounded-3xl p-6 shadow-xl shadow-blue-900/20">
+            <h3 class="text-white font-bold text-lg mb-1">Optimization Hub</h3>
+            <p class="text-blue-100 text-sm mb-2">Hapus Cache API, localStorage, sessionStorage, dan resource timings untuk origin ini.</p>
+            <p id="freed-info" class="text-blue-200 text-xs mb-4 mono hidden"></p>
+            <button onclick="runOptimization()" id="main-btn"
+                class="w-full bg-white text-blue-600 font-bold py-4 rounded-2xl active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                </svg>
+                JALANKAN OPTIMASI
+            </button>
+        </div>
+
+        <!-- Log Console -->
+        <div class="bg-black/50 border border-slate-800 rounded-2xl p-4 mono text-[11px]">
+            <p class="text-blue-500 mb-2">SYSTEM_LOGS:</p>
+            <div id="console-logs" class="space-y-1 text-slate-400 h-28 overflow-y-auto flex flex-col-reverse"></div>
+        </div>
+
+    </div>
+
+    <script>
+    /* ── Utility ─────────────────────────────────────── */
+    function fmt(bytes, unit) {
+        if (unit === 'KB') return (bytes / 1024).toFixed(1);
+        if (unit === 'MB') return (bytes / (1024 ** 2)).toFixed(2);
+        if (unit === 'GB') return (bytes / (1024 ** 3)).toFixed(2);
+        return bytes;
+    }
+
+    function logToConsole(msg) {
+        const logs = document.getElementById('console-logs');
+        const p = document.createElement('p');
+        const ts = new Date().toLocaleTimeString('id-ID', { hour12: false });
+        p.textContent = `[${ts}] > ${msg}`;
+        logs.prepend(p);
+    }
+
+    /* ── Memory Sparkline ────────────────────────────── */
+    const MEM_HISTORY = [];
+    const MAX_SPARK = 12;
+
+    function updateSparkline(mb) {
+        MEM_HISTORY.push(mb);
+        if (MEM_HISTORY.length > MAX_SPARK) MEM_HISTORY.shift();
+
+        const container = document.getElementById('mem-sparkline');
+        const max = Math.max(...MEM_HISTORY, 1);
+        container.innerHTML = '';
+        MEM_HISTORY.forEach(v => {
+            const bar = document.createElement('span');
+            bar.className = 'spark-bar';
+            bar.style.height = `${Math.round((v / max) * 28)}px`;
+            container.appendChild(bar);
+        });
+    }
+
+    /* ── 1. Storage (Real: navigator.storage.estimate + Cache API + LS) ── */
+    async function getCacheAPISize() {
+        if (!('caches' in window)) return 0;
+        let total = 0;
+        try {
+            const keys = await caches.keys();
+            for (const name of keys) {
+                const cache = await caches.open(name);
+                const reqs = await cache.keys();
+                for (const req of reqs) {
+                    const res = await cache.match(req);
+                    if (res) {
+                        const blob = await res.clone().blob();
+                        total += blob.size;
+                    }
+                }
+            }
+        } catch (_) {}
+        return total;
+    }
+
+    async function getIndexedDBCount() {
+        if (!indexedDB || !indexedDB.databases) return '?';
+        try {
+            const dbs = await indexedDB.databases();
+            return dbs.length;
+        } catch (_) { return '?'; }
+    }
+
+    function getLocalStorageSize() {
+        try {
+            let size = 0;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                size += (key.length + (localStorage.getItem(key) || '').length) * 2;
+            }
+            return size;
+        } catch (_) { return 0; }
+    }
+
+    async function updateStorageInfo() {
+        if (!navigator.storage || !navigator.storage.estimate) return;
+
+        const estimate = await navigator.storage.estimate();
+        const usedMB  = parseFloat(fmt(estimate.usage || 0, 'MB'));
+        const totalGB = parseFloat(fmt(estimate.quota  || 0, 'GB'));
+        const pct     = estimate.quota ? ((estimate.usage / estimate.quota) * 100).toFixed(2) : 0;
+
+        document.getElementById('storage-used').textContent    = usedMB;
+        document.getElementById('storage-total').textContent   = totalGB;
+        document.getElementById('storage-percent').textContent = pct;
+
+        const bar = document.getElementById('storage-bar');
+        bar.style.width = pct + '%';
+        bar.className = `h-full progress-fill ${
+            pct > 80 ? 'bg-red-500' : pct > 50 ? 'bg-yellow-500' : 'bg-blue-500'
+        }`;
+
+        // Sub-breakdown (run concurrently)
+        const [cacheBytes, idbCount, lsBytes] = await Promise.all([
+            getCacheAPISize(),
+            getIndexedDBCount(),
+            Promise.resolve(getLocalStorageSize())
+        ]);
+
+        document.getElementById('cache-size').textContent = fmt(cacheBytes, 'KB') + ' KB';
+        document.getElementById('idb-count').textContent  = idbCount + ' DB';
+        document.getElementById('ls-size').textContent    = fmt(lsBytes, 'KB') + ' KB';
+
+        logToConsole(`Storage: ${usedMB} MB used / ${totalGB} GB quota (${pct}%)`);
+    }
+
+    /* ── 2. Battery (Real: getBattery API) ───────────── */
+    (async function initBattery() {
+        if (!navigator.getBattery) {
+            document.getElementById('battery-level').textContent = 'N/A';
+            document.getElementById('charging-status').textContent = 'No API';
+            return;
+        }
+        const battery = await navigator.getBattery();
+
+        function updateBattery() {
+            const level = Math.round(battery.level * 100);
+            const el = document.getElementById('battery-level');
+            const fill = document.getElementById('battery-fill');
+
+            el.textContent = level + '%';
+            fill.style.width = level + '%';
+            fill.className = `h-full transition-all duration-1000 ${
+                level < 20 ? 'bg-red-500' : level < 50 ? 'bg-yellow-500' : 'bg-green-500'
+            }`;
+
+            document.getElementById('charging-status').textContent =
+                battery.charging ? '⚡ Charging' : 'Discharging';
+
+            el.className = `font-bold text-lg ${
+                level < 20 ? 'critical' :
+                level < 50 ? 'text-yellow-400' : 'text-green-400'
+            }`;
+        }
+
+        updateBattery();
+        ['levelchange','chargingchange','chargingtimechange','dischargingtimechange']
+            .forEach(e => battery.addEventListener(e, updateBattery));
+    })();
+
+    /* ── 3. Memory / Performance (Real: performance.memory) ── */
+    function updateMemory() {
+        const mem = performance.memory;
+        if (!mem) {
+            document.getElementById('ram-usage').textContent = 'N/A';
+            return;
+        }
+        const usedMB  = parseFloat(fmt(mem.usedJSHeapSize, 'MB'));
+        const limitMB = parseFloat(fmt(mem.jsHeapSizeLimit, 'MB'));
+
+        document.getElementById('ram-usage').textContent =
+            usedMB.toFixed(1) + ' MB';
+        document.getElementById('ram-limit').textContent =
+            limitMB > 1024
+                ? (limitMB / 1024).toFixed(1) + ' GB'
+                : limitMB.toFixed(0) + ' MB';
+
+        updateSparkline(usedMB);
+    }
+
+    /* ── 4. Network (Real: navigator.connection + resource timing) ── */
+    function updateNetwork() {
+        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+        if (conn) {
+            // rtt is real measured RTT in ms
+            const rtt = conn.rtt;
+            const el  = document.getElementById('ping-status');
+            el.textContent = rtt !== undefined ? rtt + ' ms' : '-- ms';
+            el.className = `text-xl font-bold mono ${
+                rtt === undefined ? 'text-slate-400' :
+                rtt < 50  ? 'text-green-400' :
+                rtt < 150 ? 'text-yellow-400' : 'text-red-400'
+            }`;
+
+            const dl = conn.downlink;
+            document.getElementById('net-downlink').textContent =
+                dl !== undefined ? dl + ' Mbps' : '-- Mbps';
+            document.getElementById('net-type').textContent =
+                (conn.effectiveType || '--').toUpperCase() + ' Network';
+
+            // Listen for changes
+            conn.onchange = updateNetwork;
+        } else {
+            // Fallback: fetch-based latency
+            const url = 'https://www.gstatic.com/generate_204';
+            const start = performance.now();
+            fetch(url, { mode: 'no-cors', cache: 'no-store' })
+                .then(() => {
+                    // Try resource timing first (more accurate)
+                    const entries = performance.getEntriesByName(url);
+                    const latency = entries.length
+                        ? Math.round(entries[entries.length - 1].duration)
+                        : Math.round(performance.now() - start);
+
+                    const el = document.getElementById('ping-status');
+                    el.textContent = latency + ' ms';
+                    el.className = `text-xl font-bold mono ${latency < 150 ? 'text-green-400' : 'text-yellow-400'}`;
+                })
+                .catch(() => {
+                    document.getElementById('ping-status').textContent = 'ERR';
+                });
+        }
+    }
+
+    /* ── 5. Hardware Info (Real: navigator properties) ── */
+    function detectHardware() {
+        // CPU cores
+        const cores = navigator.hardwareConcurrency;
+        document.getElementById('cpu-cores').textContent =
+            cores ? cores + ' cores' : 'N/A';
+
+        // Device RAM hint (Chrome/Edge, in GB, rounded to nearest power-of-2)
+        const ram = navigator.deviceMemory;
+        document.getElementById('device-ram').textContent =
+            ram !== undefined ? ram + ' GB' : 'N/A';
+
+        // Screen
+        document.getElementById('screen-res').textContent =
+            `${screen.width}×${screen.height}`;
+        document.getElementById('color-depth').textContent =
+            screen.colorDepth + ' bit';
+    }
+
+    /* ── 6. Device Model Info ───────────────────────── */
+    function detectDevice() {
+        const ua = navigator.userAgent;
+        let device = 'Desktop';
+        if (/Android/i.test(ua))       device = 'Android';
+        else if (/iPhone/i.test(ua))   device = 'iPhone';
+        else if (/iPad/i.test(ua))     device = 'iPad';
+        else if (/Macintosh/i.test(ua))device = 'Mac';
+
+        const platform = navigator.platform || navigator.userAgentData?.platform || 'Unknown';
+        document.getElementById('device-model').textContent = `${device} | ${platform}`;
+    }
+
+    /* ── 7. Page Load Timing (Real: Navigation Timing API v2) ── */
+    function initPageTiming() {
+        const [nav] = performance.getEntriesByType('navigation');
+        if (!nav) return;
+
+        const dns  = Math.round(nav.domainLookupEnd  - nav.domainLookupStart);
+        const tcp  = Math.round(nav.connectEnd        - nav.connectStart);
+        const dom  = Math.round(nav.domContentLoadedEventEnd - nav.startTime);
+
+        document.getElementById('timing-dns').textContent = dns  + ' ms';
+        document.getElementById('timing-tcp').textContent = tcp  + ' ms';
+        document.getElementById('timing-dom').textContent = dom  + ' ms';
+
+        logToConsole(`Page timing — DNS: ${dns}ms, TCP: ${tcp}ms, DOMReady: ${dom}ms`);
+    }
+
+    /* ── 8. Optimization (Real cleanup) ─────────────── */
+    async function runOptimization() {
+        const btn = document.getElementById('main-btn');
+        btn.disabled = true;
+        btn.innerHTML = `<span class="animate-spin inline-block mr-2">↻</span> Mengoptimalkan...`;
+
+        logToConsole('Memulai optimasi...');
+
+        // Snapshot before
+        let beforeBytes = 0;
+        try {
+            const est = await navigator.storage.estimate();
+            beforeBytes = est.usage || 0;
+        } catch (_) {}
+
+        // --- Real cleanup actions ---
+        // 1. localStorage & sessionStorage
+        const lsCount = localStorage.length;
+        localStorage.clear();
+        sessionStorage.clear();
+        logToConsole(`LocalStorage: ${lsCount} entri dihapus.`);
+
+        // 2. Cache API — delete all caches for this origin
+        let cacheCount = 0;
+        let cacheBytes = 0;
+        if ('caches' in window) {
+            try {
+                const keys = await caches.keys();
+                cacheCount = keys.length;
+                // Calculate before deleting
+                for (const name of keys) {
+                    const cache = await caches.open(name);
+                    const reqs  = await cache.keys();
+                    for (const req of reqs) {
+                        const res = await cache.match(req);
+                        if (res) {
+                            const blob = await res.clone().blob();
+                            cacheBytes += blob.size;
+                        }
+                    }
+                    await caches.delete(name);
+                }
+                logToConsole(`Cache API: ${cacheCount} cache dihapus (${fmt(cacheBytes, 'KB')} KB).`);
+            } catch (e) {
+                logToConsole('Cache API: tidak dapat diakses.');
+            }
+        }
+
+        // 3. Clear resource timing buffer
+        performance.clearResourceTimings();
+        logToConsole('Resource timing buffer dikosongkan.');
+
+        // 4. Snapshot after & report
+        await updateStorageInfo();
+        updateMemory();
+
+        let afterBytes = 0;
+        try {
+            const est = await navigator.storage.estimate();
+            afterBytes = est.usage || 0;
+        } catch (_) {}
+
+        const freedBytes = beforeBytes - afterBytes;
+        const freedInfo  = document.getElementById('freed-info');
+        if (freedBytes > 0) {
+            freedInfo.textContent = `✓ Dibebaskan: ~${fmt(freedBytes, 'KB')} KB`;
+            freedInfo.classList.remove('hidden');
+        } else if (cacheBytes > 0) {
+            freedInfo.textContent = `✓ Cache API dihapus: ~${fmt(cacheBytes, 'KB')} KB`;
+            freedInfo.classList.remove('hidden');
+        }
+
+        logToConsole('Optimasi selesai.');
+
+        btn.textContent = 'SELESAI!';
+        btn.classList.replace('text-blue-600', 'text-green-600');
+
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = 'JALANKAN ULANG';
+            btn.classList.replace('text-green-600', 'text-blue-600');
+        }, 2500);
+    }
+
+    /* ── Init ────────────────────────────────────────── */
+    detectDevice();
+    detectHardware();
+    initPageTiming();
+    updateStorageInfo();
+    updateNetwork();
+    updateMemory();
+
+    // Periodic refresh
+    setInterval(() => {
+        updateMemory();
+        updateNetwork();
+    }, 3000);
+
+    setInterval(() => {
+        updateStorageInfo();
+    }, 15000);
+
+    logToConsole('System Monitor aktif — data real-time.');
+    </script>
+</body>
+</html>
