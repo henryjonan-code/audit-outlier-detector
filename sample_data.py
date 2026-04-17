@@ -1,14 +1,14 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 4.0 - Update 26 Maret 2026
+Version 4.1 - Update 17 April 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 26 Maret 2026.
+Data diupdate berdasarkan harga pasar 17 April 2026.
 
-IHSG: 7.316,61 (+0.20%)
-Context: Market volatile, INCO & ANTM koreksi signifikan dari peak
+IHSG: 7.634 (+0.17%)
+Context: INCO & ANTM rebound kuat dari low Maret
 
 Sumber: Yahoo Finance, Investing.com, Bisnis.com
 ============================================================================
@@ -26,7 +26,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6875,  # Update 26 Mar 2026: -0.36%
+        'current_price': 6550,  # Update 17 Apr 2026: -1.48%
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -57,7 +57,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3480,  # Update 26 Mar 2026: -1.68%
+        'current_price': 3430,  # Update 17 Apr 2026: +0.59%
         'price_change_3y': -14.6,  # 3 TAHUN: masih TURUN
         'price_change_1y': -6.0,  # 1 TAHUN: membaik dari -32% (52w: 3290-4450)
         # METRIK KHUSUS BANK
@@ -263,7 +263,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Telkom Indonesia Tbk',
         'sector': 'Communication Services',
         'industry': 'Telecom Services',
-        'current_price': 3170,  # Update 26 Mar 2026: -3.94%
+        'current_price': 3230,  # Update 17 Apr 2026: +5.90%
         'price_change_3y': -28.5,  # 3 TAHUN: TURUN SIGNIFIKAN dari ~4000
         'debt_to_equity': 0.55,
         'roe': 18.5,
@@ -355,32 +355,32 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 5575,  # Update 26 Mar 2026: +4.21% hari ini
-        'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575 - masih STRONG
-        'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UPTREND!
+        'current_price': 6900,  # Update 17 Apr 2026: +1.85%
+        'price_change_3y': 266.1,  # 3 TAHUN: dari ~1885 ke 6900 - STRONG
+        'price_change_1y': 142.1,  # 1 TAHUN: dari ~2850 ke 6900 - UPTREND!
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
         'profit_margin': 22.5,
-        'dividend_yield': 3.8,  # Yield naik karena harga turun
+        'dividend_yield': 3.1,
         'current_ratio': 4.5,
         'earnings_growth': 35.2,
-        'pe_ratio': 9.5,
-        'pb_ratio': 1.8,
-        'peg_ratio': 0.27,
-        'market_cap': 58.76e12,
+        'pe_ratio': 11.8,
+        'pb_ratio': 2.2,
+        'peg_ratio': 0.34,
+        'market_cap': 72.9e12,
         'avg_volume': 18_000_000,
         'free_float_pct': 21,
-        'notes': 'Update 26 Mar: Satu-satunya nickel yg dapat RKAB 2026',
+        'notes': 'Update 17 Apr: Rebound +24% dari low Maret',
     },
     {
         'ticker': 'ANTM.JK',
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3750,  # Update 26 Mar 2026: +3.02% hari ini
-        'price_change_3y': 275.8,  # 3 TAHUN: dari ~998 ke 3750 - STILL STRONG
-        'price_change_1y': 169.8,  # 1 TAHUN: dari ~1390 ke 3750 - STILL UP!
+        'current_price': 3900,  # Update 17 Apr 2026: +4.00%
+        'price_change_3y': 290.8,  # 3 TAHUN: dari ~998 ke 3900 - STRONG
+        'price_change_1y': 180.6,  # 1 TAHUN: dari ~1390 ke 3900 - UPTREND!
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
