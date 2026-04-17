@@ -446,13 +446,14 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2180,
-        'price_change_3y': 32.5,  # 3 TAHUN
-        'debt_to_equity': 0.32,
+        'current_price': 2720,  # Update 17 Apr 2026
+        'price_change_3y': 53.2,  # 3 TAHUN: dari ~1775 ke 2720
+        'price_change_1y': 34.8,  # 1 TAHUN: +34.83% UPTREND!
+        'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH (update from web)
         'roe': 12.5,
         'roa': 7.8,
         'profit_margin': 8.2,
-        'dividend_yield': 4.2,
+        'dividend_yield': 7.3,  # Update: 7.30%
         'current_ratio': 1.9,
         'earnings_growth': 15.2,
         'pe_ratio': 9.5,
@@ -773,5 +774,84 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 13e12,
         'avg_volume': 25_000_000,
         'free_float_pct': 45,
+    },
+
+    # =========================================================================
+    # SAHAM BARU - Verified passing all 5 criteria (April 2026)
+    # =========================================================================
+
+    # Tin Mining - VERIFIED PASS
+    {
+        'ticker': 'TINS.JK',
+        'name': 'Timah Tbk',
+        'sector': 'Basic Materials',
+        'industry': 'Tin Mining',
+        'current_price': 3880,  # Update 17 Apr 2026
+        'price_change_3y': 370.3,  # 3 TAHUN: dari ~825 ke 3880
+        'price_change_1y': 255.8,  # 1 TAHUN: EXPLOSIVE dari ~1090
+        'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
+        'roe': 15.0,
+        'roa': 8.5,
+        'profit_margin': 12.0,
+        'dividend_yield': 1.92,
+        'current_ratio': 2.5,
+        'earnings_growth': 176.4,  # Projected 2026
+        'pe_ratio': 8.5,
+        'pb_ratio': 1.3,
+        'peg_ratio': 0.05,
+        'market_cap': 39e12,
+        'avg_volume': 25_000_000,
+        'free_float_pct': 35,
+        'notes': 'TIN MINING - RKAB export recovery 2026, profit +176% YoY',
+    },
+
+    # Palm Oil Plantation - VERIFIED PASS
+    {
+        'ticker': 'AALI.JK',
+        'name': 'Astra Agro Lestari Tbk',
+        'sector': 'Consumer Defensive',
+        'industry': 'Farm Products',
+        'current_price': 7350,  # Update 17 Apr 2026
+        'price_change_3y': 41.3,  # 3 TAHUN: dari ~5200 ke 7350
+        'price_change_1y': 28.4,  # 1 TAHUN: +28.38%
+        'debt_to_equity': 0.004,  # 0.38% - SANGAT RENDAH
+        'roe': 14.6,
+        'roa': 9.7,
+        'profit_margin': 15.5,
+        'dividend_yield': 4.09,
+        'current_ratio': 1.8,
+        'earnings_growth': 12.5,
+        'pe_ratio': 9.2,
+        'pb_ratio': 1.3,
+        'peg_ratio': 0.74,
+        'market_cap': 14.6e12,
+        'avg_volume': 3_000_000,
+        'free_float_pct': 20,
+        'notes': 'CPO plantation - low debt, consistent dividend',
+    },
+
+    # Pharmaceutical - VERIFIED PASS
+    {
+        'ticker': 'TSPC.JK',
+        'name': 'Tempo Scan Pacific Tbk',
+        'sector': 'Healthcare',
+        'industry': 'Drug Manufacturers',
+        'current_price': 2430,  # Update 17 Apr 2026
+        'price_change_3y': 35.6,  # 3 TAHUN: dari ~1790 ke 2430
+        'price_change_1y': 18.7,  # 1 TAHUN: +18.67%
+        'debt_to_equity': 0.12,  # 12% - RENDAH
+        'roe': 18.5,
+        'roa': 12.8,
+        'profit_margin': 11.2,
+        'dividend_yield': 5.51,
+        'current_ratio': 3.5,
+        'earnings_growth': 15.2,
+        'pe_ratio': 12.5,
+        'pb_ratio': 2.3,
+        'peg_ratio': 0.82,
+        'market_cap': 11e12,
+        'avg_volume': 5_000_000,
+        'free_float_pct': 25,
+        'notes': 'Pharma defensive - consistent growth, low debt',
     },
 ]
