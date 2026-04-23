@@ -1,16 +1,16 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 4.1 - Update 17 April 2026
+Version 4.2 - Update 23 April 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 17 April 2026.
+Data diupdate berdasarkan harga pasar 23 April 2026.
 
-IHSG: 7.634 (+0.17%)
-Context: INCO & ANTM rebound kuat dari low Maret
+IHSG: ~7,600
+Context: Mining stocks volatile, TINS +7.65%, ANTM +2%
 
-Sumber: Yahoo Finance, Investing.com, Bisnis.com
+Sumber: Yahoo Finance, Investing.com, Katadata
 ============================================================================
 """
 
@@ -26,7 +26,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6550,  # Update 17 Apr 2026: -1.48%
+        'current_price': 6475,  # Update 23 Apr 2026
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -355,9 +355,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 6900,  # Update 17 Apr 2026: +1.85%
-        'price_change_3y': 266.1,  # 3 TAHUN: dari ~1885 ke 6900 - STRONG
-        'price_change_1y': 142.1,  # 1 TAHUN: dari ~2850 ke 6900 - UPTREND!
+        'current_price': 5575,  # Update 23 Apr 2026: koreksi -19%
+        'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
+        'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UPTREND
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
@@ -378,9 +378,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3900,  # Update 17 Apr 2026: +4.00%
-        'price_change_3y': 290.8,  # 3 TAHUN: dari ~998 ke 3900 - STRONG
-        'price_change_1y': 180.6,  # 1 TAHUN: dari ~1390 ke 3900 - UPTREND!
+        'current_price': 4100,  # Update 23 Apr 2026: +5.1%
+        'price_change_3y': 310.8,  # 3 TAHUN: dari ~998 ke 4100
+        'price_change_1y': 195.0,  # 1 TAHUN: dari ~1390 ke 4100 - UPTREND!
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -446,7 +446,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2720,  # Update 17 Apr 2026
+        'current_price': 2710,  # Update 23 Apr 2026
         'price_change_3y': 53.2,  # 3 TAHUN: dari ~1775 ke 2720
         'price_change_1y': 34.8,  # 1 TAHUN: +34.83% UPTREND!
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH (update from web)
@@ -786,7 +786,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3880,  # Update 17 Apr 2026
+        'current_price': 3940,  # Update 23 Apr 2026: +7.65%
         'price_change_3y': 370.3,  # 3 TAHUN: dari ~825 ke 3880
         'price_change_1y': 255.8,  # 1 TAHUN: EXPLOSIVE dari ~1090
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
