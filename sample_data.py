@@ -1,16 +1,16 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 4.3 - Update 26 April 2026
+Version 4.4 - Update 28 April 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 26 April 2026.
+Data diupdate berdasarkan harga pasar 28 April 2026.
 
-IHSG: ~7,600
-Context: Mining sector mixed - INCO rebound, TINS koreksi, AUTO turun tajam
+IHSG: ~7,650
+Context: Mining volatile - ANTM rebound +6.5%, AUTO recovery +18%
 
-Sumber: Yahoo Finance, Investing.com
+Sumber: Yahoo Finance, Investing.com, TradingView
 ============================================================================
 """
 
@@ -355,9 +355,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 6650,  # Update 26 Apr 2026: rebound +19%
-        'price_change_3y': 252.9,  # 3 TAHUN: dari ~1885 ke 6650
-        'price_change_1y': 133.3,  # 1 TAHUN: dari ~2850 ke 6650 - UPTREND!
+        'current_price': 6200,  # Update 28 Apr 2026: -6.8%
+        'price_change_3y': 228.9,  # 3 TAHUN: dari ~1885 ke 6200
+        'price_change_1y': 117.5,  # 1 TAHUN: dari ~2850 ke 6200 - UPTREND!
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
@@ -378,9 +378,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3520,  # Update 26 Apr 2026: koreksi -14%
-        'price_change_3y': 252.7,  # 3 TAHUN: dari ~998 ke 3520
-        'price_change_1y': 153.2,  # 1 TAHUN: dari ~1390 ke 3520 - still UP
+        'current_price': 3750,  # Update 28 Apr 2026: +6.5%
+        'price_change_3y': 275.8,  # 3 TAHUN: dari ~998 ke 3750
+        'price_change_1y': 169.8,  # 1 TAHUN: dari ~1390 ke 3750 - UPTREND!
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -446,9 +446,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2150,  # Update 26 Apr 2026: -20.6%
-        'price_change_3y': 21.1,  # 3 TAHUN: dari ~1775 ke 2150
-        'price_change_1y': 6.9,  # 1 TAHUN: dari ~2010 ke 2150 - masih positif
+        'current_price': 2550,  # Update 28 Apr 2026: recovery +18.6%
+        'price_change_3y': 43.7,  # 3 TAHUN: dari ~1775 ke 2550
+        'price_change_1y': 26.9,  # 1 TAHUN: dari ~2010 ke 2550 - UPTREND!
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH (update from web)
         'roe': 12.5,
         'roa': 7.8,
@@ -786,9 +786,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3220,  # Update 26 Apr 2026: koreksi -18%
-        'price_change_3y': 290.3,  # 3 TAHUN: dari ~825 ke 3220
-        'price_change_1y': 195.4,  # 1 TAHUN: dari ~1090 ke 3220 - still UP!
+        'current_price': 3350,  # Update 28 Apr 2026: +4%
+        'price_change_3y': 306.1,  # 3 TAHUN: dari ~825 ke 3350
+        'price_change_1y': 207.3,  # 1 TAHUN: dari ~1090 ke 3350 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
         'roe': 15.0,
         'roa': 8.5,
@@ -836,9 +836,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Tempo Scan Pacific Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 2620,  # Update 26 Apr 2026: +7.8%
-        'price_change_3y': 46.4,  # 3 TAHUN: dari ~1790 ke 2620
-        'price_change_1y': 28.0,  # 1 TAHUN: dari ~2047 ke 2620 - UP!
+        'current_price': 2670,  # Update 28 Apr 2026: +1.9%
+        'price_change_3y': 49.2,  # 3 TAHUN: dari ~1790 ke 2670
+        'price_change_1y': 30.4,  # 1 TAHUN: dari ~2047 ke 2670 - UPTREND!
         'debt_to_equity': 0.12,  # 12% - RENDAH
         'roe': 18.5,
         'roa': 12.8,
