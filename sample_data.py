@@ -1,16 +1,16 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 4.4 - Update 28 April 2026
+Version 4.5 - Update 1 Mei 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 28 April 2026.
+Data diupdate berdasarkan harga pasar 1 Mei 2026.
 
-IHSG: ~7,650
-Context: Mining volatile - ANTM rebound +6.5%, AUTO recovery +18%
+IHSG: ~7,600
+Context: ANTM +7.7%, INCO +9.7%, TINS +9.3% dari update terakhir
 
-Sumber: Yahoo Finance, Investing.com, TradingView
+Sumber: User portfolio real-time
 ============================================================================
 """
 
@@ -26,7 +26,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6475,  # Update 23 Apr 2026
+        'current_price': 6000,  # Update 1 Mei 2026: -7.3%
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -173,8 +173,8 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indofood Sukses Makmur',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 6800,
-        'price_change_3y': 35.2,  # 3 TAHUN
+        'current_price': 6825,  # Update 1 Mei 2026
+        'price_change_3y': 35.7,  # 3 TAHUN
         'debt_to_equity': 0.68,
         'roe': 14.2,
         'roa': 6.5,
@@ -355,9 +355,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 6200,  # Update 28 Apr 2026: -6.8%
-        'price_change_3y': 228.9,  # 3 TAHUN: dari ~1885 ke 6200
-        'price_change_1y': 117.5,  # 1 TAHUN: dari ~2850 ke 6200 - UPTREND!
+        'current_price': 6800,  # Update 1 Mei 2026: +9.7%
+        'price_change_3y': 260.8,  # 3 TAHUN: dari ~1885 ke 6800
+        'price_change_1y': 138.6,  # 1 TAHUN: dari ~2850 ke 6800 - UPTREND!
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
@@ -378,9 +378,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3750,  # Update 28 Apr 2026: +6.5%
-        'price_change_3y': 275.8,  # 3 TAHUN: dari ~998 ke 3750
-        'price_change_1y': 169.8,  # 1 TAHUN: dari ~1390 ke 3750 - UPTREND!
+        'current_price': 4040,  # Update 1 Mei 2026: +7.7%
+        'price_change_3y': 304.8,  # 3 TAHUN: dari ~998 ke 4040
+        'price_change_1y': 190.6,  # 1 TAHUN: dari ~1390 ke 4040 - UPTREND!
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -786,9 +786,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3350,  # Update 28 Apr 2026: +4%
-        'price_change_3y': 306.1,  # 3 TAHUN: dari ~825 ke 3350
-        'price_change_1y': 207.3,  # 1 TAHUN: dari ~1090 ke 3350 - UPTREND!
+        'current_price': 3660,  # Update 1 Mei 2026: +9.3%
+        'price_change_3y': 343.6,  # 3 TAHUN: dari ~825 ke 3660
+        'price_change_1y': 235.8,  # 1 TAHUN: dari ~1090 ke 3660 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
         'roe': 15.0,
         'roa': 8.5,
