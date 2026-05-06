@@ -854,4 +854,58 @@ SAMPLE_STOCK_DATA = [
         'free_float_pct': 25,
         'notes': 'Pharma defensive - consistent growth, low debt',
     },
+
+    # =========================================================================
+    # SAHAM BARU - Coal Mining (Mei 2026 Scan)
+    # =========================================================================
+
+    # Coal Mining - VERIFIED PASS
+    {
+        'ticker': 'ITMG.JK',
+        'name': 'Indo Tambangraya Megah Tbk',
+        'sector': 'Energy',
+        'industry': 'Coal Mining',
+        'current_price': 25000,  # Update 6 Mei 2026
+        'price_change_3y': 45.0,  # 3 TAHUN: estimasi
+        'price_change_1y': 14.88,  # 1 TAHUN: +14.88%
+        'debt_to_equity': 0.022,  # 2.2% - SANGAT RENDAH
+        'roe': 25.0,
+        'roa': 18.0,
+        'profit_margin': 15.0,
+        'dividend_yield': 11.72,  # VERY HIGH!
+        'current_ratio': 2.5,
+        'earnings_growth': 10.0,
+        'pe_ratio': 5.5,
+        'pb_ratio': 1.4,
+        'peg_ratio': 0.55,
+        'market_cap': 28e12,
+        'avg_volume': 3_000_000,
+        'free_float_pct': 35,
+        'notes': 'Coal mining - ultra low debt, very high dividend yield',
+    },
+
+    # Coal Mining - VERIFIED PASS
+    {
+        'ticker': 'PTBA.JK',
+        'name': 'Bukit Asam Tbk',
+        'sector': 'Energy',
+        'industry': 'Coal Mining',
+        'current_price': 2930,  # Update 6 Mei 2026
+        'price_change_3y': 35.0,  # 3 TAHUN: estimasi
+        'price_change_1y': 15.69,  # 1 TAHUN: +15.69%
+        'debt_to_equity': 0.20,  # 20% - RENDAH
+        'roe': 22.0,
+        'roa': 15.0,
+        'profit_margin': 18.0,
+        'dividend_yield': 11.19,  # VERY HIGH!
+        'current_ratio': 2.2,
+        'earnings_growth': 8.0,
+        'pe_ratio': 6.0,
+        'pb_ratio': 1.3,
+        'peg_ratio': 0.75,
+        'market_cap': 34e12,
+        'avg_volume': 8_000_000,
+        'free_float_pct': 35,
+        'notes': 'Coal mining BUMN - low debt, very high dividend yield',
+    },
 ]
