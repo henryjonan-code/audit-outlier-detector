@@ -1,16 +1,16 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 4.5 - Update 1 Mei 2026
+Version 4.6 - Update 6 Mei 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 1 Mei 2026.
+Data diupdate berdasarkan harga pasar 6 Mei 2026.
 
-IHSG: ~7,600
-Context: ANTM +7.7%, INCO +9.7%, TINS +9.3% dari update terakhir
+IHSG: ~7,550
+Context: Mining koreksi tipis, BBCA masih downtrend
 
-Sumber: User portfolio real-time
+Sumber: Yahoo Finance, Investing.com, TradingView
 ============================================================================
 """
 
@@ -26,7 +26,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6000,  # Update 1 Mei 2026: -7.3%
+        'current_price': 5950,  # Update 6 Mei 2026: -0.8%
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -355,9 +355,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 6800,  # Update 1 Mei 2026: +9.7%
-        'price_change_3y': 260.8,  # 3 TAHUN: dari ~1885 ke 6800
-        'price_change_1y': 138.6,  # 1 TAHUN: dari ~2850 ke 6800 - UPTREND!
+        'current_price': 6825,  # Update 6 Mei 2026: +0.4%
+        'price_change_3y': 262.1,  # 3 TAHUN: dari ~1885 ke 6825
+        'price_change_1y': 139.5,  # 1 TAHUN: dari ~2850 ke 6825 - UPTREND!
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
@@ -378,9 +378,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 4040,  # Update 1 Mei 2026: +7.7%
-        'price_change_3y': 304.8,  # 3 TAHUN: dari ~998 ke 4040
-        'price_change_1y': 190.6,  # 1 TAHUN: dari ~1390 ke 4040 - UPTREND!
+        'current_price': 3520,  # Update 6 Mei 2026: -12.9%
+        'price_change_3y': 252.7,  # 3 TAHUN: dari ~998 ke 3520
+        'price_change_1y': 153.2,  # 1 TAHUN: dari ~1390 ke 3520 - still UP
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -446,9 +446,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2550,  # Update 28 Apr 2026: recovery +18.6%
-        'price_change_3y': 43.7,  # 3 TAHUN: dari ~1775 ke 2550
-        'price_change_1y': 26.9,  # 1 TAHUN: dari ~2010 ke 2550 - UPTREND!
+        'current_price': 2620,  # Update 6 Mei 2026: +2.7%
+        'price_change_3y': 47.6,  # 3 TAHUN: dari ~1775 ke 2620
+        'price_change_1y': 30.3,  # 1 TAHUN: dari ~2010 ke 2620 - UPTREND!
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH (update from web)
         'roe': 12.5,
         'roa': 7.8,
@@ -786,9 +786,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3660,  # Update 1 Mei 2026: +9.3%
-        'price_change_3y': 343.6,  # 3 TAHUN: dari ~825 ke 3660
-        'price_change_1y': 235.8,  # 1 TAHUN: dari ~1090 ke 3660 - UPTREND!
+        'current_price': 3580,  # Update 6 Mei 2026: -2.2%
+        'price_change_3y': 334.0,  # 3 TAHUN: dari ~825 ke 3580
+        'price_change_1y': 228.4,  # 1 TAHUN: dari ~1090 ke 3580 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
         'roe': 15.0,
         'roa': 8.5,
@@ -836,9 +836,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Tempo Scan Pacific Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 2670,  # Update 28 Apr 2026: +1.9%
-        'price_change_3y': 49.2,  # 3 TAHUN: dari ~1790 ke 2670
-        'price_change_1y': 30.4,  # 1 TAHUN: dari ~2047 ke 2670 - UPTREND!
+        'current_price': 2620,  # Update 6 Mei 2026: -1.9%
+        'price_change_3y': 46.4,  # 3 TAHUN: dari ~1790 ke 2620
+        'price_change_1y': 28.0,  # 1 TAHUN: dari ~2047 ke 2620 - UPTREND!
         'debt_to_equity': 0.12,  # 12% - RENDAH
         'roe': 18.5,
         'roa': 12.8,
