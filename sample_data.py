@@ -1,14 +1,14 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 4.6 - Update 6 Mei 2026
+Version 4.7 - Update 7 Mei 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 6 Mei 2026.
+Data diupdate berdasarkan harga pasar 7 Mei 2026.
 
-IHSG: ~7,550
-Context: Mining koreksi tipis, BBCA masih downtrend
+IHSG: ~7,600
+Context: ANTM +4.8%, ITMG rally ke 26rb
 
 Sumber: Yahoo Finance, Investing.com, TradingView
 ============================================================================
@@ -355,9 +355,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 6825,  # Update 6 Mei 2026: +0.4%
-        'price_change_3y': 262.1,  # 3 TAHUN: dari ~1885 ke 6825
-        'price_change_1y': 139.5,  # 1 TAHUN: dari ~2850 ke 6825 - UPTREND!
+        'current_price': 6800,  # Update 7 Mei 2026: -0.4%
+        'price_change_3y': 260.8,  # 3 TAHUN: dari ~1885 ke 6800
+        'price_change_1y': 138.6,  # 1 TAHUN: dari ~2850 ke 6800 - UPTREND!
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
@@ -378,9 +378,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3520,  # Update 6 Mei 2026: -12.9%
-        'price_change_3y': 252.7,  # 3 TAHUN: dari ~998 ke 3520
-        'price_change_1y': 153.2,  # 1 TAHUN: dari ~1390 ke 3520 - still UP
+        'current_price': 3690,  # Update 7 Mei 2026: +4.8%
+        'price_change_3y': 269.7,  # 3 TAHUN: dari ~998 ke 3690
+        'price_change_1y': 165.5,  # 1 TAHUN: dari ~1390 ke 3690 - UPTREND!
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -446,9 +446,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2620,  # Update 6 Mei 2026: +2.7%
-        'price_change_3y': 47.6,  # 3 TAHUN: dari ~1775 ke 2620
-        'price_change_1y': 30.3,  # 1 TAHUN: dari ~2010 ke 2620 - UPTREND!
+        'current_price': 2550,  # Update 7 Mei 2026: -2.7%
+        'price_change_3y': 43.7,  # 3 TAHUN: dari ~1775 ke 2550
+        'price_change_1y': 26.9,  # 1 TAHUN: dari ~2010 ke 2550 - still UP
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH (update from web)
         'roe': 12.5,
         'roa': 7.8,
@@ -786,9 +786,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3580,  # Update 6 Mei 2026: -2.2%
-        'price_change_3y': 334.0,  # 3 TAHUN: dari ~825 ke 3580
-        'price_change_1y': 228.4,  # 1 TAHUN: dari ~1090 ke 3580 - UPTREND!
+        'current_price': 3660,  # Update 7 Mei 2026: +2.2%
+        'price_change_3y': 343.6,  # 3 TAHUN: dari ~825 ke 3660
+        'price_change_1y': 235.8,  # 1 TAHUN: dari ~1090 ke 3660 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
         'roe': 15.0,
         'roa': 8.5,
@@ -836,9 +836,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Tempo Scan Pacific Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 2620,  # Update 6 Mei 2026: -1.9%
-        'price_change_3y': 46.4,  # 3 TAHUN: dari ~1790 ke 2620
-        'price_change_1y': 28.0,  # 1 TAHUN: dari ~2047 ke 2620 - UPTREND!
+        'current_price': 2430,  # Update 7 Mei 2026: -7.3%
+        'price_change_3y': 35.8,  # 3 TAHUN: dari ~1790 ke 2430
+        'price_change_1y': 18.7,  # 1 TAHUN: dari ~2047 ke 2430 - still UP
         'debt_to_equity': 0.12,  # 12% - RENDAH
         'roe': 18.5,
         'roa': 12.8,
@@ -865,9 +865,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indo Tambangraya Megah Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 25000,  # Update 6 Mei 2026
-        'price_change_3y': 45.0,  # 3 TAHUN: estimasi
-        'price_change_1y': 14.88,  # 1 TAHUN: +14.88%
+        'current_price': 26000,  # Update 7 Mei 2026: +4%
+        'price_change_3y': 49.4,  # 3 TAHUN: estimasi
+        'price_change_1y': 19.5,  # 1 TAHUN: rally continues
         'debt_to_equity': 0.022,  # 2.2% - SANGAT RENDAH
         'roe': 25.0,
         'roa': 18.0,
@@ -890,9 +890,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 2930,  # Update 6 Mei 2026
-        'price_change_3y': 35.0,  # 3 TAHUN: estimasi
-        'price_change_1y': 15.69,  # 1 TAHUN: +15.69%
+        'current_price': 2950,  # Update 7 Mei 2026: +0.7%
+        'price_change_3y': 35.9,  # 3 TAHUN: estimasi
+        'price_change_1y': 16.5,  # 1 TAHUN: steady
         'debt_to_equity': 0.20,  # 20% - RENDAH
         'roe': 22.0,
         'roa': 15.0,
