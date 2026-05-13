@@ -1,14 +1,14 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 4.7 - Update 7 Mei 2026
+Version 4.8 - Update 13 Mei 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 7 Mei 2026.
+Data diupdate berdasarkan harga pasar 13 Mei 2026.
 
-IHSG: ~7,600
-Context: ANTM +4.8%, ITMG rally ke 26rb
+IHSG: ~7,650
+Context: Mining rally continues - TINS +5.85%, AALI +6.8%
 
 Sumber: Yahoo Finance, Investing.com, TradingView
 ============================================================================
@@ -378,9 +378,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3690,  # Update 7 Mei 2026: +4.8%
-        'price_change_3y': 269.7,  # 3 TAHUN: dari ~998 ke 3690
-        'price_change_1y': 165.5,  # 1 TAHUN: dari ~1390 ke 3690 - UPTREND!
+        'current_price': 3800,  # Update 13 Mei 2026: +3%
+        'price_change_3y': 280.8,  # 3 TAHUN: dari ~998 ke 3800
+        'price_change_1y': 173.4,  # 1 TAHUN: dari ~1390 ke 3800 - UPTREND!
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -786,9 +786,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3660,  # Update 7 Mei 2026: +2.2%
-        'price_change_3y': 343.6,  # 3 TAHUN: dari ~825 ke 3660
-        'price_change_1y': 235.8,  # 1 TAHUN: dari ~1090 ke 3660 - UPTREND!
+        'current_price': 3790,  # Update 13 Mei 2026: +3.6%
+        'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
+        'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
         'roe': 15.0,
         'roa': 8.5,
@@ -811,9 +811,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Agro Lestari Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Farm Products',
-        'current_price': 7350,  # Update 17 Apr 2026
-        'price_change_3y': 41.3,  # 3 TAHUN: dari ~5200 ke 7350
-        'price_change_1y': 28.4,  # 1 TAHUN: +28.38%
+        'current_price': 7850,  # Update 13 Mei 2026: +6.8%
+        'price_change_3y': 50.9,  # 3 TAHUN: dari ~5200 ke 7850
+        'price_change_1y': 37.1,  # 1 TAHUN: dari ~5725 ke 7850 - UPTREND!
         'debt_to_equity': 0.004,  # 0.38% - SANGAT RENDAH
         'roe': 14.6,
         'roa': 9.7,
@@ -836,9 +836,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Tempo Scan Pacific Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 2430,  # Update 7 Mei 2026: -7.3%
-        'price_change_3y': 35.8,  # 3 TAHUN: dari ~1790 ke 2430
-        'price_change_1y': 18.7,  # 1 TAHUN: dari ~2047 ke 2430 - still UP
+        'current_price': 2620,  # Update 13 Mei 2026: +7.8%
+        'price_change_3y': 46.4,  # 3 TAHUN: dari ~1790 ke 2620
+        'price_change_1y': 28.0,  # 1 TAHUN: dari ~2047 ke 2620 - UPTREND!
         'debt_to_equity': 0.12,  # 12% - RENDAH
         'roe': 18.5,
         'roa': 12.8,
@@ -865,9 +865,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indo Tambangraya Megah Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 26000,  # Update 7 Mei 2026: +4%
-        'price_change_3y': 49.4,  # 3 TAHUN: estimasi
-        'price_change_1y': 19.5,  # 1 TAHUN: rally continues
+        'current_price': 25475,  # Update 13 Mei 2026: -2%
+        'price_change_3y': 46.4,  # 3 TAHUN: estimasi
+        'price_change_1y': 17.0,  # 1 TAHUN: consolidation
         'debt_to_equity': 0.022,  # 2.2% - SANGAT RENDAH
         'roe': 25.0,
         'roa': 18.0,
@@ -890,9 +890,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 2950,  # Update 7 Mei 2026: +0.7%
-        'price_change_3y': 35.9,  # 3 TAHUN: estimasi
-        'price_change_1y': 16.5,  # 1 TAHUN: steady
+        'current_price': 3020,  # Update 13 Mei 2026: +2.4%
+        'price_change_3y': 39.1,  # 3 TAHUN: estimasi
+        'price_change_1y': 19.3,  # 1 TAHUN: steady growth
         'debt_to_equity': 0.20,  # 20% - RENDAH
         'roe': 22.0,
         'roa': 15.0,
