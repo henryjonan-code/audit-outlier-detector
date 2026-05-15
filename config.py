@@ -107,13 +107,43 @@ SCORING_WEIGHTS = {
     'liquidity': 0.05,           # Trading Liquidity/Volume (5%)
 }
 
-# Kriteria minimum Warren Buffett
+# ============================================================================
+# KRITERIA MINIMUM V5.0 - POST MSCI
+# ============================================================================
+# Update setelah kasus MSCI menghapus 6 saham Indonesia karena:
+# - Transparansi rendah
+# - Free float rendah
+# - Konsentrasi kepemilikan tinggi
+# ============================================================================
+
 MIN_CRITERIA = {
-    'min_roe': 15,              # ROE minimal 15%
-    'max_debt_to_equity': 1.0,  # D/E ratio maksimal 1.0
-    'min_profit_margin': 10,    # Profit margin minimal 10%
-    'min_dividend_yield': 1.0,  # Dividend yield minimal 1%
+    'min_roe': 10,              # ROE minimal 10% (naik dari >0%)
+    'max_debt_to_equity': 0.5,  # D/E ratio maksimal 50% untuk non-bank
+    'min_profit_margin': 5,     # Profit margin minimal 5%
+    'min_dividend_yield': 0,    # Dividend yield minimal > 0%
+    'max_payout_ratio': 80,     # Payout ratio maksimal 80% (sustainable)
     'min_current_ratio': 1.0,   # Current ratio minimal 1.0
+    'max_per': 20,              # P/E ratio maksimal 20x
+    'max_pbv': 3.0,             # P/B ratio maksimal 3x
+}
+
+# ============================================================================
+# GOVERNANCE CRITERIA V5.0 - Anti MSCI Risk
+# ============================================================================
+# Filter baru untuk menghindari saham yang bisa di-kick dari indeks global
+# ============================================================================
+
+GOVERNANCE_CRITERIA = {
+    'min_free_float_pct': 15,           # Minimal 15% free float (aturan baru BEI)
+    'max_ownership_concentration': 80,   # Maksimal 80% kepemilikan terkonsentrasi
+    'require_positive_ocf': True,        # Operating Cash Flow harus positif
+    'governance_flags': [                # Red flags yang harus dihindari
+        'transparency_issue',
+        'ownership_concentration',
+        'index_removal_risk',
+        'related_party_transaction',
+        'audit_concern',
+    ]
 }
 
 # ============================================================================

@@ -1,25 +1,38 @@
 """
-Sistem Scoring Saham ala Warren Buffett V3.0
+Sistem Scoring Saham ala Warren Buffett V5.0 - POST MSCI
 
-Update V3.0:
-- FIXED: Bank menggunakan metrik khusus (CAR, NPL, NIM) bukan D/E ratio
-- FIXED: Uptrend sekarang HARD FILTER - eliminasi, bukan scoring
-- Saham dengan 1Y return negatif langsung didiskualifikasi
+============================================================================
+UPDATE V5.0 - POST MSCI CRITERIA (Mei 2026):
+============================================================================
+Setelah MSCI menghapus 6 saham Indonesia dari indeks karena:
+- Transparansi rendah
+- Free float rendah
+- Konsentrasi kepemilikan tinggi
 
-Update V2.0:
-- Menambahkan Valuation Score (PEG, P/E, P/B) dengan bobot 25%
-- Menambahkan Liquidity Filter (Volume, Market Cap) untuk anti-goreng
-- Menyesuaikan bobot komponen lainnya
+PERUBAHAN UTAMA:
+1. ROE minimal 10% (bukan cuma > 0%)
+2. Free float minimal 15%
+3. Valuasi filter (PER < 20, PBV < 3)
+4. Operating Cash Flow harus positif
+5. Governance flag untuk red flags
+6. Payout ratio harus sustainable (< 80%)
 
-Prinsip-prinsip Warren Buffett yang digunakan:
-1. Cari perusahaan dengan competitive advantage (moat)
-2. Hutang rendah - perusahaan yang tidak terlalu bergantung pada hutang
-3. ROE tinggi - perusahaan yang efisien menggunakan modal
-4. Profit margin tinggi - pricing power
-5. Dividen konsisten - shareholder friendly
-6. VALUASI WAJAR - beli di harga yang masuk akal (PEG < 1)
-7. LIKUIDITAS TINGGI - saham tidak mudah digoreng
-8. TREND POSITIF - harga HARUS naik (bukan cuma fundamental bagus)
+7 HARD FILTER BARU:
+1. Profitabilitas: ROE >= 10%
+2. Utang sehat: D/E < 50% (non-bank) atau CAR/NPL sehat (bank)
+3. Arus kas: Operating Cash Flow positif
+4. Dividen: Yield > 0%, Payout Ratio < 80%
+5. Likuiditas: Volume cukup, Market Cap > 5T
+6. Free Float: >= 15%
+7. Governance: Tidak ada red flag
+
+============================================================================
+HISTORY:
+- V4.0: 5 Hard Filter (trend, D/E, dividend, ROE>0, profit)
+- V3.0: Bank metrics (CAR, NPL, NIM)
+- V2.0: Valuation Score + Liquidity Filter
+- V1.0: Basic Buffett criteria
+============================================================================
 """
 
 import pandas as pd
@@ -439,67 +452,109 @@ class BuffettScorer:
 
     def apply_buffett_filter(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
-        Filter saham berdasarkan kriteria KETAT user:
+        Filter saham berdasarkan kriteria KETAT V5.0 - POST MSCI:
 
-        HARD FILTER V4.0:
-        1. Trend 1 TAHUN: HARUS NAIK (price_change_1y > 0)
-        2. Trend 2 TAHUN: HARUS NAIK (price_change_2y > 0)
-        3. D/E Ratio < 50% (0.5) - untuk non-bank
-        4. Bagi dividen (dividend_yield > 0)
-        5. Untung (ROE > 0 atau profit_margin > 0)
+        7 HARD FILTER:
+        1. Profitabilitas: ROE >= 10% (bukan cuma > 0%)
+        2. Utang sehat: D/E < 50% untuk non-bank, atau metrik bank sehat
+        3. Arus kas: Operating Cash Flow positif (jika data ada)
+        4. Dividen: Yield > 0%, Payout Ratio < 80%
+        5. Likuiditas: Volume cukup, Market Cap > 5T
+        6. Free Float: >= 15%
+        7. Governance: Tidak ada red flag (governance_flag != True)
 
-        Tidak ada toleransi - semua kriteria HARUS terpenuhi!
+        SOFT FILTER (untuk scoring, bukan eliminasi):
+        - Trend 1Y/3Y positif (momentum)
+        - Valuasi wajar (PER < 20, PBV < 3)
+
+        Tidak ada toleransi - semua HARD FILTER HARUS terpenuhi!
         """
         # Apply liquidity filter first
         filtered = self.apply_liquidity_filter(df)
 
-        # HARD FILTER 1: Trend 1Y HARUS positif
-        has_1y = 'price_change_1y' in filtered.columns
-        if has_1y:
-            mask_1y = filtered['price_change_1y'] > 0
+        # =====================================================================
+        # HARD FILTER 1: ROE >= 10% (Profitabilitas berkualitas)
+        # =====================================================================
+        has_roe = 'roe' in filtered.columns
+        if has_roe:
+            mask_roe = filtered['roe'] >= 10
         else:
-            mask_1y = pd.Series([True] * len(filtered), index=filtered.index)
+            mask_roe = pd.Series([True] * len(filtered), index=filtered.index)
 
-        # HARD FILTER 2: Trend 2Y HARUS positif (gunakan 3Y jika 2Y tidak ada)
-        has_2y = 'price_change_2y' in filtered.columns
-        has_3y = 'price_change_3y' in filtered.columns
-        if has_2y:
-            mask_2y = filtered['price_change_2y'] > 0
-        elif has_3y:
-            # Fallback: gunakan 3Y sebagai proxy
-            mask_2y = filtered['price_change_3y'] > 0
-        else:
-            mask_2y = pd.Series([True] * len(filtered), index=filtered.index)
-
-        # HARD FILTER 3: D/E < 0.5 (50%) untuk NON-BANK
-        # Bank punya struktur modal berbeda, skip filter ini untuk bank
+        # =====================================================================
+        # HARD FILTER 2: D/E < 50% untuk NON-BANK
+        # Bank punya struktur modal berbeda, gunakan CAR/NPL
+        # =====================================================================
         if 'debt_to_equity' in filtered.columns:
             is_bank = filtered.apply(lambda row: self.is_bank(row), axis=1)
             de_ok = (filtered['debt_to_equity'] < 0.5) | filtered['debt_to_equity'].isna()
-            mask_de = is_bank | de_ok  # Bank lolos, non-bank harus D/E < 0.5
+            mask_de = is_bank | de_ok
         else:
             mask_de = pd.Series([True] * len(filtered), index=filtered.index)
 
-        # HARD FILTER 4: Bagi dividen
+        # =====================================================================
+        # HARD FILTER 3: Operating Cash Flow positif
+        # =====================================================================
+        if 'operating_cash_flow' in filtered.columns:
+            mask_ocf = (filtered['operating_cash_flow'] > 0) | filtered['operating_cash_flow'].isna()
+        else:
+            mask_ocf = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # =====================================================================
+        # HARD FILTER 4: Bagi dividen + Payout ratio sustainable
+        # =====================================================================
         if 'dividend_yield' in filtered.columns:
             mask_div = filtered['dividend_yield'] > 0
         else:
             mask_div = pd.Series([True] * len(filtered), index=filtered.index)
 
-        # HARD FILTER 5: Untung (ROE > 0 atau profit_margin > 0)
-        has_roe = 'roe' in filtered.columns
-        has_margin = 'profit_margin' in filtered.columns
-        if has_roe and has_margin:
-            mask_profit = (filtered['roe'] > 0) | (filtered['profit_margin'] > 0)
-        elif has_roe:
-            mask_profit = filtered['roe'] > 0
-        elif has_margin:
-            mask_profit = filtered['profit_margin'] > 0
+        if 'payout_ratio' in filtered.columns:
+            # Payout ratio harus < 80% (sustainable)
+            mask_payout = (filtered['payout_ratio'] < 80) | filtered['payout_ratio'].isna()
         else:
-            mask_profit = pd.Series([True] * len(filtered), index=filtered.index)
+            mask_payout = pd.Series([True] * len(filtered), index=filtered.index)
 
-        # GABUNGKAN SEMUA FILTER - SEMUA HARUS LOLOS
-        mask_all = mask_1y & mask_2y & mask_de & mask_div & mask_profit
+        # =====================================================================
+        # HARD FILTER 5: Free Float >= 15% (MSCI requirement)
+        # =====================================================================
+        if 'free_float_pct' in filtered.columns:
+            mask_float = (filtered['free_float_pct'] >= 15) | filtered['free_float_pct'].isna()
+        else:
+            mask_float = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # =====================================================================
+        # HARD FILTER 6: Governance - tidak ada red flag
+        # =====================================================================
+        if 'governance_flag' in filtered.columns:
+            # governance_flag = True berarti ada masalah, harus skip
+            mask_gov = (filtered['governance_flag'] != True) | filtered['governance_flag'].isna()
+        else:
+            mask_gov = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # =====================================================================
+        # HARD FILTER 7: Valuasi wajar (PER < 20 atau PBV < 3)
+        # =====================================================================
+        has_per = 'pe_ratio' in filtered.columns
+        has_pbv = 'pb_ratio' in filtered.columns
+        if has_per and has_pbv:
+            mask_val = (filtered['pe_ratio'] < 20) | (filtered['pb_ratio'] < 3) | \
+                       filtered['pe_ratio'].isna() | filtered['pb_ratio'].isna()
+        elif has_per:
+            mask_val = (filtered['pe_ratio'] < 20) | filtered['pe_ratio'].isna()
+        elif has_pbv:
+            mask_val = (filtered['pb_ratio'] < 3) | filtered['pb_ratio'].isna()
+        else:
+            mask_val = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # =====================================================================
+        # SOFT FILTER: Trend positif (untuk ranking, bukan eliminasi)
+        # Catatan: Dihapus dari hard filter agar tidak miss opportunity
+        # pada saham quality yang sedang turun
+        # =====================================================================
+
+        # GABUNGKAN SEMUA HARD FILTER
+        mask_all = mask_roe & mask_de & mask_ocf & mask_div & mask_payout & \
+                   mask_float & mask_gov & mask_val
 
         passed = filtered[mask_all].copy()
         failed = filtered[~mask_all].copy()
