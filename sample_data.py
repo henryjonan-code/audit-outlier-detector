@@ -1,14 +1,14 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 4.8 - Update 13 Mei 2026
+Version 4.9 - Update 15 Mei 2026
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 13 Mei 2026.
+Data diupdate berdasarkan harga pasar 15 Mei 2026.
 
-IHSG: ~7,650
-Context: Mining rally continues - TINS +5.85%, AALI +6.8%
+IHSG: ~7,550
+Context: INCO koreksi tajam -18%, ANTM -6.4%
 
 Sumber: Yahoo Finance, Investing.com, TradingView
 ============================================================================
@@ -355,9 +355,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 6800,  # Update 7 Mei 2026: -0.4%
-        'price_change_3y': 260.8,  # 3 TAHUN: dari ~1885 ke 6800
-        'price_change_1y': 138.6,  # 1 TAHUN: dari ~2850 ke 6800 - UPTREND!
+        'current_price': 5575,  # Update 15 Mei 2026: -18% koreksi tajam!
+        'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
+        'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UP
         'debt_to_equity': 0.15,
         'roe': 18.5,
         'roa': 12.5,
@@ -378,9 +378,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3800,  # Update 13 Mei 2026: +3%
-        'price_change_3y': 280.8,  # 3 TAHUN: dari ~998 ke 3800
-        'price_change_1y': 173.4,  # 1 TAHUN: dari ~1390 ke 3800 - UPTREND!
+        'current_price': 3700,  # Update 15 Mei 2026: -6.4%
+        'price_change_3y': 270.7,  # 3 TAHUN: dari ~998 ke 3700
+        'price_change_1y': 166.2,  # 1 TAHUN: dari ~1390 ke 3700 - masih UP
         'debt_to_equity': 0.42,
         'roe': 15.8,
         'roa': 8.5,
@@ -836,9 +836,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Tempo Scan Pacific Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 2620,  # Update 13 Mei 2026: +7.8%
-        'price_change_3y': 46.4,  # 3 TAHUN: dari ~1790 ke 2620
-        'price_change_1y': 28.0,  # 1 TAHUN: dari ~2047 ke 2620 - UPTREND!
+        'current_price': 2670,  # Update 15 Mei 2026: +1.9%
+        'price_change_3y': 49.2,  # 3 TAHUN: dari ~1790 ke 2670
+        'price_change_1y': 30.4,  # 1 TAHUN: dari ~2047 ke 2670 - UPTREND!
         'debt_to_equity': 0.12,  # 12% - RENDAH
         'roe': 18.5,
         'roa': 12.8,
@@ -890,9 +890,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 3020,  # Update 13 Mei 2026: +2.4%
-        'price_change_3y': 39.1,  # 3 TAHUN: estimasi
-        'price_change_1y': 19.3,  # 1 TAHUN: steady growth
+        'current_price': 2910,  # Update 15 Mei 2026: -3.6%
+        'price_change_3y': 34.1,  # 3 TAHUN: estimasi
+        'price_change_1y': 14.9,  # 1 TAHUN: koreksi
         'debt_to_equity': 0.20,  # 20% - RENDAH
         'roe': 22.0,
         'roa': 15.0,
