@@ -1,11 +1,11 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 5.0 - Update 15 Mei 2026 (POST-MSCI CRITERIA)
+Version 5.1 - Update 18 Mei 2026 (POST-MSCI CRITERIA)
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 15 Mei 2026.
+Data diupdate berdasarkan harga pasar 18 Mei 2026.
 
 KRITERIA BARU V5.0 (7 Hard Filter):
 1. ROE >= 10% (bukan cuma > 0%)
@@ -184,7 +184,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indofood Sukses Makmur',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 6825,  # Update 1 Mei 2026
+        'current_price': 6800,  # Update 18 Mei 2026: -0.4%
         'price_change_3y': 35.7,  # 3 TAHUN
         'debt_to_equity': 0.68,
         'roe': 14.2,
@@ -366,7 +366,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 5575,  # Update 15 Mei 2026: -18% koreksi tajam!
+        'current_price': 5250,  # Update 18 Mei 2026: -5.8% (portfolio)
         'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
         'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UP
         'debt_to_equity': 0.15,
@@ -465,7 +465,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2550,  # Update 15 Mei 2026
+        'current_price': 2640,  # Update 18 Mei 2026: +3.5% (portfolio)
         'price_change_3y': 43.7,  # 3 TAHUN: dari ~1775 ke 2550
         'price_change_1y': 26.9,  # 1 TAHUN: dari ~2010 ke 2550 - still UP
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH
@@ -812,7 +812,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3790,  # Update 15 Mei 2026
+        'current_price': 3450,  # Update 18 Mei 2026: -9.0% (portfolio)
         'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
         'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
