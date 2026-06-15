@@ -1,30 +1,28 @@
 """
-Sistem Scoring Saham ala Warren Buffett V5.0 - POST MSCI
+Sistem Scoring Saham ala Warren Buffett V5.1 - REVISED
 
 ============================================================================
-UPDATE V5.0 - POST MSCI CRITERIA (Mei 2026):
+UPDATE V5.1 - REVISED CRITERIA (Juni 2026):
 ============================================================================
-Setelah MSCI menghapus 6 saham Indonesia dari indeks karena:
-- Transparansi rendah
-- Free float rendah
-- Konsentrasi kepemilikan tinggi
+Revisi dari V5.0 berdasarkan feedback:
+- D/E < 0.5 terlalu ketat → dinaikkan ke < 1.0
+- FCF dijadikan soft filter untuk capex-heavy industries
+- Ditambah weighted soft scoring system
 
-PERUBAHAN UTAMA:
-1. ROE minimal 10% (bukan cuma > 0%)
-2. Free float minimal 15%
-3. Valuasi filter (PER < 20, PBV < 3)
-4. Operating Cash Flow harus positif
-5. Governance flag untuk red flags
-6. Payout ratio harus sustainable (< 80%)
-
-7 HARD FILTER BARU:
+7 HARD FILTER:
 1. Profitabilitas: ROE >= 10%
-2. Utang sehat: D/E < 50% (non-bank) atau CAR/NPL sehat (bank)
+2. Utang sehat: D/E < 100% (non-bank) atau CAR/NPL sehat (bank)
 3. Arus kas: Operating Cash Flow positif
 4. Dividen: Yield > 0%, Payout Ratio < 80%
 5. Likuiditas: Volume cukup, Market Cap > 5T
 6. Free Float: >= 15%
 7. Governance: Tidak ada red flag
+
+SOFT FILTER (weighted scoring, bukan eliminasi):
+- FCF > 0: +15 pts
+- Revenue growth 3Y > 0: +10 pts
+- Dividend streak 3Y: +15 pts
+- Price trend 1Y > 0: +10 pts
 
 ============================================================================
 HISTORY:
@@ -482,12 +480,13 @@ class BuffettScorer:
             mask_roe = pd.Series([True] * len(filtered), index=filtered.index)
 
         # =====================================================================
-        # HARD FILTER 2: D/E < 50% untuk NON-BANK
+        # HARD FILTER 2: D/E < 100% untuk NON-BANK (revised dari 50%)
         # Bank punya struktur modal berbeda, gunakan CAR/NPL
+        # Catatan V5.1: 50% terlalu ketat, banyak perusahaan sehat punya leverage
         # =====================================================================
         if 'debt_to_equity' in filtered.columns:
             is_bank = filtered.apply(lambda row: self.is_bank(row), axis=1)
-            de_ok = (filtered['debt_to_equity'] < 0.5) | filtered['debt_to_equity'].isna()
+            de_ok = (filtered['debt_to_equity'] < 1.0) | filtered['debt_to_equity'].isna()
             mask_de = is_bank | de_ok
         else:
             mask_de = pd.Series([True] * len(filtered), index=filtered.index)
