@@ -1,11 +1,11 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 5.4 - Update 22 Juni 2026 (V5.1 REVISED CRITERIA)
+Version 5.5 - Update 23 Juni 2026 (V5.1 REVISED CRITERIA)
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 22 Juni 2026.
+Data diupdate berdasarkan harga pasar 23 Juni 2026.
 
 KRITERIA BARU V5.0 (7 Hard Filter):
 1. ROE >= 10% (bukan cuma > 0%)
@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6300,  # Update 22 Juni 2026: +6.3%
+        'current_price': 6175,  # Update 23 Juni 2026: -2.0%
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -184,7 +184,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indofood Sukses Makmur',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 6425,  # Update 22 Juni 2026 (unchanged)
+        'current_price': 6725,  # Update 23 Juni 2026: +4.7%
         'price_change_3y': 35.7,  # 3 TAHUN
         'debt_to_equity': 0.68,
         'roe': 14.2,
@@ -366,7 +366,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 5575,  # Update 22 Juni 2026: +19.6% RALLY!
+        'current_price': 5575,  # Update 23 Juni 2026 (unchanged)
         'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
         'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UP
         'debt_to_equity': 0.15,
@@ -393,7 +393,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 2910,  # Update 22 Juni 2026: +3.9%
+        'current_price': 2910,  # Update 23 Juni 2026 (unchanged)
         'price_change_3y': 270.7,  # 3 TAHUN: dari ~998 ke 3700
         'price_change_1y': 166.2,  # 1 TAHUN: dari ~1390 ke 3700 - masih UP
         'debt_to_equity': 0.42,
@@ -465,7 +465,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2620,  # Update 22 Juni 2026 (unchanged)
+        'current_price': 2620,  # Update 23 Juni 2026 (unchanged)
         'price_change_3y': 43.7,  # 3 TAHUN: dari ~1775 ke 2550
         'price_change_1y': 26.9,  # 1 TAHUN: dari ~2010 ke 2550 - still UP
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH
@@ -812,7 +812,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3190,  # Update 22 Juni 2026: -4.2%
+        'current_price': 3190,  # Update 23 Juni 2026: -3.6%
         'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
         'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
@@ -841,7 +841,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Agro Lestari Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Farm Products',
-        'current_price': 7975,  # Update 22 Juni 2026: +22.2% RALLY!
+        'current_price': 7975,  # Update 23 Juni 2026: +1.3%
         'price_change_3y': 50.9,  # 3 TAHUN: dari ~5200 ke 7850
         'price_change_1y': 37.1,  # 1 TAHUN: dari ~5725 ke 7850 - UPTREND!
         'debt_to_equity': 0.004,  # 0.38% - SANGAT RENDAH
@@ -870,7 +870,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Tempo Scan Pacific Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 2430,  # Update 22 Juni 2026: -7.3%
+        'current_price': 2960,  # Update 23 Juni 2026: +21.8% RALLY!
         'price_change_3y': 49.2,  # 3 TAHUN: dari ~1790 ke 2670
         'price_change_1y': 30.4,  # 1 TAHUN: dari ~2047 ke 2670 - UPTREND!
         'debt_to_equity': 0.12,  # 12% - RENDAH
@@ -932,7 +932,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 2300,  # Update 22 Juni 2026: -9.1%
+        'current_price': 2300,  # Update 23 Juni 2026 (unchanged)
         'price_change_3y': 34.1,  # 3 TAHUN: estimasi
         'price_change_1y': 14.9,  # 1 TAHUN: koreksi
         'debt_to_equity': 0.20,  # 20% - RENDAH
