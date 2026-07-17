@@ -1,11 +1,11 @@
 """
 Sample Data Saham IHSG untuk Demonstrasi
-Version 5.6 - Update 4 Juli 2026 (V5.1 REVISED CRITERIA)
+Version 5.7 - Update 17 Juli 2026 (V5.1 REVISED CRITERIA)
 
 ============================================================================
 DISCLAIMER PENTING:
 ============================================================================
-Data diupdate berdasarkan harga pasar 4 Juli 2026.
+Data diupdate berdasarkan harga pasar 17 Juli 2026.
 
 KRITERIA BARU V5.0 (7 Hard Filter):
 1. ROE >= 10% (bukan cuma > 0%)
@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6050,  # Update 4 Juli 2026: -2.0%
+        'current_price': 6125,  # Update 17 Juli 2026: +1.2%
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -366,7 +366,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 4590,  # Update 4 Juli 2026: -17.7% KOREKSI!
+        'current_price': 5575,  # Update 17 Juli 2026: +21.5% RECOVERY!
         'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
         'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UP
         'debt_to_equity': 0.15,
@@ -393,7 +393,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 2740,  # Update 4 Juli 2026: -5.8%
+        'current_price': 3040,  # Update 17 Juli 2026: +10.9%
         'price_change_3y': 270.7,  # 3 TAHUN: dari ~998 ke 3700
         'price_change_1y': 166.2,  # 1 TAHUN: dari ~1390 ke 3700 - masih UP
         'debt_to_equity': 0.42,
@@ -812,7 +812,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3490,  # Update 4 Juli 2026: +9.4%
+        'current_price': 3490,  # Update 17 Juli 2026 (unchanged)
         'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
         'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
@@ -841,7 +841,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Agro Lestari Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Farm Products',
-        'current_price': 7375,  # Update 4 Juli 2026: -7.5%
+        'current_price': 6175,  # Update 17 Juli 2026: -16.3%
         'price_change_3y': 50.9,  # 3 TAHUN: dari ~5200 ke 7850
         'price_change_1y': 37.1,  # 1 TAHUN: dari ~5725 ke 7850 - UPTREND!
         'debt_to_equity': 0.004,  # 0.38% - SANGAT RENDAH
@@ -932,7 +932,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 2420,  # Update 4 Juli 2026: +5.2%
+        'current_price': 2340,  # Update 17 Juli 2026: -3.3%
         'price_change_3y': 34.1,  # 3 TAHUN: estimasi
         'price_change_1y': 14.9,  # 1 TAHUN: koreksi
         'debt_to_equity': 0.20,  # 20% - RENDAH
