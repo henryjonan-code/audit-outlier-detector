@@ -493,14 +493,16 @@ class BuffettScorer:
 
         # =====================================================================
         # HARD FILTER 3: Operating Cash Flow positif
+        # STRICT: None/missing = FAIL (bukan skip)
         # =====================================================================
         if 'operating_cash_flow' in filtered.columns:
-            mask_ocf = (filtered['operating_cash_flow'] > 0) | filtered['operating_cash_flow'].isna()
+            mask_ocf = filtered['operating_cash_flow'] > 0
         else:
-            mask_ocf = pd.Series([True] * len(filtered), index=filtered.index)
+            mask_ocf = pd.Series([False] * len(filtered), index=filtered.index)
 
         # =====================================================================
         # HARD FILTER 4: Bagi dividen + Payout ratio sustainable
+        # STRICT: None payout = FAIL
         # =====================================================================
         if 'dividend_yield' in filtered.columns:
             mask_div = filtered['dividend_yield'] > 0
@@ -508,10 +510,9 @@ class BuffettScorer:
             mask_div = pd.Series([True] * len(filtered), index=filtered.index)
 
         if 'payout_ratio' in filtered.columns:
-            # Payout ratio harus < 80% (sustainable)
-            mask_payout = (filtered['payout_ratio'] < 80) | filtered['payout_ratio'].isna()
+            mask_payout = filtered['payout_ratio'] < 80
         else:
-            mask_payout = pd.Series([True] * len(filtered), index=filtered.index)
+            mask_payout = pd.Series([False] * len(filtered), index=filtered.index)
 
         # =====================================================================
         # HARD FILTER 5: Free Float >= 15% (MSCI requirement)

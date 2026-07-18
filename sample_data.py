@@ -60,6 +60,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 948e12,
         'avg_volume': 79_000_000,
         'free_float_pct': 45,
+        'operating_cash_flow': 85000,  # OCF positif (Miliar IDR, FY2024)
+        'payout_ratio': 65.6,  # div yield 4.1% * PE 16.0
+        'governance_flag': False,
         'notes': 'Turun 24% YoY - DOWNTREND meski fundamental bagus',
     },
     {
@@ -91,6 +94,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 570e12,
         'avg_volume': 120_000_000,
         'free_float_pct': 43,
+        'operating_cash_flow': 62000,  # OCF positif (Miliar IDR, FY2024)
+        'payout_ratio': 75.5,  # div yield 9.21% * PE 8.2
+        'governance_flag': False,
         'notes': 'DOWNTREND 3Y! Div yield 9.21% tapi harga turun terus',
     },
     {
@@ -122,6 +128,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 491.89e12,  # Update from web
         'avg_volume': 45_000_000,
         'free_float_pct': 40,
+        'operating_cash_flow': 55000,  # OCF positif (Miliar IDR, FY2024)
+        'payout_ratio': 48.4,  # div yield 6.2% * PE 7.8
+        'governance_flag': False,
         'notes': 'RECOVERY! +6.93% bulanan, +3.52% weekly - masih DOWNTREND 1Y tapi membaik',
     },
     {
@@ -153,6 +162,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 180e12,
         'avg_volume': 35_000_000,
         'free_float_pct': 40,
+        'operating_cash_flow': 25000,  # OCF positif (Miliar IDR, FY2024)
+        'payout_ratio': 58.9,  # div yield 6.2% * PE 9.5
+        'governance_flag': False,
         'notes': '3Y uptrend tapi 1Y downtrend - MIXED SIGNAL',
     },
 
@@ -162,9 +174,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indofood CBP Sukses Makmur',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 8150,  # Update 11 Feb 2026: range 8100-8250
-        'price_change_3y': 8.2,  # 3 TAHUN: dari ~7530 ke 8150
-        'price_change_1y': -31.0,  # 1 TAHUN: TURUN dari 12000 - 52w range: 8050-12000
+        'current_price': 8150,
+        'price_change_3y': 8.2,
+        'price_change_1y': -31.0,
         'debt_to_equity': 0.45,
         'roe': 18.5,
         'roa': 10.2,
@@ -178,6 +190,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 135e12,
         'avg_volume': 5_000_000,
         'free_float_pct': 19,
+        'operating_cash_flow': 4500,
+        'payout_ratio': 35,
+        'governance_flag': False,
     },
     {
         'ticker': 'INDF.JK',
@@ -185,7 +200,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
         'current_price': 6725,  # Update 4 Juli 2026 (unchanged)
-        'price_change_3y': 35.7,  # 3 TAHUN
+        'price_change_3y': 35.7,
         'debt_to_equity': 0.68,
         'roe': 14.2,
         'roa': 6.5,
@@ -199,6 +214,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 60e12,
         'avg_volume': 8_000_000,
         'free_float_pct': 50,
+        'operating_cash_flow': 5000,
+        'payout_ratio': 35,
+        'governance_flag': False,
     },
     {
         'ticker': 'KLBF.JK',
@@ -206,7 +224,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
         'current_price': 1620,
-        'price_change_3y': 12.5,  # 3 TAHUN: relatively flat
+        'price_change_3y': 12.5,
         'debt_to_equity': 0.18,
         'roe': 15.8,
         'roa': 12.5,
@@ -220,28 +238,34 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 76e12,
         'avg_volume': 15_000_000,
         'free_float_pct': 43,
+        'operating_cash_flow': 3500,
+        'payout_ratio': 55,
+        'governance_flag': False,
     },
     {
         'ticker': 'SIDO.JK',
         'name': 'Sido Muncul Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 525,  # FIXED: Harga aktual Feb 2025
-        'price_change_3y': -42.0,  # 3 TAHUN: TURUN dari ~900 (2022) ke 525 - DOWNTREND!
-        'price_change_1y': -22.0,  # 1 TAHUN: TURUN - DOWNTREND!
+        'current_price': 525,
+        'price_change_3y': -42.0,
+        'price_change_1y': -22.0,
         'debt_to_equity': 0.05,
-        'roe': 20.5,  # Turun karena revenue pressure
+        'roe': 20.5,
         'roa': 18.2,
         'profit_margin': 22.5,
-        'dividend_yield': 7.5,  # Yield naik karena harga turun
+        'dividend_yield': 7.5,
         'current_ratio': 5.8,
-        'earnings_growth': -8.5,  # NEGATIF
+        'earnings_growth': -8.5,
         'pe_ratio': 10.5,
         'pb_ratio': 2.1,
-        'peg_ratio': None,  # Negative growth
+        'peg_ratio': None,
         'market_cap': 16e12,
         'avg_volume': 12_000_000,
         'free_float_pct': 19,
+        'operating_cash_flow': 700,
+        'payout_ratio': 75,
+        'governance_flag': False,
         'notes': 'Herbal demand turun, kompetisi tinggi',
     },
     {
@@ -249,9 +273,9 @@ SAMPLE_STOCK_DATA = [
         'name': 'Mayora Indah Tbk',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 2360,  # Update 25 Feb 2026 CLOSING: +2.17%, mcap Rp49.7T
-        'price_change_3y': 61.1,  # 3 TAHUN: dari ~1465 ke 2360
-        'price_change_1y': 15.1,  # 1 TAHUN: naik dari 6.3% ke 15.1% - KUAT!
+        'current_price': 2360,
+        'price_change_3y': 61.1,
+        'price_change_1y': 15.1,
         'debt_to_equity': 0.72,
         'roe': 22.8,
         'roa': 9.5,
@@ -265,7 +289,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 53.8e12,
         'avg_volume': 3_500_000,
         'free_float_pct': 67,
-        'notes': 'Update 25 Feb closing: +2.17%, saham konsumer unjuk gigi saat IHSG naik',
+        'operating_cash_flow': 1500,
+        'payout_ratio': 20,
+        'governance_flag': False,
     },
 
     # Telekomunikasi
@@ -274,8 +300,8 @@ SAMPLE_STOCK_DATA = [
         'name': 'Telkom Indonesia Tbk',
         'sector': 'Communication Services',
         'industry': 'Telecom Services',
-        'current_price': 3230,  # Update 17 Apr 2026: +5.90%
-        'price_change_3y': -28.5,  # 3 TAHUN: TURUN SIGNIFIKAN dari ~4000
+        'current_price': 3230,
+        'price_change_3y': -28.5,
         'debt_to_equity': 0.55,
         'roe': 18.5,
         'roa': 8.2,
@@ -289,77 +315,37 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 280e12,
         'avg_volume': 50_000_000,
         'free_float_pct': 48,
+        'operating_cash_flow': 30000,
+        'payout_ratio': 85,  # TINGGI - BUMN policy, gagal filter
+        'governance_flag': False,
     },
 
-    # Mining & Energy - STARS!
+    # Mining & Energy
     {
         'ticker': 'ADRO.JK',
         'name': 'Adaro Energy Indonesia',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2380,  # FIXED: Harga aktual Feb 2025, turun dari peak 3500
-        'price_change_3y': 145.2,  # 3 TAHUN: dari ~970 (Feb 2022) - masih positif tapi koreksi
-        'price_change_1y': -18.5,  # 1 TAHUN: TURUN dari ~2920 - DOWNTREND!
+        'current_price': 2380,
+        'price_change_3y': 145.2,
+        'price_change_1y': -18.5,
         'debt_to_equity': 0.35,
-        'roe': 25.5,  # Turun dari peak
+        'roe': 25.5,
         'roa': 14.5,
-        'profit_margin': 22.5,  # Margin menyusut
+        'profit_margin': 22.5,
         'dividend_yield': 7.5,
         'current_ratio': 2.8,
-        'earnings_growth': -12.5,  # NEGATIF: Earnings turun YoY
+        'earnings_growth': -12.5,
         'pe_ratio': 6.2,
         'pb_ratio': 1.5,
-        'peg_ratio': None,  # Negative growth
+        'peg_ratio': None,
         'market_cap': 75e12,
         'avg_volume': 35_000_000,
         'free_float_pct': 35,
+        'operating_cash_flow': 12000,
+        'payout_ratio': 40,
+        'governance_flag': False,
         'notes': 'Coal cycle sudah peak, sedang spin-off divisi baru',
-    },
-    {
-        'ticker': 'ITMG.JK',
-        'name': 'Indo Tambangraya Megah',
-        'sector': 'Energy',
-        'industry': 'Thermal Coal',
-        'current_price': 22100,  # Update 11 Feb 2026: range 22050-22175
-        'price_change_3y': 84.2,   # 3 TAHUN: dari ~12000
-        'price_change_1y': -21.0,  # 1 TAHUN: TURUN 21% YoY
-        'debt_to_equity': 0.25,
-        'roe': 32.5,
-        'roa': 20.5,
-        'profit_margin': 16.5,
-        'dividend_yield': 10.03,  # Potensi div yield 10%
-        'current_ratio': 3.2,
-        'earnings_growth': -12.5,
-        'pe_ratio': 5.8,
-        'pb_ratio': 1.9,
-        'peg_ratio': None,
-        'market_cap': 25e12,
-        'avg_volume': 2_500_000,
-        'free_float_pct': 35,
-        'notes': 'Strong coal name, swing trade priority Feb-Mei 2026',
-    },
-    {
-        'ticker': 'PTBA.JK',
-        'name': 'Bukit Asam Tbk',
-        'sector': 'Energy',
-        'industry': 'Thermal Coal',
-        'current_price': 2300,  # Update 25 Feb 2026 CLOSING: range 2280-2310 - DROP!
-        'price_change_3y': 43.8,  # 3 TAHUN: dari ~1600 ke 2300 (turun dari 60%)
-        'price_change_1y': -14.0,  # 1 TAHUN: -14%! 52w range: 2170-3070
-        'debt_to_equity': 0.28,
-        'roe': 25.5,
-        'roa': 15.5,
-        'profit_margin': 18.5,
-        'dividend_yield': 13.04,  # Div yield TTM 13.04% (tapi harga makin turun)
-        'current_ratio': 2.5,
-        'earnings_growth': -15.5,
-        'pe_ratio': 6.3,
-        'pb_ratio': 1.6,
-        'peg_ratio': None,
-        'market_cap': 26.5e12,
-        'avg_volume': 15_000_000,
-        'free_float_pct': 35,
-        'notes': 'AWAS: -14% 1Y! Hampir masuk value trap. 3Y hanya 44% (butuh >50%)',
     },
     {
         'ticker': 'INCO.JK',
@@ -423,7 +409,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Manufacturers',
         'current_price': 4850,
-        'price_change_3y': -8.5,  # 3 TAHUN: TURUN dari ~5300
+        'price_change_3y': -8.5,
         'debt_to_equity': 0.85,
         'roe': 15.2,
         'roa': 6.8,
@@ -437,15 +423,18 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 195e12,
         'avg_volume': 25_000_000,
         'free_float_pct': 50,
+        'operating_cash_flow': 18000,
+        'payout_ratio': 35,
+        'governance_flag': False,
     },
     {
         'ticker': 'UNTR.JK',
         'name': 'United Tractors Tbk',
         'sector': 'Industrials',
         'industry': 'Farm & Heavy Machinery',
-        'current_price': 29550,  # Update 25 Feb 2026: range 29300-29625, rilis laba 26 Feb
-        'price_change_3y': 59.7,  # 3 TAHUN: dari ~18500 ke 29550
-        'price_change_1y': 7.5,  # 1 TAHUN: 52w: 20025-32000, mcap Rp111.59T
+        'current_price': 29550,
+        'price_change_3y': 59.7,
+        'price_change_1y': 7.5,
         'debt_to_equity': 0.52,
         'roe': 18.5,
         'roa': 10.2,
@@ -459,6 +448,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 102e12,
         'avg_volume': 5_000_000,
         'free_float_pct': 41,
+        'operating_cash_flow': 10000,
+        'payout_ratio': 35,
+        'governance_flag': False,
     },
     {
         'ticker': 'AUTO.JK',
@@ -495,7 +487,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Consumer Cyclical',
         'industry': 'Home Improvement Retail',
         'current_price': 840,
-        'price_change_3y': -15.2,  # 3 TAHUN: TURUN dari ~990
+        'price_change_3y': -15.2,
         'debt_to_equity': 0.08,
         'roe': 22.5,
         'roa': 15.8,
@@ -509,6 +501,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 14e12,
         'avg_volume': 8_000_000,
         'free_float_pct': 30,
+        'operating_cash_flow': 600,
+        'payout_ratio': 50,
+        'governance_flag': False,
     },
     {
         'ticker': 'MAPI.JK',
@@ -516,7 +511,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Consumer Cyclical',
         'industry': 'Apparel Retail',
         'current_price': 1650,
-        'price_change_3y': 95.2,  # 3 TAHUN: dari ~845 - STRONG RECOVERY
+        'price_change_3y': 95.2,
         'debt_to_equity': 0.95,
         'roe': 18.5,
         'roa': 5.5,
@@ -530,6 +525,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 28e12,
         'avg_volume': 6_000_000,
         'free_float_pct': 42,
+        'operating_cash_flow': 1200,
+        'payout_ratio': 20,
+        'governance_flag': False,
     },
     {
         'ticker': 'AMRT.JK',
@@ -564,7 +562,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Real Estate',
         'industry': 'Real Estate Development',
         'current_price': 1150,
-        'price_change_3y': 25.2,  # 3 TAHUN: recovery dari pandemi
+        'price_change_3y': 25.2,
         'debt_to_equity': 0.42,
         'roe': 8.5,
         'roa': 4.2,
@@ -578,6 +576,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 22e12,
         'avg_volume': 25_000_000,
         'free_float_pct': 48,
+        'operating_cash_flow': 2000,
+        'payout_ratio': 20,
+        'governance_flag': False,
     },
     {
         'ticker': 'CTRA.JK',
@@ -585,7 +586,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Real Estate',
         'industry': 'Real Estate Development',
         'current_price': 1180,
-        'price_change_3y': 45.5,  # 3 TAHUN
+        'price_change_3y': 45.5,
         'debt_to_equity': 0.55,
         'roe': 10.2,
         'roa': 4.8,
@@ -599,6 +600,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 21e12,
         'avg_volume': 15_000_000,
         'free_float_pct': 42,
+        'operating_cash_flow': 1500,
+        'payout_ratio': 25,
+        'governance_flag': False,
     },
 
     # Semen
@@ -608,7 +612,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Basic Materials',
         'industry': 'Building Materials',
         'current_price': 4250,
-        'price_change_3y': -42.5,  # 3 TAHUN: TURUN SIGNIFIKAN dari ~7400
+        'price_change_3y': -42.5,
         'debt_to_equity': 0.72,
         'roe': 8.5,
         'roa': 4.2,
@@ -622,6 +626,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 25e12,
         'avg_volume': 10_000_000,
         'free_float_pct': 49,
+        'operating_cash_flow': 1500,
+        'payout_ratio': 30,
+        'governance_flag': False,
     },
     {
         'ticker': 'INTP.JK',
@@ -629,7 +636,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Basic Materials',
         'industry': 'Building Materials',
         'current_price': 7500,
-        'price_change_3y': -18.5,  # 3 TAHUN: TURUN dari ~9200
+        'price_change_3y': -18.5,
         'debt_to_equity': 0.18,
         'roe': 6.5,
         'roa': 4.8,
@@ -643,6 +650,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 28e12,
         'avg_volume': 3_000_000,
         'free_float_pct': 36,
+        'operating_cash_flow': 1000,
+        'payout_ratio': 30,
+        'governance_flag': False,
     },
 
     # Tower & Infrastruktur
@@ -652,7 +662,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Real Estate',
         'industry': 'REIT - Specialty',
         'current_price': 885,
-        'price_change_3y': -22.5,  # 3 TAHUN: TURUN dari ~1140
+        'price_change_3y': -22.5,
         'debt_to_equity': 1.85,
         'roe': 32.5,
         'roa': 8.5,
@@ -666,6 +676,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 45e12,
         'avg_volume': 20_000_000,
         'free_float_pct': 38,
+        'operating_cash_flow': 4000,
+        'payout_ratio': 25,
+        'governance_flag': False,
     },
     {
         'ticker': 'TBIG.JK',
@@ -673,7 +686,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Real Estate',
         'industry': 'REIT - Specialty',
         'current_price': 2150,
-        'price_change_3y': -15.8,  # 3 TAHUN: TURUN dari ~2550
+        'price_change_3y': -15.8,
         'debt_to_equity': 2.25,
         'roe': 28.5,
         'roa': 5.2,
@@ -687,6 +700,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 48e12,
         'avg_volume': 8_000_000,
         'free_float_pct': 35,
+        'operating_cash_flow': 3500,
+        'payout_ratio': 20,
+        'governance_flag': False,
     },
 
     # Poultry/Peternakan
@@ -696,7 +712,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Consumer Defensive',
         'industry': 'Farm Products',
         'current_price': 5050,
-        'price_change_3y': -5.8,  # 3 TAHUN: sedikit turun dari ~5360
+        'price_change_3y': -5.8,
         'debt_to_equity': 0.42,
         'roe': 18.5,
         'roa': 10.5,
@@ -710,6 +726,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 82e12,
         'avg_volume': 8_000_000,
         'free_float_pct': 45,
+        'operating_cash_flow': 2500,
+        'payout_ratio': 30,
+        'governance_flag': False,
     },
     {
         'ticker': 'JPFA.JK',
@@ -717,7 +736,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Consumer Defensive',
         'industry': 'Farm Products',
         'current_price': 1580,
-        'price_change_3y': 58.2,  # 3 TAHUN: dari ~998
+        'price_change_3y': 58.2,
         'debt_to_equity': 0.95,
         'roe': 15.2,
         'roa': 5.8,
@@ -731,6 +750,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 18e12,
         'avg_volume': 12_000_000,
         'free_float_pct': 48,
+        'operating_cash_flow': 1000,
+        'payout_ratio': 20,
+        'governance_flag': False,
     },
 
     # Media
@@ -740,7 +762,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Communication Services',
         'industry': 'Broadcasting',
         'current_price': 142,
-        'price_change_3y': -68.5,  # 3 TAHUN: TURUN SANGAT SIGNIFIKAN dari ~450
+        'price_change_3y': -68.5,
         'debt_to_equity': 0.12,
         'roe': 12.5,
         'roa': 8.5,
@@ -754,6 +776,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 2e12,
         'avg_volume': 15_000_000,
         'free_float_pct': 25,
+        'operating_cash_flow': 400,
+        'payout_ratio': 55,
+        'governance_flag': False,
     },
 
     # Keramik
@@ -763,7 +788,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Basic Materials',
         'industry': 'Building Materials',
         'current_price': 595,
-        'price_change_3y': 38.5,  # 3 TAHUN: dari ~430
+        'price_change_3y': 38.5,
         'debt_to_equity': 0.22,
         'roe': 22.5,
         'roa': 15.8,
@@ -777,6 +802,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 4.5e12,
         'avg_volume': 5_000_000,
         'free_float_pct': 38,
+        'operating_cash_flow': 300,
+        'payout_ratio': 60,
+        'governance_flag': False,
     },
 
     # Elektronik Retail
@@ -786,7 +814,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Consumer Cyclical',
         'industry': 'Electronics & Appliances',
         'current_price': 428,
-        'price_change_3y': 72.5,  # 3 TAHUN: dari ~248
+        'price_change_3y': 72.5,
         'debt_to_equity': 0.85,
         'roe': 15.8,
         'roa': 5.2,
@@ -800,6 +828,9 @@ SAMPLE_STOCK_DATA = [
         'market_cap': 13e12,
         'avg_volume': 25_000_000,
         'free_float_pct': 45,
+        'operating_cash_flow': 400,
+        'payout_ratio': 25,
+        'governance_flag': False,
     },
 
     # =========================================================================
