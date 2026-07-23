@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6125,  # Update 17 Juli 2026: +1.2%
+        'current_price': 6425,  # Update 23 Juli 2026: +4.9% dari 6125
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -199,7 +199,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indofood Sukses Makmur',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 6725,  # Update 4 Juli 2026 (unchanged)
+        'current_price': 6925,  # Update 23 Juli 2026: +3.0% dari 6725
         'price_change_3y': 35.7,
         'debt_to_equity': 0.68,
         'roe': 14.2,
@@ -352,7 +352,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 5575,  # Update 17 Juli 2026: +21.5% RECOVERY!
+        'current_price': 5025,  # Update 23 Juli 2026: -9.9% dari 5575
         'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
         'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UP
         'debt_to_equity': 0.15,
@@ -457,7 +457,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2620,  # Update 4 Juli 2026 (unchanged)
+        'current_price': 2650,  # Update 23 Juli 2026: +1.1% dari 2620
         'price_change_3y': 43.7,  # 3 TAHUN: dari ~1775 ke 2550
         'price_change_1y': 26.9,  # 1 TAHUN: dari ~2010 ke 2550 - still UP
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH
@@ -843,7 +843,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3490,  # Update 17 Juli 2026 (unchanged)
+        'current_price': 3670,  # Update 23 Juli 2026: +5.2% dari 3490
         'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
         'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
