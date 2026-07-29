@@ -934,7 +934,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indo Tambangraya Megah Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 25400,  # Update 15 Juni 2026 (unchanged)
+        'current_price': 24450,  # Update 29 Juli 2026: -3.7% dari 25400
         'price_change_3y': 46.4,  # 3 TAHUN: estimasi
         'price_change_1y': 17.0,  # 1 TAHUN: consolidation
         'debt_to_equity': 0.022,  # 2.2% - SANGAT RENDAH
@@ -963,7 +963,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 2340,  # Update 17 Juli 2026: -3.3%
+        'current_price': 2420,  # Update 29 Juli 2026: +3.4% dari 2340
         'price_change_3y': 34.1,  # 3 TAHUN: estimasi
         'price_change_1y': 14.9,  # 1 TAHUN: koreksi
         'debt_to_equity': 0.20,  # 20% - RENDAH
