@@ -344,6 +344,14 @@ def index():
     return render_template_string(HTML)
 
 
+@app.route('/acl')
+def acl():
+    acl_path = Path(__file__).parent / 'ACL_INPP.html'
+    if acl_path.exists():
+        return acl_path.read_text(encoding='utf-8')
+    return "File ACL_INPP.html tidak ditemukan.", 404
+
+
 @app.route('/api/rate-change', methods=['POST'])
 def api_rate_change():
     try:
