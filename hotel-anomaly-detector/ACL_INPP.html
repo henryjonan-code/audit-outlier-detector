@@ -526,8 +526,15 @@
       };
       const toNum = (val) => {
         if (val === null || val === undefined || val === "") return 0;
+        // JS number → return as-is (no string heuristics on native floats)
+        if (typeof val === "number") return isNaN(val) ? 0 : val;
         let raw = val.toString().trim();
         if (!raw) return 0;
+        // Handle scientific notation like "1e6" → strip 'e' → would produce "16"; parse properly
+        if (/^-?[\d.]+e[+-]?\d+$/i.test(raw)) {
+          const parsed = Number(raw);
+          return isNaN(parsed) ? 0 : parsed;
+        }
         // Accounting negative notation: (1,234.56) → -1234.56
         let accountingNeg = false;
         if (raw.startsWith("(") && raw.endsWith(")")) {
@@ -565,12 +572,14 @@
             // Multiple dots → all thousands: 1.234.567
             normalized = raw.replace(/\./g, "");
           } else {
-            // Single dot: exactly 3 digits after dot = Indonesian thousands separator
-            // 12.500 → 12500, Rp 1.234 → 1234
-            // Other patterns: 12.5, 0.75 → decimal (no change)
+            // Single dot: 3-digit decimal part = Indonesian thousands separator
+            // Rules: integer part "0" → always decimal (0.123 = 0.123, 0.500 = 0.5)
+            // Integer part ≥ "1" AND exactly 3 decimal digits → thousands (12.500 → 12500)
             const dotParts = normalized.split(".");
-            if (dotParts[1] && /^\d{3}$/.test(dotParts[1]))
+            const intPart = dotParts[0].replace(/^-/, "");
+            if (dotParts[1] && /^\d{3}$/.test(dotParts[1]) && intPart !== "0" && intPart !== "")
               normalized = dotParts[0] + dotParts[1];
+            // else: treat dot as decimal separator (0.123, 12.5, 0.75 etc.)
           }
         }
         const num = parseFloat(normalized.replace(/[^0-9.-]+/g, ""));
@@ -595,27 +604,34 @@
         }
         if (val instanceof Date) return val;
         const s = String(val).trim();
+        const validateDate = (y, mo, dd) => {
+          const r = new Date(y, mo, dd);
+          return (r.getFullYear() === y && r.getMonth() === mo && r.getDate() === dd) ? r : null;
+        };
         // Indonesian/English long format: "7 Agustus 2026" / "7 August 2026"
-        const longM = s.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+        // Also strips trailing time if present: "7 Agustus 2026 14:30"
+        const longM = s.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
         if (longM) {
           const month = ID_MONTH_MAP[longM[2].toLowerCase()];
-          if (month !== undefined)
-            return new Date(parseInt(longM[3]), month, parseInt(longM[1]));
+          if (month !== undefined) {
+            const r = validateDate(parseInt(longM[3]), month, parseInt(longM[1]));
+            if (r) return r;
+            return null; // invalid like "31 Februari 2026"
+          }
         }
-        // DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY (Indonesian standard)
-        const dmyM = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+        // DD/MM/YYYY [HH:MM[:SS]] — Indonesian standard, optional time suffix
+        const dmyM = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})(?:\s+\d{1,2}[:.]\d{2}.*)?$/);
         if (dmyM) {
           const dd = parseInt(dmyM[1]), mo = parseInt(dmyM[2]) - 1, y = parseInt(dmyM[3]);
-          const result = new Date(y, mo, dd);
-          // Reject invalid dates (31/02, 29/02/2025 etc.) — JS auto-corrects, we must not
-          if (result.getFullYear() === y && result.getMonth() === mo && result.getDate() === dd)
-            return result;
-          return null;
+          const result = validateDate(y, mo, dd);
+          return result; // null if invalid date (31/02 etc.)
         }
-        // YYYY-MM-DD (ISO)
+        // YYYY-MM-DD (ISO) — validate to reject 2026-02-31 etc.
         const isoM = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-        if (isoM)
-          return new Date(parseInt(isoM[1]), parseInt(isoM[2]) - 1, parseInt(isoM[3]));
+        if (isoM) {
+          const r = validateDate(parseInt(isoM[1]), parseInt(isoM[2]) - 1, parseInt(isoM[3]));
+          return r; // null if invalid
+        }
         // Fallback
         const d = new Date(s);
         return isNaN(d.getTime()) ? null : d;
@@ -998,7 +1014,7 @@
         if (!Array.isArray(lines) || !lines.length) return [];
         const rows = [];
         const rowPattern =
-          /^(?<vendor>.+?)\s+,?\s*(?<voucher>\d{6,8})\s+(?<date>\d{2}\/\d{2}\/\d{2})\s+(?<debit>[0-9][0-9,\s]*\.[0-9]{2})\s+(?<credit>[0-9][0-9,\s]*\.[0-9]{2})\s+(?<balance>[0-9][0-9,\s]*\.[0-9]{2})\s+(?<user>\d{1,4})$/;
+          /^(?<vendor>.+?)\s+,?\s*(?<voucher>\d{6,8})\s+(?<date>\d{2}\/\d{2}\/\d{2,4})\s+(?<debit>[0-9][0-9,\s]*\.[0-9]{2})\s+(?<credit>[0-9][0-9,\s]*\.[0-9]{2})\s+(?<balance>[0-9][0-9,\s]*\.[0-9]{2})\s+(?<user>\d{1,4})$/;
         lines.forEach((rawLine) => {
           const line = safeStr(rawLine).replace(/\s+/g, " ").trim();
           if (!line) return;
@@ -4850,16 +4866,20 @@
           });
           // Scope filter: zero out datasets that belong to a DIFFERENT scope
           // so analysis blocks produce 0 exceptions for out-of-scope modules
+          // Only datasets that are UNIQUE to a single scope are exclusive.
+          // Shared datasets (retailTx, revenue, projects) must NOT be excluded
+          // because they appear as required items in multiple scope checklists.
           const SCOPE_EXCLUSIVE = {
             HOTEL:     new Set(["hotelRev","guestLedger","rateChange","foPayment","foRevenue"]),
-            MALL:      new Set(["tenantContracts","retailTx","revenue"]),
+            MALL:      new Set(["tenantContracts"]),
             APARTMENT: new Set(["unitSales","apartmentRental","apartmentIPL"]),
-            PROJECTS:  new Set(["projects"]),
+            PROJECTS:  new Set([]), // projects is shared (also in APARTMENT), not exclusive
           };
           const ALL_SCOPE_EXCLUSIVE = new Set([
             "hotelRev","guestLedger","rateChange","foPayment","foRevenue",
-            "tenantContracts","retailTx","revenue",
-            "unitSales","apartmentRental","apartmentIPL","projects",
+            "tenantContracts",
+            "unitSales","apartmentRental","apartmentIPL",
+            // retailTx, revenue, projects intentionally omitted — shared across scopes
           ]);
           const effectiveDatasets = (() => {
             if (!auditScope || !SCOPE_EXCLUSIVE[auditScope]) return datasets;
@@ -4962,7 +4982,10 @@
           const toPct = (val) => {
             const num = toNum(val);
             if (num <= 0) return 0;
-            return num > 1 ? num / 100 : num;
+            // PMS exports percentage values in scale 0–100 (e.g., TO% 1 = 1%, 5 = 5%)
+            // Use ≥1 threshold so value "1" is correctly treated as 1% not 100%
+            // Values already in 0–1 fraction form (e.g., 0.5) pass through as 50%
+            return num >= 1 ? num / 100 : num;
           };
           const isArOtherAccount = (accountCode, accountName) => {
             const code = safeStr(accountCode).toUpperCase();
@@ -5210,17 +5233,20 @@
             queryDay,
             maxDays,
             predicate,
+            consumed, // optional Set<number> of positional indices already matched
           }) => {
             if (!index || !index.indexed || !(queryAmount > 0)) return null;
             const tolerance = Math.max(1000, queryAmount * 0.01);
             const start = lowerBound(index.amounts, queryAmount - tolerance);
             const end = upperBound(index.amounts, queryAmount + tolerance);
             for (let i = start; i < end; i++) {
+              if (consumed && consumed.has(i)) continue; // skip already-matched candidates
               const candidate = index.indexed[i];
               if (!amountClose(candidate.amount, queryAmount)) continue;
               const cDay = candidate.row._day;
               if (!isDayNear(cDay, queryDay, maxDays)) continue;
               if (predicate && !predicate(candidate.row)) continue;
+              if (consumed) consumed.add(i); // mark as consumed (1-to-1 matching)
               return candidate.row;
             }
             return null;
@@ -6417,7 +6443,11 @@
             let exp = 0;
             if (roomsAvail > 0 && occ > 0) {
               exp = roomsAvail * (occ / 100) * adr;
-            } else if (rooms > 0) {
+            } else if (rooms > 0 && occ > 0) {
+              // rooms column maps to total available rooms — apply occupancy
+              exp = rooms * (occ / 100) * adr;
+            } else if (rooms > 0 && adr > 0) {
+              // No occupancy data at all — use all rooms (conservative estimate)
               exp = rooms * adr;
             }
 
@@ -9708,12 +9738,14 @@
 
           if (bankRowsOut.length && payRowsOut.length && bankPayComparable) {
             const matchedPays = new Set();
+            const consumedPayIdx = new Set(); // 1-to-1: each AP Pay matched at most once
             bankRowsOut.forEach((b) => {
               const match = findIndexedMatch({
                 index: payAmountIndex,
                 queryAmount: b.flow.amount,
                 queryDay: b._day,
                 maxDays: 5,
+                consumed: consumedPayIdx,
               });
               if (match) {
                 matchedPays.add(match.idx);
