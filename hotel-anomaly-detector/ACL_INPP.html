@@ -5510,7 +5510,7 @@
                 module: "MASTER",
                 test: "Duplicate Vendor Acc Code",
                 score: 88,
-                desc: `Acc Code ${r.accCode || accKey} dipakai ${distinctNames.length} vendor`,
+                desc: `Acc Code ${r.accCode || accKey} dipakai ${distinctNames.length} vendor berbeda. Risiko: tumpang tindih akun mempersulit audit trail dan rekonsiliasi AP.`,
                 ref: safeStr(r.accCode || `VENDOR-${r.idx + 1}`),
                 srcRef: buildSrcRef(r, ["cid", "name", "accCode"]),
               });
@@ -5527,7 +5527,7 @@
                 module: "MASTER",
                 test: "Duplicate Vendor Name",
                 score: 68,
-                desc: `Nama vendor ${r.name} muncul pada ${distinctAcc.length} account code`,
+                desc: `Vendor "${r.name}" muncul di ${distinctAcc.length} account code berbeda. Risiko: duplikasi vendor atau splitting pembayaran untuk menghindari batas approval.`,
                 ref: safeStr(r.cid || r.accCode || `VENDOR-${r.idx + 1}`),
                 srcRef: buildSrcRef(r, ["cid", "name", "accCode"]),
               });
@@ -5569,7 +5569,7 @@
                   module: "MASTER",
                   test: "Ghost/Test Vendor",
                   score: 95,
-                  desc: `Indikasi data test pada vendor ${r.name || r.cid || "UNKNOWN"}`,
+                  desc: `Vendor "${r.name || r.cid || "UNKNOWN"}" mengandung kata test/dummy. Risiko: vendor fiktif aktif di master data — berpotensi menjadi tujuan pembayaran tidak sah.`,
                   ref: cidRef,
                   srcRef: _mstRef,
                 });
@@ -5602,7 +5602,7 @@
                   module: "MASTER",
                   test: "Missing Vendor Stat",
                   score: 60,
-                  desc: `Field Stat kosong untuk ${r.name || r.cid || "vendor"}`,
+                  desc: `Vendor "${r.name || r.cid || "?"}" tidak memiliki field Status. Tanpa status aktif/non-aktif, vendor tidak terotorisasi dapat tetap menerima pembayaran.`,
                   ref: cidRef,
                   srcRef: _mstRef,
                 });
@@ -5624,7 +5624,7 @@
                   module: "MASTER",
                   test: "Invoice Due Day Zero",
                   score: 82,
-                  desc: "Invoice Due Day = 0 hari",
+                  desc: `Vendor ${r.name || r.cid} termin 0 hari — invoice harus dibayar hari yang sama dengan penerbitan. Risiko: bypass proses review & approval pembayaran.`,
                   ref: cidRef,
                   srcRef: _mstRef,
                 });
@@ -5635,7 +5635,7 @@
                   module: "MASTER",
                   test: "Goods Delivery Day Zero",
                   score: 82,
-                  desc: "Goods Delivery Day = 0 hari",
+                  desc: `Vendor ${r.name || r.cid} lead time pengiriman 0 hari — tidak realistis untuk barang fisik. Kemungkinan data tidak akurat atau rekayasa.`,
                   ref: cidRef,
                   srcRef: _mstRef,
                 });
@@ -5651,7 +5651,7 @@
                   module: "MASTER",
                   test: "Non-standard Invoice Due Day",
                   score: 56,
-                  desc: `Invoice Due Day non-standar: ${r.invoiceDueDay}`,
+                  desc: `Vendor ${r.name || r.cid} termin ${r.invoiceDueDay} hari — di luar standar 7/14/30 hari. Verifikasi kontrak dan persetujuan manajemen.`,
                   ref: cidRef,
                   srcRef: _mstRef,
                 });
@@ -5664,7 +5664,7 @@
                     module: "MASTER",
                     test: "Due vs Delivery Mismatch",
                     score: gap >= 20 ? 70 : 62,
-                    desc: `Gap Invoice Due vs Delivery = ${gap} hari`,
+                    desc: `Vendor ${r.name || r.cid}: gap ${gap} hari antara termin invoice dan lead time pengiriman. Risiko proyeksi cashflow meleset — pembayaran jatuh tempo sebelum/lama setelah barang tiba.`,
                     ref: safeStr(cidRef || r.entryAt || "VENDOR-TERM"),
                     srcRef: _mstRef,
                   });
@@ -7574,13 +7574,16 @@
                 p["Approval Substitusi"] ||
                 p["Approved Spec Change"]
             );
-            if (toNum(p.actual || p.Actual) > toNum(p.budget || p.Budget))
+            const _actualAmt = toNum(p.actual || p.Actual);
+            const _budgetAmt = toNum(p.budget || p.Budget);
+            const _overrunPct = _budgetAmt > 0 ? ((_actualAmt / _budgetAmt - 1) * 100).toFixed(1) : "?";
+            if (_actualAmt > _budgetAmt)
               exc.push({
                 id: genId("CON"),
                 module: "CONST",
                 test: "Over Budget",
                 score: 85,
-                desc: "Budget Overrun",
+                desc: `Realisasi ${_actualAmt.toLocaleString()} melebihi anggaran ${_budgetAmt.toLocaleString()} (overrun ${_overrunPct}%). Verifikasi persetujuan tambahan anggaran dan potensi mark-up biaya.`,
                 ref: projectRef,
                 srcRef: _prjRef,
               });
@@ -8022,7 +8025,7 @@
                 module: "ASSET",
                 test: "No PO",
                 score: 90,
-                desc: `Capex ${cost.toLocaleString()} tanpa PO`,
+                desc: `Capex ${cost.toLocaleString()} tidak memiliki Purchase Order. Risiko: pembelian aset tidak terotorisasi, tidak ada 3-way match (PO-GRN-Invoice).`,
                 ref: safeStr(fa.id || fa["Asset ID"] || fa["Asset Code"]),
                 srcRef: buildSrcRef(fa, ["id", "cost"]),
               });
@@ -8147,7 +8150,7 @@
                 module: "REV",
                 test: "Weekend Rev",
                 score: 40,
-                desc: "Rev manual di hari libur",
+                desc: `Revenue ${revType || "manual"} senilai ${toNum(r.amount || r.Amount || r.total || r.Total || 0).toLocaleString()} pada ${safeStr(r.date || r.Date)} (hari libur/weekend). Input di luar jam kerja normal — verifikasi otorisasi dan kewajaran transaksi.`,
                 ref: safeStr(r.id || r["Revenue ID"]),
                 srcRef: buildSrcRef(r, ["id", "date", "amount", "type", "tenant"]),
               });
@@ -8672,7 +8675,7 @@
                   module: "AP",
                   test: "Duplicate Invoice",
                   score: 90,
-                  desc: `Indikasi invoice ganda vendor ${vendor}`,
+                  desc: `Invoice ganda terdeteksi dari vendor ${vendor} — nilai ${amt.toLocaleString()}, tgl ${date}. Risiko double payment atas transaksi yang sama.`,
                   ref: safeStr(i.id || i["Invoice ID"] || i["Invoice No"]),
                   srcRef: _apInvRef,
                 });
@@ -8691,7 +8694,7 @@
                   module: "AP",
                   test: "Instant Big Pay",
                   score: 95,
-                  desc: "Bayar 500jt+ di hari yang sama (No Approval time).",
+                  desc: `Invoice senilai ${amt.toLocaleString()} dibayar pada hari yang sama dengan tanggal invoice (0 hari tenggang). Pembayaran besar tanpa jeda review — risiko bypass approval dan pembayaran tidak sah.`,
                   ref: safeStr(i.id || i["Invoice ID"] || i["Invoice No"]),
                   srcRef: _apInvRef,
                 });
@@ -8746,7 +8749,7 @@
                 module: "AP",
                 test: "Duplicate Pay",
                 score: 90,
-                desc: `Payment ganda Ref: ${ref}`,
+                desc: `Payment ganda dari vendor ${vendor} senilai ${amount.toLocaleString()} (Ref: ${ref}, tgl: ${date}). Kemungkinan pembayaran dilakukan dua kali untuk transaksi yang sama.`,
                 ref,
                 srcRef: buildSrcRef(p, ["vendor", "amount", "date", "ref"]),
               });
@@ -9380,7 +9383,7 @@
                 module: "GL",
                 test: "Suspense",
                 score: 75,
-                desc: "Parkir dana di suspense",
+                desc: `Debet ${toNum(g.debit || g.Debit).toLocaleString()} diparkir di akun SUSPENSE (jurnal: ${safeStr(g.id || g["Journal ID"] || "-")}). Dana di suspense berisiko tidak dibukukan ke akun yang tepat — perlu penyelesaian segera.`,
                 ref: safeStr(g.id || g["Journal ID"] || g.ID),
                 srcRef: buildSrcRef(g, ["id", "acc", "debit", "date"]),
               });
@@ -9396,7 +9399,7 @@
               module: "GL",
               test: "EOM Spike",
               score: 60,
-              desc: "30%+ transaksi GL di akhir bulan.",
+              desc: `${eomCount} dari ${glTotal} jurnal (${Math.round(eomCount / glTotal * 100)}%) dibukukan di akhir bulan. Konsentrasi transaksi EOM berisiko window dressing laporan keuangan atau pembukuan backdated.`,
               ref: "GL-BATCH",
             });
           Object.keys(userCount).forEach((u) => {
@@ -9407,7 +9410,7 @@
                 module: "GL",
                 test: "User Dominance",
                 score: 75,
-                desc: `User '${u}' input ${Math.round(ratio * 100)}% jurnal.`,
+                desc: `User '${u}' membukukan ${Math.round(ratio * 100)}% dari ${glTotal} jurnal GL. Dominasi satu user mengindikasikan lemahnya segregasi tugas — risiko manipulasi tanpa pengawasan.`,
                 ref: "USER-RISK",
               });
           });
@@ -9420,7 +9423,7 @@
                 module: "INV",
                 test: "Negative Stock",
                 score: 65,
-                desc: "Stok minus (indikasi shrinkage).",
+                desc: `Item ${safeStr(item.id || item["Item Code"] || item.name || "?")} memiliki stok ${qty.toLocaleString()} unit (negatif). Indikasi pengeluaran tanpa dokumen — kemungkinan shrinkage, pencurian, atau kesalahan pencatatan.`,
                 ref: safeStr(item.id || item["Item Code"] || item["Item ID"]),
                 srcRef: buildSrcRef(item, ["id", "qty"]),
               });
