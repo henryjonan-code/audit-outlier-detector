@@ -4633,6 +4633,7 @@
           } else {
             reader.readAsArrayBuffer(file);
           }
+          e.target.value = "";
         };
 
         const getFileExt = (name = "") => {
@@ -11483,13 +11484,6 @@ ${optional.length ? `<div class="sec">B. Data Opsional (jika tersedia)</div>
                           >
                             Copy Draft
                           </button>
-                          <button
-                            type="button"
-                            onClick={exportDataRequestLetter}
-                            className="px-3 py-1.5 rounded border border-emerald-500/50 text-[10px] font-black uppercase tracking-widest text-emerald-200 hover:bg-emerald-500/20 flex items-center gap-1"
-                          >
-                            <Icon name="file-text" size={11} /> Surat Permintaan Data
-                          </button>
                         </div>
                       </div>
                       <div className="grid md:grid-cols-2 gap-2 text-[11px] text-slate-300">
@@ -11535,7 +11529,7 @@ ${optional.length ? `<div class="sec">B. Data Opsional (jika tersedia)</div>
                       </div>
                     </div>
                   </Card>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div>
                     <Card className="border-t-4 border-t-blue-500 bg-slate-800/50">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="font-black text-white text-xs uppercase tracking-widest flex items-center gap-2">
@@ -11585,32 +11579,6 @@ ${optional.length ? `<div class="sec">B. Data Opsional (jika tersedia)</div>
                           )}
                         </div>
                       )}
-                    </Card>
-                    <Card className="border-t-4 border-t-slate-600 bg-slate-800/40">
-                      <h4 className="font-black text-white text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <Icon name="boxes" size={14} className="text-slate-400" />
-                        Ringkasan Kamar Data
-                      </h4>
-                      <div className="grid grid-cols-2 gap-3 max-h-[330px] overflow-auto pr-1">
-                        {dataRooms.map((room) => (
-                          <div
-                            key={room.id}
-                            className="bg-slate-900/40 border border-slate-700 rounded-lg p-3"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span
-                                className={`text-[10px] font-black uppercase ${room.colorClass}`}
-                              >
-                                {room.label}
-                              </span>
-                              <Icon name={room.icon} size={12} className="text-slate-500" />
-                            </div>
-                            <div className="text-xl font-black text-white mt-1">
-                              {datasets[room.id].length}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </Card>
                   </div>
                   {sourceManifest.length > 0 && (
@@ -11744,18 +11712,6 @@ ${optional.length ? `<div class="sec">B. Data Opsional (jika tersedia)</div>
                           "RUN AUDIT & OUTLIER"
                         )}
                       </button>
-                      <div className="mt-4 flex flex-col items-center gap-2">
-                        <button
-                          onClick={() => setActiveTab("REKON")}
-                          disabled={!reconReady}
-                          className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-2 rounded-full text-[11px] font-black uppercase tracking-widest border border-slate-600 transition-all disabled:opacity-30"
-                        >
-                          Berikutnya: Rekonsiliasi
-                        </button>
-                        <p className="text-[10px] text-slate-500 font-medium">
-                          Rekonsiliasi butuh minimal dua data (contoh: Bank + Rekening Koran / AP Pay / AP Invoice).
-                        </p>
-                      </div>
                     </div>
                   </div>
               )}
