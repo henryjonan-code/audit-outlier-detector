@@ -5481,6 +5481,7 @@
                   score: 86,
                   desc: `CID ${r.cid || cidKey.toUpperCase()} dipakai ${rows.length} kali`,
                   ref: safeStr(r.cid || r.accCode || `VENDOR-${r.idx + 1}`),
+                  srcRef: buildSrcRef(r, ["cid", "name", "accCode"]),
                 });
               });
             });
@@ -5494,6 +5495,7 @@
                 score: 90,
                 desc: `Nama+Acc Code identik terdeteksi ${rows.length} kali (${r.name})`,
                 ref: safeStr(r.cid || r.accCode || `VENDOR-${r.idx + 1}`),
+                srcRef: buildSrcRef(r, ["cid", "name", "accCode"]),
               });
             });
             Object.entries(accGroups).forEach(([accKey, rows]) => {
@@ -5510,6 +5512,7 @@
                 score: 88,
                 desc: `Acc Code ${r.accCode || accKey} dipakai ${distinctNames.length} vendor`,
                 ref: safeStr(r.accCode || `VENDOR-${r.idx + 1}`),
+                srcRef: buildSrcRef(r, ["cid", "name", "accCode"]),
               });
             });
             Object.entries(nameGroups).forEach(([nameKey, rows]) => {
@@ -5526,6 +5529,7 @@
                 score: 68,
                 desc: `Nama vendor ${r.name} muncul pada ${distinctAcc.length} account code`,
                 ref: safeStr(r.cid || r.accCode || `VENDOR-${r.idx + 1}`),
+                srcRef: buildSrcRef(r, ["cid", "name", "accCode"]),
               });
             });
 
@@ -5544,6 +5548,7 @@
                   score: 60,
                   desc: `Nama mirip varian NEW: ${row.name}`,
                   ref: safeStr(row.cid || row.accCode || `VENDOR-${row.idx + 1}`),
+                  srcRef: buildSrcRef(row, ["cid", "name", "accCode"]),
                 });
               }
             });
@@ -5557,6 +5562,7 @@
             const hasDeliverySignal = vendorMasterRows.some((r) => r.deliveryRaw !== "");
             vendorMasterRows.forEach((r) => {
               const cidRef = safeStr(r.cid || r.accCode || `VENDOR-${r.idx + 1}`);
+              const _mstRef = buildSrcRef(r, ["cid", "name", "accCode"]);
               if (testRegex.test(`${r.cid} ${r.name} ${r.accCode}`)) {
                 exc.push({
                   id: genId("MVD"),
@@ -5565,6 +5571,7 @@
                   score: 95,
                   desc: `Indikasi data test pada vendor ${r.name || r.cid || "UNKNOWN"}`,
                   ref: cidRef,
+                  srcRef: _mstRef,
                 });
               }
               if (r.cid && !/^[A-Z]{1,4}\d{3}$/i.test(r.cid)) {
@@ -5575,6 +5582,7 @@
                   score: 55,
                   desc: `Format CID tidak standar: ${r.cid}`,
                   ref: cidRef,
+                  srcRef: _mstRef,
                 });
               }
               if (r.accCode && !/^(SUP)?\d{3,5}\.[A-Z0-9]{2,10}$/i.test(r.accCode)) {
@@ -5585,6 +5593,7 @@
                   score: 62,
                   desc: `Format Acc Code tidak standar: ${r.accCode}`,
                   ref: cidRef,
+                  srcRef: _mstRef,
                 });
               }
               if (hasStatSignal && !r.stat) {
@@ -5595,6 +5604,7 @@
                   score: 60,
                   desc: `Field Stat kosong untuk ${r.name || r.cid || "vendor"}`,
                   ref: cidRef,
+                  srcRef: _mstRef,
                 });
               }
               if (majorityWapu && r.wapu && r.wapu !== majorityWapu) {
@@ -5605,6 +5615,7 @@
                   score: 58,
                   desc: `WAPU ${r.wapu} berbeda dari mayoritas ${majorityWapu}`,
                   ref: cidRef,
+                  srcRef: _mstRef,
                 });
               }
               if (hasDueSignal && r.dueRaw !== "" && r.invoiceDueDay === 0) {
@@ -5615,6 +5626,7 @@
                   score: 82,
                   desc: "Invoice Due Day = 0 hari",
                   ref: cidRef,
+                  srcRef: _mstRef,
                 });
               }
               if (hasDeliverySignal && r.deliveryRaw !== "" && r.goodsDeliveryDay === 0) {
@@ -5625,6 +5637,7 @@
                   score: 82,
                   desc: "Goods Delivery Day = 0 hari",
                   ref: cidRef,
+                  srcRef: _mstRef,
                 });
               }
               if (
@@ -5640,6 +5653,7 @@
                   score: 56,
                   desc: `Invoice Due Day non-standar: ${r.invoiceDueDay}`,
                   ref: cidRef,
+                  srcRef: _mstRef,
                 });
               }
               if (hasDueSignal && hasDeliverySignal && r.dueRaw !== "" && r.deliveryRaw !== "") {
@@ -5652,6 +5666,7 @@
                     score: gap >= 20 ? 70 : 62,
                     desc: `Gap Invoice Due vs Delivery = ${gap} hari`,
                     ref: safeStr(cidRef || r.entryAt || "VENDOR-TERM"),
+                    srcRef: _mstRef,
                   });
                 }
               }
@@ -7396,6 +7411,7 @@
             const projectRef = safeStr(
               p.id || p["Project ID"] || p.code || p["Project Code"] || p.name || p["Project Name"]
             );
+            const _prjRef = buildSrcRef(p, ["project_id", "project", "contractor", "budget"]);
             const permitStatus = safeStr(
               p.permit_status ||
                 p["Permit Status"] ||
@@ -7566,6 +7582,7 @@
                 score: 85,
                 desc: "Budget Overrun",
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (boqPlanQty > 0 && boqActualQty > boqPlanQty * 1.1)
               exc.push({
@@ -7575,6 +7592,7 @@
                 score: 90,
                 desc: `Volume realisasi ${boqActualQty.toLocaleString()} > rencana ${boqPlanQty.toLocaleString()}`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (
               contractAmount > 0 &&
@@ -7588,6 +7606,7 @@
                 score: 90,
                 desc: `VO ${variationAmount.toLocaleString()} (${((variationAmount / contractAmount) * 100).toFixed(1)}%) dengan ${variationCount.toLocaleString()} perubahan`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (
               (billingProgress > 0 && physicalProgress > 0 && billingProgress - physicalProgress > 0.15) ||
@@ -7600,6 +7619,7 @@
                 score: 92,
                 desc: `Progress billing ${(billingProgress * 100).toFixed(1)}% vs fisik ${(physicalProgress * 100).toFixed(1)}%`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (retentionReleased > 0) {
               const earlyRelease =
@@ -7614,6 +7634,7 @@
                   score: 93,
                   desc: `Retensi ${retentionReleased.toLocaleString()} dicairkan sebelum serah terima lengkap`,
                   ref: projectRef,
+                srcRef: _prjRef,
                 });
               }
             }
@@ -7630,6 +7651,7 @@
                 score: 90,
                 desc: `Spec aktual (${materialSpecActual}) berbeda dari rencana (${materialSpecPlan}) tanpa approval`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (isApprovedStatus(permitStatus) && (isIncompleteDocs(permitDocs) || permitOverride))
               exc.push({
@@ -7639,6 +7661,7 @@
                 score: 92,
                 desc: `Permit ${permitStatus || "approved"} dengan dokumen/override tidak wajar`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (constructionStart && permitIssueDate && getDaysDistance(constructionStart, permitIssueDate) < 0)
               exc.push({
@@ -7648,6 +7671,7 @@
                 score: 95,
                 desc: `Konstruksi ${constructionStart} sebelum izin ${permitIssueDate}`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (farBase > 0 && farApproved > 0 && farApproved > farBase * 1.3 && farApproved - farBase >= 0.5)
               exc.push({
@@ -7657,6 +7681,7 @@
                 score: 88,
                 desc: `FAR naik dari ${farBase.toLocaleString()} ke ${farApproved.toLocaleString()}`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (
               donationAmount >= CAMPAIGN_DONATION_THRESHOLD &&
@@ -7673,6 +7698,7 @@
                 score: 90,
                 desc: `Donasi ${donationAmount.toLocaleString()} dekat tanggal approval`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
             if (pepFlag || hasPepSignal(beneficialOwner, officialRelation, p.name || p["Project Name"], p["PEP Note"], p["Risk Note"]))
               exc.push({
@@ -7682,6 +7708,7 @@
                 score: 90,
                 desc: `Proyek/UBO terindikasi PEP: ${beneficialOwner || p.name || p["Project Name"] || "UNKNOWN"}`,
                 ref: projectRef,
+                srcRef: _prjRef,
               });
           });
 
@@ -7997,6 +8024,7 @@
                 score: 90,
                 desc: `Capex ${cost.toLocaleString()} tanpa PO`,
                 ref: safeStr(fa.id || fa["Asset ID"] || fa["Asset Code"]),
+                srcRef: buildSrcRef(fa, ["id", "cost"]),
               });
           });
           if (payroll.length) {
@@ -8618,6 +8646,7 @@
             });
           }
           apInv.forEach((i) => {
+            const _apInvRef = buildSrcRef(i, ["id", "vendor", "amount", "date"]);
             const rowType = safeStr(i.row_type || i.rowType || i["Row Type"]).toLowerCase();
             const vendor = safeStr(i.vendor || i.Vendor || i.Supplier);
             const amt = toNum(i.amount || i["Payment Amount"] || i.Amount);
@@ -8645,6 +8674,7 @@
                   score: 90,
                   desc: `Indikasi invoice ganda vendor ${vendor}`,
                   ref: safeStr(i.id || i["Invoice ID"] || i["Invoice No"]),
+                  srcRef: _apInvRef,
                 });
               invMap[k] = true;
             }
@@ -8663,6 +8693,7 @@
                   score: 95,
                   desc: "Bayar 500jt+ di hari yang sama (No Approval time).",
                   ref: safeStr(i.id || i["Invoice ID"] || i["Invoice No"]),
+                  srcRef: _apInvRef,
                 });
               }
             }
@@ -8677,6 +8708,7 @@
                 score: 50,
                 desc: `Inefisiensi: Diskon ${off.toLocaleString()} tidak diambil.`,
                 ref: safeStr(i.id || i["Invoice ID"] || i["Invoice No"]),
+                srcRef: _apInvRef,
               });
             }
             if (gross > 0 && tax > 0) {
@@ -8689,6 +8721,7 @@
                   score: 75,
                   desc: `Rate Pajak aneh (${(taxRate * 100).toFixed(1)}%). Cek Faktur Pajak.`,
                   ref: safeStr(i.id || i["Invoice ID"] || i["Invoice No"]),
+                  srcRef: _apInvRef,
                 });
               }
             }
@@ -8715,6 +8748,7 @@
                 score: 90,
                 desc: `Payment ganda Ref: ${ref}`,
                 ref,
+                srcRef: buildSrcRef(p, ["vendor", "amount", "date", "ref"]),
               });
             payMap[k] = true;
           });
@@ -9348,6 +9382,7 @@
                 score: 75,
                 desc: "Parkir dana di suspense",
                 ref: safeStr(g.id || g["Journal ID"] || g.ID),
+                srcRef: buildSrcRef(g, ["id", "acc", "debit", "date"]),
               });
             if (g.date || g.Date) {
               if (isEOM(g.date || g.Date)) eomCount++;
@@ -9387,6 +9422,7 @@
                 score: 65,
                 desc: "Stok minus (indikasi shrinkage).",
                 ref: safeStr(item.id || item["Item Code"] || item["Item ID"]),
+                srcRef: buildSrcRef(item, ["id", "qty"]),
               });
             }
           });
@@ -10028,6 +10064,7 @@
                   score: 80,
                   desc: `Bank outflow ${b.flow.amount.toLocaleString()} tanpa pasangan invoice`,
                   ref: safeStr(b.id || b.desc || "BANK-UNMATCH"),
+                  srcRef: buildSrcRef(b, ["id", "date", "desc"]),
                 });
               }
             });
@@ -10040,6 +10077,7 @@
                   score: 75,
                   desc: `Invoice ${inv.amount.toLocaleString()} tidak ditemukan di bank`,
                   ref: safeStr(inv.id || "INV-UNMATCH"),
+                  srcRef: buildSrcRef(inv, ["id", "vendor", "amount", "date"]),
                 });
               }
             });
@@ -10059,6 +10097,7 @@
                   score: 70,
                   desc: `Duplikat transaksi ${b.flow.amount.toLocaleString()}`,
                   ref: safeStr(b.id || b.desc || "BANK-DUP"),
+                  srcRef: buildSrcRef(b, ["id", "date", "desc"]),
                 });
               }
               if (txId) seenTxnId.add(txId);
@@ -10070,6 +10109,7 @@
                   score: 75,
                   desc: `Nominal besar ${b.flow.amount.toLocaleString()}`,
                   ref: safeStr(b.id || b.desc || "BANK-OUTLIER"),
+                  srcRef: buildSrcRef(b, ["id", "date", "desc"]),
                 });
               }
             });
@@ -10151,6 +10191,7 @@
                   score: 75,
                   desc: `Nominal besar ${b.flow.amount.toLocaleString()}`,
                   ref: safeStr(b.id || b.desc || "BANK-OUTLIER"),
+                  srcRef: buildSrcRef(b, ["id", "date", "desc"]),
                 });
               }
             });
