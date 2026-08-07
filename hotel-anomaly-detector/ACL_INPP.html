@@ -526,31 +526,61 @@
       };
       const toNum = (val) => {
         if (val === null || val === undefined || val === "") return 0;
-        const raw = val.toString().trim();
+        let raw = val.toString().trim();
         if (!raw) return 0;
+        // Accounting negative notation: (1,234.56) → -1234.56
+        let accountingNeg = false;
+        if (raw.startsWith("(") && raw.endsWith(")")) {
+          accountingNeg = true;
+          raw = raw.slice(1, -1).trim();
+        }
         const hasDot = raw.includes(".");
         const hasComma = raw.includes(",");
+        const dotCount = (raw.match(/\./g) || []).length;
+        const commaCount = (raw.match(/,/g) || []).length;
         let normalized = raw;
         if (hasDot && hasComma) {
           const lastDot = raw.lastIndexOf(".");
           const lastComma = raw.lastIndexOf(",");
           if (lastComma > lastDot) {
+            // European format: 1.234,56 → comma is decimal separator
             normalized = raw.replace(/\./g, "").replace(/,/g, ".");
           } else {
+            // US format: 1,234.56 → comma is thousands separator
             normalized = raw.replace(/,/g, "");
           }
         } else if (hasComma && !hasDot) {
-          normalized = raw.replace(/,/g, ".");
-        } else {
-          normalized = raw.replace(/,/g, "");
+          if (commaCount > 1) {
+            // Multiple commas → all thousands: 4,200,000,000
+            normalized = raw.replace(/,/g, "");
+          } else {
+            const afterComma = (raw.split(",")[1] || "");
+            // Exactly 3 digits after single comma = thousands: 1,234
+            normalized = /^\d{3}$/.test(afterComma)
+              ? raw.replace(/,/g, "")
+              : raw.replace(/,/g, ".");
+          }
+        } else if (hasDot && !hasComma) {
+          if (dotCount > 1) {
+            // Multiple dots → all thousands: 1.234.567
+            normalized = raw.replace(/\./g, "");
+          }
+          // else: single dot = decimal separator, no change
         }
         const num = parseFloat(normalized.replace(/[^0-9.-]+/g, ""));
-        return isNaN(num) ? 0 : num;
+        if (isNaN(num)) return 0;
+        return accountingNeg ? -Math.abs(num) : num;
+      };
+      const ID_MONTH_MAP = {
+        januari:0, februari:1, maret:2, april:3, mei:4, juni:5,
+        juli:6, agustus:7, september:8, oktober:9, november:10, desember:11,
+        jan:0, feb:1, mar:2, apr:3, jun:5, jul:6, agu:7, agt:7, sep:8, okt:9, nov:10, des:11,
+        january:0, february:1, march:2, may:4, june:5, july:6, august:7,
+        october:9, december:11,
       };
       const toDate = (val) => {
         if (val === null || val === undefined || val === "") return null;
         if (typeof val === "number" && isFinite(val)) {
-          // Excel serial date support (days since 1899-12-30).
           if (val > 20000 && val < 80000) {
             return new Date(Date.UTC(1899, 11, 30) + Math.round(val) * 86400000);
           }
@@ -558,7 +588,27 @@
           return isNaN(dNum.getTime()) ? null : dNum;
         }
         if (val instanceof Date) return val;
-        const d = new Date(val);
+        const s = String(val).trim();
+        // Indonesian/English long format: "7 Agustus 2026" / "7 August 2026"
+        const longM = s.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+        if (longM) {
+          const month = ID_MONTH_MAP[longM[2].toLowerCase()];
+          if (month !== undefined)
+            return new Date(parseInt(longM[3]), month, parseInt(longM[1]));
+        }
+        // DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY (Indonesian standard)
+        const dmyM = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+        if (dmyM) {
+          const d = parseInt(dmyM[1]), mo = parseInt(dmyM[2]) - 1, y = parseInt(dmyM[3]);
+          if (d >= 1 && d <= 31 && mo >= 0 && mo <= 11)
+            return new Date(y, mo, d);
+        }
+        // YYYY-MM-DD (ISO)
+        const isoM = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (isoM)
+          return new Date(parseInt(isoM[1]), parseInt(isoM[2]) - 1, parseInt(isoM[3]));
+        // Fallback
+        const d = new Date(s);
         return isNaN(d.getTime()) ? null : d;
       };
       const safeStr = (val) => (val ? String(val).trim() : "");
@@ -1910,6 +1960,7 @@
         rateChange: "Rate Change Log",
         foPayment: "FO Payment",
         foRevenue: "FO Revenue",
+        unclassified: "Tidak Terklasifikasi",
       };
 
       const moduleKeywords = {
@@ -2356,9 +2407,10 @@
               best = { type: "ar", score: 0.5, reasons: ["fallback PDF: AR hint"] };
             else if (hasKeyword(pdfOpsHints))
               best = { type: "projects", score: 0.5, reasons: ["fallback PDF: ops/project hint"] };
-            else best = { type: "projects", score: 0, reasons: ["fallback PDF: generic document"] };
+            else best = { type: "unclassified", score: 0, reasons: ["PDF tidak dikenali — klasifikasi manual"] };
           } else {
-            best = { type: "bank", score: 0, reasons: ["fallback: default bank/internal table"] };
+            // score=0 on non-PDF: do NOT auto-assign to bank to avoid false positives
+            best = { type: "unclassified", score: 0, reasons: ["Header tidak cocok modul manapun — klasifikasi manual"] };
           }
         }
         const confidence = Math.min(0.95, (best.score + 1) / (best.score + 3));
@@ -2408,10 +2460,28 @@
         "2025-09-05",
         "2025-12-25",
         "2025-12-26",
-        // 2026
-        "2026-01-01",
-        "2026-01-16",
-        "2026-02-17",
+        // 2026 (Tahun Baru Masehi, Isra Mi'raj, Nyepi, Idul Fitri, Paskah,
+        //        Buruh, Kenaikan Isa, Waisak, Pancasila, HUT RI, Maulid Nabi, Natal)
+        "2026-01-01", // Tahun Baru Masehi
+        "2026-01-27", // Tahun Baru Imlek
+        "2026-02-17", // Isra Mi'raj
+        "2026-03-20", // Hari Raya Nyepi
+        "2026-03-31", // Selasa Hari Raya Idul Fitri (perkiraan)
+        "2026-04-01", // Idul Fitri H+1
+        "2026-04-02", // Idul Fitri H+2
+        "2026-04-03", // Good Friday (Jumat Agung)
+        "2026-04-05", // Paskah
+        "2026-05-01", // Hari Buruh
+        "2026-05-14", // Kenaikan Isa Almasih
+        "2026-05-24", // Hari Raya Waisak
+        "2026-06-01", // Hari Lahir Pancasila
+        "2026-06-02", // Cuti Bersama Pancasila
+        "2026-06-07", // Idul Adha (perkiraan)
+        "2026-06-28", // Tahun Baru Islam 1448H (perkiraan)
+        "2026-08-17", // HUT Kemerdekaan RI
+        "2026-09-26", // Maulid Nabi Muhammad SAW (perkiraan)
+        "2026-12-25", // Hari Raya Natal
+        "2026-12-26", // Cuti Bersama Natal
       ]);
       const toIsoDate = (dateVal) => {
         const d = toDate(dateVal);
@@ -3775,6 +3845,7 @@
         rateChange: [],
         foPayment: [],
         foRevenue: [],
+        unclassified: [],
       });
 
       const RiskBadge = ({ score }) => {
@@ -3860,6 +3931,7 @@
         const [compareResult, setCompareResult] = useState(null);
         const [compareReportName, setCompareReportName] = useState(null);
         const [requestChecklistScope, setRequestChecklistScope] = useState("HOTEL");
+        const [auditScope, setAuditScope] = useState(null); // null = welcome screen
         const [agentLogs, setAgentLogs] = useState([
           {
             id: "BOOT-2",
@@ -8661,7 +8733,8 @@
                 });
               }
             }
-            if (p.requestDate && p.poDate && getDaysDistance(p.requestDate, p.poDate) < 0) {
+            // PO Before PR: poDate < requestDate → getDaysDistance(requestDate, poDate) > 0
+            if (p.requestDate && p.poDate && getDaysDistance(p.requestDate, p.poDate) > 0) {
               exc.push({
                 id: genId("PRC"),
                 module: "PROCUREMENT",
@@ -8671,7 +8744,8 @@
                 ref: safeStr(p.poNo || p.prNo || p.vendor || `PROC-${p.idx + 1}`),
               });
             }
-            if (p.poDate && p.deliveryEstDate && getDaysDistance(p.poDate, p.deliveryEstDate) < 0) {
+            // Delivery Before PO: deliveryEstDate < poDate → getDaysDistance(poDate, deliveryEstDate) > 0
+            if (p.poDate && p.deliveryEstDate && getDaysDistance(p.poDate, p.deliveryEstDate) > 0) {
               exc.push({
                 id: genId("PRC"),
                 module: "PROCUREMENT",
@@ -8795,14 +8869,15 @@
               });
             }
             if (p.requestDate && p.deliveryEstDate) {
-              const leadDays = getDaysDistance(p.requestDate, p.deliveryEstDate);
+              // Lead time = deliveryEstDate - requestDate (positive = delivery after request)
+              const leadDays = getDaysDistance(p.deliveryEstDate, p.requestDate);
               if (leadDays > 90) {
                 exc.push({
                   id: genId("PRC"),
                   module: "PROCUREMENT",
                   test: "Long Lead Time PO",
                   score: leadDays > 120 ? 78 : 70,
-                  desc: `Lead time request->delivery ${leadDays} hari`,
+                  desc: `Lead time request→delivery ${leadDays} hari`,
                   ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
                 });
               }
@@ -10389,6 +10464,12 @@
           };
         }, [exceptions, sortedExceptions]);
 
+        const escHtml = (s) =>
+          String(s ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
         const exportAuditReport = () => {
           if (!isAnalyzed) return alert("Jalankan audit terlebih dahulu.");
           const reportDate = new Date().toISOString().slice(0, 10);
@@ -10414,13 +10495,13 @@
             .map(
               (e) =>
                 `<tr>
-                  <td>${e.riskLabel || getRiskLabel(e.score)} (${e.score})</td>
-                  <td>${e.module}</td>
-                  <td>${e.test}</td>
-                  <td>${e.evidence || "-"}</td>
-                  <td>${e.desc}</td>
-                  <td>${e.criteria || getCriteria(e.test)}</td>
-                  <td>${e.ref}</td>
+                  <td>${escHtml(e.riskLabel || getRiskLabel(e.score))} (${e.score})</td>
+                  <td>${escHtml(e.module)}</td>
+                  <td>${escHtml(e.test)}</td>
+                  <td>${escHtml(e.evidence || "-")}</td>
+                  <td>${escHtml(e.desc)}</td>
+                  <td>${escHtml(e.criteria || getCriteria(e.test))}</td>
+                  <td>${escHtml(e.ref)}</td>
                 </tr>`
             )
             .join("");
@@ -10428,10 +10509,10 @@
             .map(
               (row) =>
                 `<tr>
-                  <td>${row.fileName}</td>
-                  <td>${moduleLabels[row.type] || row.type}</td>
+                  <td>${escHtml(row.fileName)}</td>
+                  <td>${escHtml(moduleLabels[row.type] || row.type)}</td>
                   <td>${Math.round((row.confidence || 0) * 100)}%</td>
-                  <td>${(row.reasons || []).join(" | ") || "-"}</td>
+                  <td>${escHtml((row.reasons || []).join(" | ") || "-")}</td>
                   <td style="text-align:right">${row.rows || 0}</td>
                 </tr>`
             )
@@ -10754,6 +10835,95 @@
           setActiveTab("EXCEPTIONS");
         };
 
+        // ─── WELCOME SCREEN ───────────────────────────────────────────
+        if (auditScope === null) {
+          const SCOPE_CARDS = [
+            {
+              key: "HOTEL",
+              icon: "bed-double",
+              color: "from-orange-600 to-amber-500",
+              border: "border-orange-500/40",
+              title: "Hotel / Resort",
+              desc: "Revenue harian, FO Journal, Rate Change, Guest Ledger, Rekening Koran, Vendor.",
+              badge: "FO Anomaly + Rate Change",
+              badgeColor: "bg-orange-900/50 text-orange-300 border-orange-500/30",
+            },
+            {
+              key: "MALL",
+              icon: "shopping-bag",
+              color: "from-purple-600 to-violet-500",
+              border: "border-purple-500/40",
+              title: "Mall / Retail Center",
+              desc: "Kontrak & billing tenant, AR piutang, retail POS, AP, bank, procurement.",
+              badge: "Turnover + Tax Anomaly",
+              badgeColor: "bg-purple-900/50 text-purple-300 border-purple-500/30",
+            },
+            {
+              key: "APARTMENT",
+              icon: "building",
+              color: "from-blue-600 to-cyan-500",
+              border: "border-blue-500/40",
+              title: "Apartment / Property Sales",
+              desc: "Penjualan unit, sewa tenant, IPL pemilik, konstruksi, AR, AP, bank.",
+              badge: "POC + Commission + IPL",
+              badgeColor: "bg-blue-900/50 text-blue-300 border-blue-500/30",
+            },
+            {
+              key: "PROJECTS",
+              icon: "hard-hat",
+              color: "from-yellow-600 to-lime-500",
+              border: "border-yellow-500/40",
+              title: "Projects Sipil",
+              desc: "BoQ, variation order, progress, retensi, BAST/PHO/FHO, spesifikasi, izin.",
+              badge: "BoQ + Split PO + Retention",
+              badgeColor: "bg-yellow-900/50 text-yellow-300 border-yellow-500/30",
+            },
+          ];
+          return (
+            <div className="min-h-screen text-slate-200 flex flex-col items-center justify-center p-6">
+              <div className="w-full max-w-3xl">
+                <div className="text-center mb-10">
+                  <h1 className="text-4xl font-black text-white uppercase tracking-tighter title-font mb-2 flex items-center justify-center gap-3">
+                    <Icon name="shield-alert" size={36} className="text-blue-500" />
+                    AUDIT<span className="text-blue-500">COMMAND</span> LANGUAGE
+                  </h1>
+                  <p className="text-slate-400 text-sm uppercase tracking-widest font-semibold">
+                    PT Indonesian Paradise Property Tbk — Internal Audit Analytics
+                  </p>
+                  <p className="text-slate-500 text-xs mt-3">
+                    Pilih jenis properti yang akan diaudit untuk memulai
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {SCOPE_CARDS.map((card) => (
+                    <button
+                      key={card.key}
+                      onClick={() => {
+                        setAuditScope(card.key);
+                        setRequestChecklistScope(card.key);
+                      }}
+                      className={`text-left rounded-2xl border ${card.border} bg-slate-900/60 p-6 hover:bg-slate-800/80 transition-all active:scale-95 shadow-lg group`}
+                    >
+                      <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${card.color} mb-4 shadow-md`}>
+                        <Icon name={card.icon} size={22} className="text-white" />
+                      </div>
+                      <h3 className="font-black text-white text-base title-font mb-1">{card.title}</h3>
+                      <p className="text-slate-400 text-xs leading-relaxed mb-3">{card.desc}</p>
+                      <span className={`inline-block px-2 py-1 rounded text-[10px] font-black border ${card.badgeColor} uppercase tracking-wider`}>
+                        {card.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-center text-slate-600 text-[11px] mt-8 uppercase tracking-widest">
+                  Rule Guard: {Object.keys({...criteriaMap}).length} kriteria • Multi-format CSV / XLSX / PDF
+                </p>
+              </div>
+            </div>
+          );
+        }
+        // ─── END WELCOME SCREEN ───────────────────────────────────────
+
         return (
           <div className="min-h-screen text-slate-200 p-4 md:p-8">
             <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6 border-b border-slate-700 pb-6">
@@ -10769,12 +10939,21 @@
                   Upload dokumen, auto-mapping AI, deteksi outlier, dan rekonsiliasi.
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="flex flex-wrap gap-2 justify-center items-center">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 border border-slate-700 px-2 py-1 rounded">
+                  {auditScope || "ALL"}
+                </span>
+                <button
+                  onClick={() => { setAuditScope(null); }}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg font-bold text-xs flex items-center gap-2 border border-slate-600 transition-all active:scale-95"
+                >
+                  <Icon name="layout-grid" size={13} /> Ganti Scope
+                </button>
                 <button
                   onClick={loadDemo}
                   className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2 border border-slate-600 transition-all shadow-lg active:scale-95"
                 >
-                  <Icon name="database" size={14} /> Simulasi Agen 2
+                  <Icon name="database" size={14} /> Demo
                 </button>
                 <button
                   onClick={resetAll}
@@ -10838,32 +11017,49 @@
                     <Card className="md:col-span-2 border-t-4 border-t-cyan-500 bg-slate-800/40">
                       <div className="flex items-center justify-between mb-4">
                         <h4 className="font-black text-white text-xs uppercase tracking-widest flex items-center gap-2">
-                          <Icon name="bot" size={14} className="text-cyan-400" />
-                          Status Agen AI
+                          <Icon name="clipboard-check" size={14} className="text-cyan-400" />
+                          Checklist Data — {activeRequestChecklist.title}
                         </h4>
                         <span className="text-[10px] text-slate-500 font-mono">
-                          Auto-simulasi & auto-fix
+                          {activeChecklistProgress.requiredOk}/{activeChecklistProgress.required} wajib ·{" "}
+                          {activeChecklistProgress.optionalOk}/{activeChecklistProgress.optional} opsional
                         </span>
                       </div>
-                      <div className="grid md:grid-cols-2 gap-3">
-                        {agentLogs.map((log) => (
+                      {/* Progress bar */}
+                      <div className="mb-4">
+                        <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
                           <div
-                            key={log.id}
-                            className="bg-slate-900/40 border border-slate-700 rounded-lg p-3"
-                          >
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-[10px] font-black text-emerald-400 uppercase">
-                                {log.agent}
+                            className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full transition-all"
+                            style={{ width: `${activeChecklistProgress.required > 0 ? (activeChecklistProgress.requiredOk / activeChecklistProgress.required) * 100 : 0}%` }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-1">
+                          {activeChecklistProgress.required > 0
+                            ? Math.round((activeChecklistProgress.requiredOk / activeChecklistProgress.required) * 100)
+                            : 0}% data wajib tersedia
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1.5 max-h-52 overflow-y-auto pr-1">
+                        {activeRequestChecklist.items.map((item) => {
+                          const filled = datasets[item.id] && datasets[item.id].length > 0;
+                          return (
+                            <div key={item.id} className={`flex items-center gap-2 p-2 rounded text-[11px] ${
+                              filled ? "bg-emerald-900/20 border border-emerald-500/20" : "bg-slate-900/30 border border-slate-700/40"
+                            }`}>
+                              <Icon
+                                name={filled ? "check-circle" : item.required ? "circle-alert" : "circle"}
+                                size={12}
+                                className={filled ? "text-emerald-400" : item.required ? "text-orange-400" : "text-slate-600"}
+                              />
+                              <span className={filled ? "text-emerald-300" : item.required ? "text-slate-300" : "text-slate-500"}>
+                                {item.label}
                               </span>
-                              <span className="text-[10px] text-slate-500 font-mono">
-                                {log.title}
-                              </span>
+                              {item.required && !filled && (
+                                <span className="ml-auto text-[9px] font-black text-orange-500 uppercase">WAJIB</span>
+                              )}
                             </div>
-                            <p className="text-[11px] text-slate-400 leading-relaxed">
-                              {log.detail}
-                            </p>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </Card>
                     <Card className="border-t-4 border-t-orange-500 bg-slate-800/40">
@@ -11544,16 +11740,17 @@
                               e.ref,
                             ]),
                           ];
+                          // Sanitize CSV cells: escape quotes + prevent formula injection
+                          const csvSanitize = (cell) => {
+                            let s = String(cell ?? "").replace(/"/g, '""');
+                            // Prepend tab to neutralize Excel formula injection (=, +, -, @, |, \t)
+                            if (/^[=+\-@\t|]/.test(s)) s = "\t" + s;
+                            return `"${s}"`;
+                          };
                           const csvContent =
                             "\uFEFF" +
                             csvRows
-                              .map((r) =>
-                                r
-                                  .map((cell) =>
-                                    `"${String(cell).replace(/"/g, '""')}"`
-                                  )
-                                  .join(",")
-                              )
+                              .map((r) => r.map(csvSanitize).join(","))
                               .join("\n");
                           const blob = new Blob([csvContent], {
                             type: "text/csv;charset=utf-8;",
