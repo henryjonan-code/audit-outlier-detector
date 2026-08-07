@@ -9041,7 +9041,8 @@
                 entryNorm.includes(reqNorm);
               const overlapByRole =
                 reqText.includes("PURCHASING") && entryByVal.includes("PURCHASING");
-              if (overlapByName || overlapByRole) {
+              const bothAreDepts = roleEntryRegex.test(reqText) && roleEntryRegex.test(entryByVal);
+              if (!bothAreDepts && (overlapByName || overlapByRole)) {
                 exc.push({
                   id: genId("PRC"),
                   module: "PROCUREMENT",
@@ -10334,7 +10335,7 @@
               const r1Raw = rcGetField(row, "Room Rate1", "RoomRate1", "Rate Baru", "RateBaru", "NewRate", "new_rate", "New Rate", "Rate After", "RateNew", "Rate1", "RatePost", "NewRoomRate");
               const r2Raw = rcGetField(row, "Room Rate2", "RoomRate2", "Rate Lama", "RateLama", "OldRate", "old_rate", "Old Rate", "Rate Before", "RatePrev", "RateOld", "Rate2", "Original Rate", "RatePre", "OldRoomRate");
               const varRaw = rcGetField(row, "Variance", "Selisih", "variance", "Delta", "Diff", "Difference");
-              const staffId = safeStr(rcGetField(row, "ID", "StaffID", "Staff ID", "User", "ChangedBy", "Changed By", "ModifiedBy", "Modified By", "Operator", "Officer", "Petugas", "Employee", "EmployeeID", "Employee ID", "UserID", "User ID", "PIC", "id"));
+              const staffId = safeStr(rcGetField(row, "StaffID", "Staff ID", "StaffId", "User", "ChangedBy", "Changed By", "ModifiedBy", "Modified By", "Operator", "Officer", "Petugas", "EmployeeID", "Employee ID", "UserID", "User ID", "PIC", "Staff"));
               const chgDate = safeStr(rcGetField(row, "Change Date", "ChangeDate", "TglUbah", "Date"));
               const chgTime = safeStr(rcGetField(row, "Time", "Change Time", "ChangeTime", "Jam"));
 
