@@ -564,8 +564,14 @@
           if (dotCount > 1) {
             // Multiple dots → all thousands: 1.234.567
             normalized = raw.replace(/\./g, "");
+          } else {
+            // Single dot: exactly 3 digits after dot = Indonesian thousands separator
+            // 12.500 → 12500, Rp 1.234 → 1234
+            // Other patterns: 12.5, 0.75 → decimal (no change)
+            const dotParts = normalized.split(".");
+            if (dotParts[1] && /^\d{3}$/.test(dotParts[1]))
+              normalized = dotParts[0] + dotParts[1];
           }
-          // else: single dot = decimal separator, no change
         }
         const num = parseFloat(normalized.replace(/[^0-9.-]+/g, ""));
         if (isNaN(num)) return 0;
@@ -599,9 +605,12 @@
         // DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY (Indonesian standard)
         const dmyM = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
         if (dmyM) {
-          const d = parseInt(dmyM[1]), mo = parseInt(dmyM[2]) - 1, y = parseInt(dmyM[3]);
-          if (d >= 1 && d <= 31 && mo >= 0 && mo <= 11)
-            return new Date(y, mo, d);
+          const dd = parseInt(dmyM[1]), mo = parseInt(dmyM[2]) - 1, y = parseInt(dmyM[3]);
+          const result = new Date(y, mo, dd);
+          // Reject invalid dates (31/02, 29/02/2025 etc.) — JS auto-corrects, we must not
+          if (result.getFullYear() === y && result.getMonth() === mo && result.getDate() === dd)
+            return result;
+          return null;
         }
         // YYYY-MM-DD (ISO)
         const isoM = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
@@ -2354,7 +2363,7 @@
           const reasons = [];
           keywords.forEach((kw) => {
             const kwKey = normalizeKey(kw);
-            if (!kwKey) return;
+            if (!kwKey || kwKey.length < 3) return; // skip very short keywords ("ar","ot","po") — causes false positives
             const inHeader = keys.some((k) => k.includes(kwKey));
             if (inHeader) {
               score += 1;
@@ -2460,28 +2469,32 @@
         "2025-09-05",
         "2025-12-25",
         "2025-12-26",
-        // 2026 (Tahun Baru Masehi, Isra Mi'raj, Nyepi, Idul Fitri, Paskah,
-        //        Buruh, Kenaikan Isa, Waisak, Pancasila, HUT RI, Maulid Nabi, Natal)
+        // 2026 — SKB 3 Menteri (Libur Nasional + Cuti Bersama)
+        // Sumber: Keppres & SKB Menteri Ketenagakerjaan, Agama, PANRB
         "2026-01-01", // Tahun Baru Masehi
-        "2026-01-27", // Tahun Baru Imlek
-        "2026-02-17", // Isra Mi'raj
-        "2026-03-20", // Hari Raya Nyepi
-        "2026-03-31", // Selasa Hari Raya Idul Fitri (perkiraan)
-        "2026-04-01", // Idul Fitri H+1
-        "2026-04-02", // Idul Fitri H+2
-        "2026-04-03", // Good Friday (Jumat Agung)
-        "2026-04-05", // Paskah
-        "2026-05-01", // Hari Buruh
-        "2026-05-14", // Kenaikan Isa Almasih
-        "2026-05-24", // Hari Raya Waisak
+        "2026-01-16", // Isra Mi'raj Nabi Muhammad SAW (27 Rajab 1447H)
+        "2026-02-17", // Tahun Baru Imlek 2577 Kongzili
+        "2026-03-19", // Hari Suci Nyepi (Tahun Baru Saka 1948)
+        "2026-03-20", // Cuti Bersama Nyepi
+        "2026-03-21", // Hari Raya Idul Fitri 1447H (1 Syawal)
+        "2026-03-22", // Hari Raya Idul Fitri 1447H (2 Syawal)
+        "2026-03-23", // Cuti Bersama Idul Fitri
+        "2026-03-24", // Cuti Bersama Idul Fitri
+        "2026-03-25", // Cuti Bersama Idul Fitri
+        "2026-03-26", // Cuti Bersama Idul Fitri
+        "2026-04-03", // Wafat Isa Al-Masih (Jumat Agung — Good Friday; Easter 2026 = 5 Apr)
+        "2026-05-01", // Hari Buruh Internasional
+        "2026-05-14", // Kenaikan Isa Al-Masih (39 hari setelah Easter 5 Apr = 14 Mei)
+        "2026-05-22", // Hari Raya Waisak 2570 BE (purnama Mei 2026)
+        "2026-05-27", // Hari Raya Idul Adha 1447H (10 Dzulhijjah — perkiraan)
+        "2026-05-28", // Cuti Bersama Idul Adha
+        "2026-05-29", // Cuti Bersama Idul Adha
         "2026-06-01", // Hari Lahir Pancasila
-        "2026-06-02", // Cuti Bersama Pancasila
-        "2026-06-07", // Idul Adha (perkiraan)
-        "2026-06-28", // Tahun Baru Islam 1448H (perkiraan)
-        "2026-08-17", // HUT Kemerdekaan RI
-        "2026-09-26", // Maulid Nabi Muhammad SAW (perkiraan)
+        "2026-06-16", // Tahun Baru Islam 1448H (1 Muharram — perkiraan)
+        "2026-08-17", // HUT Kemerdekaan RI ke-81
+        "2026-08-26", // Maulid Nabi Muhammad SAW (12 Rabi'ul Awwal 1448H — perkiraan)
+        "2026-12-24", // Cuti Bersama Natal
         "2026-12-25", // Hari Raya Natal
-        "2026-12-26", // Cuti Bersama Natal
       ]);
       const toIsoDate = (dateVal) => {
         const d = toDate(dateVal);
@@ -4699,12 +4712,10 @@
                     );
                     continue;
                   }
-                  parsed = [
-                    {
-                      DocumentRef: file.name,
-                      Note: "PDF text extraction fallback (scan/no-table).",
-                    },
-                  ];
+                  skipped.push(
+                    `${file.name} (PDF scan/gambar — tidak ada teks yang bisa dibaca. Konversi ke CSV/XLSX atau gunakan OCR terlebih dahulu.)`
+                  );
+                  continue;
                 }
                 if (!parsed || parsed.length === 0) {
                   skipped.push(`${file.name} (data kosong/header gagal)`);
@@ -4837,6 +4848,26 @@
             title: "Audit Engine",
             detail: "Mengecek error, aturan audit, dan outlier AI.",
           });
+          // Scope filter: zero out datasets that belong to a DIFFERENT scope
+          // so analysis blocks produce 0 exceptions for out-of-scope modules
+          const SCOPE_EXCLUSIVE = {
+            HOTEL:     new Set(["hotelRev","guestLedger","rateChange","foPayment","foRevenue"]),
+            MALL:      new Set(["tenantContracts","retailTx","revenue"]),
+            APARTMENT: new Set(["unitSales","apartmentRental","apartmentIPL"]),
+            PROJECTS:  new Set(["projects"]),
+          };
+          const ALL_SCOPE_EXCLUSIVE = new Set([
+            "hotelRev","guestLedger","rateChange","foPayment","foRevenue",
+            "tenantContracts","retailTx","revenue",
+            "unitSales","apartmentRental","apartmentIPL","projects",
+          ]);
+          const effectiveDatasets = (() => {
+            if (!auditScope || !SCOPE_EXCLUSIVE[auditScope]) return datasets;
+            const allowed = SCOPE_EXCLUSIVE[auditScope];
+            const result = { ...datasets };
+            ALL_SCOPE_EXCLUSIVE.forEach(k => { if (!allowed.has(k)) result[k] = []; });
+            return result;
+          })();
           const exc = [];
           const {
             unitSales,
@@ -4862,7 +4893,7 @@
             rateChange,
             foPayment,
             foRevenue,
-          } = datasets;
+          } = effectiveDatasets;
 
           const HIGH_VALUE_THRESHOLD = 10000000;
           const CAPEX_THRESHOLD = 50000000;
@@ -10521,14 +10552,14 @@
             .map(
               (row) =>
                 `<tr>
-                  <td>${row.fileName}</td>
-                  <td>${row.accountTag}${row.accountNo ? ` ${row.accountNo}` : ""}</td>
-                  <td>${row.monthLabel}</td>
+                  <td>${escHtml(row.fileName)}</td>
+                  <td>${escHtml(row.accountTag)}${row.accountNo ? ` ${escHtml(row.accountNo)}` : ""}</td>
+                  <td>${escHtml(row.monthLabel)}</td>
                   <td style="text-align:right">${row.txCount}</td>
                   <td style="text-align:right">${row.totalDebit.toLocaleString()}</td>
                   <td style="text-align:right">${row.totalCredit.toLocaleString()}</td>
                   <td style="text-align:right">${row.closingBalance === null ? "-" : row.closingBalance.toLocaleString()}</td>
-                  <td>${row.quality}</td>
+                  <td>${escHtml(row.quality)}</td>
                 </tr>`
             )
             .join("");
@@ -10784,6 +10815,71 @@
           }
         };
 
+        const exportDataRequestLetter = () => {
+          const now = new Date();
+          const esc = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+          const fmtDate = (d) => d.toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" });
+          const dueDate = new Date(now.getTime() + 7 * 86400000);
+          const scopeLabel = { HOTEL: "Hotel", MALL: "Mall", APARTMENT: "Apartment", PROJECTS: "Proyek Sipil" }[auditScope] || activeRequestChecklist.title;
+          const required = activeRequestChecklist.items.filter(i => i.required);
+          const optional = activeRequestChecklist.items.filter(i => !i.required);
+          const tableRows = (items, startIdx = 1) => items.map((item, idx) => {
+            const guide = requestItemGuides[item.id] || "Format: Excel (.xlsx) atau CSV. Periode: 12 bulan terakhir.";
+            return `<tr><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:36px">${startIdx + idx}</td><td style="padding:7px 10px;border:1px solid #ccc;font-weight:600">${esc(item.label)}</td><td style="padding:7px 10px;border:1px solid #ccc;font-size:11.5px;color:#444">${esc(guide)}</td></tr>`;
+          }).join("");
+          const html = `<!doctype html><html lang="id"><head><meta charset="utf-8">
+<title>Surat Permintaan Data Audit — ${esc(scopeLabel)}</title>
+<style>
+  body{font-family:"Times New Roman",serif;margin:48px;color:#000;font-size:13px;line-height:1.7}
+  .co{text-align:center;font-size:15px;font-weight:bold;text-transform:uppercase;letter-spacing:1px}
+  .sub{text-align:center;font-size:12px;color:#444;margin-top:2px}
+  hr{border:none;border-top:2px solid #000;margin:14px 0}
+  .row{display:flex;margin-bottom:5px}
+  .lbl{width:130px;font-weight:bold;flex-shrink:0}
+  .col{width:16px;flex-shrink:0}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+  th{background:#222;color:#fff;padding:7px 10px;border:1px solid #000;text-align:left}
+  tr:nth-child(even){background:#f8f8f8}
+  .sec{font-weight:bold;margin:20px 0 6px;text-decoration:underline}
+  .note{font-style:italic;color:#555;font-size:11.5px;margin-top:18px}
+  .sig{margin-top:56px}
+  @media print{body{margin:24px}}
+</style></head><body>
+<div class="co">PT Indonesian Paradise Property Tbk</div>
+<div class="sub">Divisi Audit Internal</div>
+<hr>
+<div style="margin-bottom:18px">
+  <div class="row"><span class="lbl">Kepada</span><span class="col">:</span><span>General Manager / Finance Manager / Property Controller</span></div>
+  <div class="row"><span class="lbl">Dari</span><span class="col">:</span><span>Chief Internal Auditor — PT Indonesian Paradise Property Tbk</span></div>
+  <div class="row"><span class="lbl">Perihal</span><span class="col">:</span><span><b>Permintaan Data untuk Audit Internal — ${esc(scopeLabel)}</b></span></div>
+  <div class="row"><span class="lbl">Tanggal</span><span class="col">:</span><span>${fmtDate(now)}</span></div>
+  <div class="row"><span class="lbl">Batas Serah</span><span class="col">:</span><span><b>${fmtDate(dueDate)}</b></span></div>
+</div>
+<hr>
+<p>Sehubungan dengan pelaksanaan <b>audit internal ${esc(scopeLabel)}</b>, kami mohon kesediaan Bapak/Ibu untuk menyiapkan dan menyerahkan data di bawah ini sesuai batas waktu yang tercantum.</p>
+<p>Seluruh data agar disiapkan dalam format <b>Excel (.xlsx) atau CSV</b>, kecuali disebutkan lain. Rekening koran dapat diserahkan dalam format PDF asli dari bank.</p>
+<div class="sec">A. Data Wajib</div>
+<table><thead><tr><th style="width:36px">#</th><th>Data yang Dibutuhkan</th><th>Format &amp; Catatan Ekspor</th></tr></thead>
+<tbody>${tableRows(required)}</tbody></table>
+${optional.length ? `<div class="sec">B. Data Opsional (jika tersedia)</div>
+<table><thead><tr><th style="width:36px">#</th><th>Data yang Dibutuhkan</th><th>Format &amp; Catatan Ekspor</th></tr></thead>
+<tbody>${tableRows(optional, required.length + 1)}</tbody></table>` : ""}
+<p class="note">Data yang diserahkan digunakan semata-mata untuk keperluan audit internal dan bersifat rahasia. Mohon hubungi tim audit jika ada pertanyaan mengenai format atau cakupan data yang diminta.</p>
+<div class="sig">
+  <div style="display:inline-block;width:220px;text-align:center">
+    <br><br><br>
+    <div style="border-top:1px solid #000;padding-top:4px">( _________________________ )</div>
+    <div style="margin-top:3px">Chief Internal Auditor</div>
+    <div style="font-size:11px;color:#444">PT Indonesian Paradise Property Tbk</div>
+  </div>
+</div>
+<p style="margin-top:36px;font-size:10px;color:#aaa;text-align:center">Dibuat oleh ACL Audit Analytics Engine INPP — ${fmtDate(now)}</p>
+</body></html>`;
+          const w = window.open("", "_blank");
+          if (w) { w.document.write(html); w.document.close(); w.focus(); setTimeout(() => w.print(), 600); }
+          else setMappingLog("Pop-up diblokir browser. Izinkan pop-up untuk membuka surat permintaan data.");
+        };
+
         const applyCommand = () => {
           const raw = command.trim();
           if (!raw) return;
@@ -10944,7 +11040,13 @@
                   {auditScope || "ALL"}
                 </span>
                 <button
-                  onClick={() => { setAuditScope(null); }}
+                  onClick={() => {
+                    setAuditScope(null);
+                    setDatasets(createEmptyDatasets());
+                    setExceptions([]);
+                    setIsAnalyzed(false);
+                    setSourceManifest([]);
+                  }}
                   className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg font-bold text-xs flex items-center gap-2 border border-slate-600 transition-all active:scale-95"
                 >
                   <Icon name="layout-grid" size={13} /> Ganti Scope
@@ -11060,6 +11162,15 @@
                             </div>
                           );
                         })}
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-slate-700/50">
+                        <button
+                          type="button"
+                          onClick={exportDataRequestLetter}
+                          className="w-full px-3 py-2 rounded border border-emerald-500/40 text-[10px] font-black uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/15 flex items-center justify-center gap-2 transition-all"
+                        >
+                          <Icon name="file-text" size={12} /> Generate Surat Permintaan Data ke Properti
+                        </button>
                       </div>
                     </Card>
                     <Card className="border-t-4 border-t-orange-500 bg-slate-800/40">
@@ -11179,13 +11290,22 @@
                             Wajib terisi: {activeChecklistProgress.requiredOk}/{activeChecklistProgress.required}
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={copyRequestChecklist}
-                          className="px-3 py-1.5 rounded border border-indigo-500/50 text-[10px] font-black uppercase tracking-widest text-indigo-200 hover:bg-indigo-500/20"
-                        >
-                          Copy Draft Permintaan
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={copyRequestChecklist}
+                            className="px-3 py-1.5 rounded border border-indigo-500/50 text-[10px] font-black uppercase tracking-widest text-indigo-200 hover:bg-indigo-500/20"
+                          >
+                            Copy Draft
+                          </button>
+                          <button
+                            type="button"
+                            onClick={exportDataRequestLetter}
+                            className="px-3 py-1.5 rounded border border-emerald-500/50 text-[10px] font-black uppercase tracking-widest text-emerald-200 hover:bg-emerald-500/20 flex items-center gap-1"
+                          >
+                            <Icon name="file-text" size={11} /> Surat Permintaan Data
+                          </button>
+                        </div>
                       </div>
                       <div className="grid md:grid-cols-2 gap-2 text-[11px] text-slate-300">
                         {activeRequestChecklist.items.map((item) => {
