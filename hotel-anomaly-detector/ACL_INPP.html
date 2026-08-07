@@ -1864,6 +1864,14 @@
             ],
             entry_at: ["entryat", "createdat", "inputdate", "tanggalinput", "entry date"],
           },
+          revenue: {
+            id: [...commonKeywords.id, "revenue id", "revid", "revenueid"],
+            date: [...commonKeywords.date],
+            amount: [...commonKeywords.amount, "total", "net", "revenue"],
+            type: ["type", "jenis", "category", "kategori", "segment", "outlet", "rev_type", "revenue_type"],
+            tenant: ["tenant", "penyewa", "customer", "lessee", "parapihak", "client"],
+            desc: [...commonKeywords.desc],
+          },
           default: {
             id: commonKeywords.id,
             name: commonKeywords.name,
@@ -8013,6 +8021,8 @@
               ).toLowerCase();
               const ref = empId || name || "EMP";
 
+              const _payRef = buildSrcRef(p, ["id", "name", "basic", "ot", "status", "acc"]);
+
               // Ghost/fictitious employee
               if (name && ghostEmpRegex.test(name)) {
                 exc.push({
@@ -8022,6 +8032,7 @@
                   score: 90,
                   desc: `Indikasi karyawan fiktif: ${name}`,
                   ref,
+                  srcRef: _payRef,
                 });
               }
 
@@ -8034,6 +8045,7 @@
                   score: 75,
                   desc: `Lembur berlebihan ${ot.toLocaleString()} (${((ot / basic) * 100).toFixed(0)}% gaji pokok) — ${name || empId}`,
                   ref,
+                  srcRef: _payRef,
                 });
               }
 
@@ -8049,6 +8061,7 @@
                   score: 85,
                   desc: `Karyawan ${name || empId} berstatus ${safeStr(p.status || p.Status)} masih menerima pembayaran`,
                   ref,
+                  srcRef: _payRef,
                 });
               }
 
@@ -8097,7 +8110,8 @@
             });
           }
           revenue.forEach((r) => {
-            if (isWeekend(r.date || r.Date) && r.type !== "Parking")
+            const revType = safeStr(r.type || r.Type || r["Revenue Type"] || r.category || r.Category || "");
+            if (isWeekend(r.date || r.Date) && revType.toLowerCase() !== "parking")
               exc.push({
                 id: genId("REV"),
                 module: "REV",
@@ -8105,6 +8119,7 @@
                 score: 40,
                 desc: "Rev manual di hari libur",
                 ref: safeStr(r.id || r["Revenue ID"]),
+                srcRef: buildSrcRef(r, ["id", "date", "amount", "type", "tenant"]),
               });
           });
 
@@ -8782,10 +8797,12 @@
                 p["Government Relation"] ||
                 p["PEP Relation"]
             ),
+            __fileName: p.__fileName,
+            __rowIndex: p.__rowIndex,
           }));
           const topStandardRegex =
             /^(?:\d{1,3}\s*HARI|CASH|COD|TRANSFER|DP\s*\d{1,3}%|NET\s*\d{1,3})$/i;
-          const roleEntryRegex = /(PURCHASING|PROCUREMENT|SYSTEM|ADMIN|BUYER|SCM)/i;
+          const roleEntryRegex = /(PURCHASING|PROCUREMENT|SYSTEM|ADMIN|BUYER|SCM|ENGINEERING|ENGINEER|F&B|FNB|FOOD|BEVERAGE|OPERATIONS|FINANCE|ACCOUNTING|HRD|HOUSEKEEPING|MAINTENANCE|MARKETING|LEGAL|SECURITY|FRONT\s*OFFICE|SALES|MANAGEMENT|GENERAL|DEPT|DEPARTMENT|RECEPTION|RESERV)/i;
           const prYearGroups = {};
           procurementRows.forEach((p) => {
             if (!p.prNo) return;
@@ -8859,6 +8876,7 @@
           }
 
           procurementRows.forEach((p) => {
+            const _prcRef = buildSrcRef(p, ["poNo", "vendor", "poAmount", "poDate", "approvalStatus"]);
             if (p.invDate && p.poDate && getDaysDistance(p.invDate, p.poDate) < 0) {
               exc.push({
                 id: genId("PRC"),
@@ -8867,6 +8885,7 @@
                 score: 90,
                 desc: `Invoice ${p.invDate} lebih awal dari PO ${p.poDate}`,
                 ref: safeStr(p.invNo || p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (p.grnDate && p.poDate && getDaysDistance(p.grnDate, p.poDate) < 0) {
@@ -8877,6 +8896,7 @@
                 score: 85,
                 desc: `GRN ${p.grnDate} lebih awal dari PO ${p.poDate}`,
                 ref: safeStr(p.grnNo || p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (p.poAmount > 0 && p.invAmount > p.poAmount * 1.1) {
@@ -8887,6 +8907,7 @@
                 score: 90,
                 desc: `Invoice ${p.invAmount.toLocaleString()} > PO ${p.poAmount.toLocaleString()}`,
                 ref: safeStr(p.invNo || p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (p.poQty > 0 && p.grnQty > p.poQty * 1.02) {
@@ -8897,6 +8918,7 @@
                 score: 85,
                 desc: `GRN qty ${p.grnQty.toLocaleString()} > PO qty ${p.poQty.toLocaleString()}`,
                 ref: safeStr(p.grnNo || p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (p.invNo && p.invAmount > 0 && !p.grnNo) {
@@ -8907,6 +8929,7 @@
                 score: 80,
                 desc: `Invoice ${p.invNo} tidak punya referensi GRN`,
                 ref: safeStr(p.invNo || p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (p.approvalLimit > 0 && p.poAmount > p.approvalLimit) {
@@ -8917,6 +8940,7 @@
                 score: 90,
                 desc: `PO ${p.poAmount.toLocaleString()} melebihi limit ${p.approvalLimit.toLocaleString()}`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (p.poNo && !p.prNo) {
@@ -8927,6 +8951,7 @@
                 score: 80,
                 desc: `PO ${p.poNo} tidak memiliki PR Number`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (p.prNo) {
@@ -8942,6 +8967,7 @@
                   score: 72,
                   desc: `PR ${p.prNo} muncul ${dupCount} kali di tahun ${year}`,
                   ref: safeStr(p.poNo || p.prNo || `PROC-${p.idx + 1}`),
+                  srcRef: _prcRef,
                 });
               }
             }
@@ -8954,6 +8980,7 @@
                 score: 84,
                 desc: `PO ${p.poDate} lebih awal dari PR ${p.requestDate}`,
                 ref: safeStr(p.poNo || p.prNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             // Delivery Before PO: deliveryEstDate < poDate → getDaysDistance(poDate, deliveryEstDate) > 0
@@ -8965,6 +8992,7 @@
                 score: 78,
                 desc: `Delivery ${p.deliveryEstDate} lebih awal dari PO ${p.poDate}`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             const topVal = safeStr(p.top).toUpperCase();
@@ -8981,6 +9009,7 @@
                 score: !topVal ? 60 : 66,
                 desc: `Nilai TOP ${topVal ? `'${topVal}'` : "kosong"} tidak standar`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             const entryByVal = safeStr(p.entryBy).toUpperCase();
@@ -8997,6 +9026,7 @@
                 score: 64,
                 desc: `Entry By menggunakan nama personal: ${entryByVal}`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             const reqText = safeStr(p.requester).toUpperCase();
@@ -9017,14 +9047,19 @@
                   score: 62,
                   desc: `Requester '${p.requester}' overlap dengan Entry By '${p.entryBy}'`,
                   ref: safeStr(p.poNo || p.prNo || p.vendor || `PROC-${p.idx + 1}`),
+                  srcRef: _prcRef,
                 });
               }
             }
             const approvalText = `${p.remark} ${p.approvalStatus}`.toLowerCase();
+            const approvalNorm = safeStr(p.approvalStatus).toLowerCase().trim();
             const isNotApproved =
               p.remark.toLowerCase().includes("not approved") ||
+              approvalNorm === "n" || approvalNorm === "no" ||
+              approvalNorm === "tidak" || approvalNorm === "ditolak" ||
+              approvalNorm.includes("not approved") || approvalNorm.includes("ditolak") ||
               /(^|[^a-z0-9])n([^a-z0-9]|$)/i.test(p.approvalStatus) ||
-              approvalText.includes("reject");
+              approvalText.includes("reject") || approvalText.includes("ditolak");
             const remarkText = p.remark.toLowerCase();
             const statusText = safeStr(p.approvalStatus).toUpperCase();
             const remarkApproved =
@@ -9046,6 +9081,7 @@
                 score: 74,
                 desc: `Status PO konflik: remark='${safeStr(p.remark) || "-"}' vs approval='${safeStr(p.approvalStatus) || "-"}'`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (isNotApproved && p.poAmount >= HIGH_VALUE_THRESHOLD) {
@@ -9056,6 +9092,7 @@
                 score: 92,
                 desc: `PO ${p.poAmount.toLocaleString()} berstatus not approved`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (isNotApproved && isNonWorkingDay(p.poDate) && p.poAmount >= HIGH_VALUE_THRESHOLD) {
@@ -9066,6 +9103,7 @@
                 score: 90,
                 desc: `PO non-kerja ${p.poAmount.toLocaleString()} berstatus not approved`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             const hasPoAmountSignal =
@@ -9078,6 +9116,7 @@
                 score: 86,
                 desc: `PO amount = 0 pada ${p.poNo || "record procurement"}`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (p.requestDate && p.deliveryEstDate) {
@@ -9091,6 +9130,7 @@
                   score: leadDays > 120 ? 78 : 70,
                   desc: `Lead time request→delivery ${leadDays} hari`,
                   ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                  srcRef: _prcRef,
                 });
               }
             }
@@ -9109,6 +9149,7 @@
                 score: 90,
                 desc: `Donasi ${p.donationAmount.toLocaleString()} dekat approval procurement`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
             if (
@@ -9122,6 +9163,7 @@
                 score: 90,
                 desc: `Vendor/UBO terindikasi PEP: ${p.beneficialOwner || p.vendor || "UNKNOWN"}`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             }
           });
@@ -9143,6 +9185,7 @@
                 score: 60,
                 desc: `Nominal ${p.poAmount.toLocaleString()} berulang ${group.length}x pada vendor/tanggal sama`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
+                srcRef: _prcRef,
               });
             });
           });
@@ -9166,6 +9209,7 @@
                 score: group.length >= 8 ? 84 : 76,
                 desc: `PR ${prNo} menghasilkan ${group.length} PO dengan total ${total.toLocaleString()}`,
                 ref: safeStr(prNo),
+                srcRef: _prcRef,
               });
             }
           });
@@ -9184,6 +9228,7 @@
               score: 65,
               desc: `PO non-kerja ${weekendProcRows.length} dari ${procurementRows.length} transaksi`,
               ref: safeStr(topWeekend?.poNo || topWeekend?.poDate || "PROC-WEEKEND"),
+              srcRef: _prcRef,
             });
           }
           const vendorTotalCounter = {};
@@ -9210,6 +9255,7 @@
                 score: 68,
                 desc: `Vendor ${vendor} muncul ${weekendCount}/${totalCount} transaksi di hari non-kerja`,
                 ref: safeStr(refRow?.poNo || vendor),
+                srcRef: _prcRef,
               });
             }
           });
@@ -9247,6 +9293,7 @@
                     score: 88,
                     desc: `Vendor ${vendorName} dominan pada paket ${scope.toUpperCase()} (${rows.length}/${group.length})`,
                     ref: safeStr(r.poNo || r.tenderId || vendorName || `PROC-${r.idx + 1}`),
+                    srcRef: _prcRef,
                   });
                 });
               }
@@ -9273,6 +9320,7 @@
                   score: 90,
                   desc: `Total split PO ${total.toLocaleString()} pada vendor/requester/tanggal sama`,
                   ref: safeStr(g.poNo || g.vendor || `PROC-${g.idx + 1}`),
+                  srcRef: _prcRef,
                 });
               });
             }
@@ -9922,12 +9970,14 @@
           }
 
           if (invRowsOut.length && payRowsOut.length && invPayComparable) {
+            const consumedInvIdx = new Set(); // 1-to-1: each AP Pay matches at most one invoice
             invRowsOut.forEach((inv) => {
               const match = findIndexedMatch({
                 index: payAmountIndex,
                 queryAmount: inv.amount,
                 queryDay: inv._day,
                 maxDays: 30,
+                consumed: consumedInvIdx,
                 predicate: (p) => {
                   const vendorMatch =
                     inv.vendor &&
@@ -10279,10 +10329,10 @@
               const roomNo = safeStr(rcGetField(row, "Room No", "RoomNo", "room_no", "room"));
               const guest = safeStr(rcGetField(row, "Guest Name", "GuestName", "guest"));
               const status = safeStr(rcGetField(row, "Status", "Reserv Status", "ReservStatus"));
-              const r1Raw = rcGetField(row, "Room Rate1", "RoomRate1", "Rate Baru", "RateBaru", "NewRate", "new_rate");
-              const r2Raw = rcGetField(row, "Room Rate2", "RoomRate2", "Rate Lama", "RateLama", "OldRate", "old_rate");
-              const varRaw = rcGetField(row, "Variance", "Selisih", "variance");
-              const staffId = safeStr(rcGetField(row, "ID", "StaffID", "Staff ID", "User", "ChangedBy", "id"));
+              const r1Raw = rcGetField(row, "Room Rate1", "RoomRate1", "Rate Baru", "RateBaru", "NewRate", "new_rate", "New Rate", "Rate After", "RateNew", "Rate1", "RatePost", "NewRoomRate");
+              const r2Raw = rcGetField(row, "Room Rate2", "RoomRate2", "Rate Lama", "RateLama", "OldRate", "old_rate", "Old Rate", "Rate Before", "RatePrev", "RateOld", "Rate2", "Original Rate", "RatePre", "OldRoomRate");
+              const varRaw = rcGetField(row, "Variance", "Selisih", "variance", "Delta", "Diff", "Difference");
+              const staffId = safeStr(rcGetField(row, "ID", "StaffID", "Staff ID", "User", "ChangedBy", "Changed By", "ModifiedBy", "Modified By", "Operator", "Officer", "Petugas", "Employee", "EmployeeID", "Employee ID", "UserID", "User ID", "PIC", "id"));
               const chgDate = safeStr(rcGetField(row, "Change Date", "ChangeDate", "TglUbah", "Date"));
               const chgTime = safeStr(rcGetField(row, "Time", "Change Time", "ChangeTime", "Jam"));
 
@@ -10290,6 +10340,7 @@
               const r2 = rcParseAmt(r2Raw);
               let variance = rcParseAmt(varRaw);
               if (variance === null && r1 !== null && r2 !== null) variance = r1 - r2;
+              const _rcRef = buildSrcRef(row);
 
               // S1: Rate turun >30%
               if (r1 !== null && r2 !== null && r2 > 0 && variance !== null && variance < 0) {
@@ -10307,6 +10358,7 @@
                       score,
                       desc: `Resv ${resv} Kamar ${roomNo}: Rate ${Math.round(r2).toLocaleString()} → ${Math.round(r1).toLocaleString()} (turun ${pct.toFixed(1)}%)${afterHours ? " — DINI HARI!" : ""}`,
                       ref: resv || roomNo,
+                      srcRef: _rcRef,
                     });
                   }
                 }
@@ -10324,6 +10376,7 @@
                     score: 97,
                     desc: `Resv ${resv} Kamar ${roomNo}: Rate diturunkan ke Rp ${Math.round(r1).toLocaleString()} dari Rp ${Math.round(r2).toLocaleString()}`,
                     ref: resv || roomNo,
+                    srcRef: _rcRef,
                   });
                 }
               }
@@ -10341,13 +10394,17 @@
                     score,
                     desc: `Resv ${resv} Kamar ${roomNo}: Rate diubah pukul ${chgTime} (${variance < 0 ? "TURUN" : "NAIK"} ${Math.abs(variance || 0).toLocaleString()})`,
                     ref: resv || roomNo,
+                    srcRef: _rcRef,
                   });
                 }
               }
 
               // S4: Tanpa Staff ID
-              const noStaff = !staffId || ["none", "?", "nan", "null", ""].includes(staffId.toLowerCase());
-              if (noStaff && variance !== null && variance !== 0) {
+              const EMPTY_STAFF_SENTINEL = new Set(["none", "?", "nan", "null", "", "-", "n/a", "na", "0", "kosong", "unknown", "tidak ada"]);
+              const noStaff = !staffId || EMPTY_STAFF_SENTINEL.has(staffId.toLowerCase().trim());
+              const hasChange = (variance !== null && variance !== 0) ||
+                (r1Raw !== "" && r2Raw !== "" && r1Raw !== r2Raw);
+              if (noStaff && hasChange) {
                 const key4 = `${resv}|${r1}|${r2}`;
                 if (!rcSeen4.has(key4)) {
                   rcSeen4.add(key4);
@@ -10358,6 +10415,7 @@
                     score: 80,
                     desc: `Resv ${resv} Kamar ${roomNo}: Rate berubah tanpa Staff ID (Δ ${(variance || 0) < 0 ? "-" : "+"}${Math.abs(variance || 0).toLocaleString()})`,
                     ref: resv || roomNo,
+                    srcRef: _rcRef,
                   });
                 }
               }
