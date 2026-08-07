@@ -4916,6 +4916,8 @@
             title: "Audit Engine",
             detail: "Mengecek error, aturan audit, dan outlier AI.",
           });
+          // Defer heavy computation so React can render the spinner first
+          setTimeout(() => {
           // Scope filter: zero out datasets that belong to a DIFFERENT scope
           // so analysis blocks produce 0 exceptions for out-of-scope modules
           // Only datasets that are UNIQUE to a single scope are exclusive.
@@ -10661,8 +10663,7 @@
           // END FO ANOMALY
           // ============================================================
 
-          setTimeout(() => {
-            const deduped = [];
+          const deduped = [];
             const seen = new Set();
             exc.forEach((e) => {
               const key = [
@@ -10679,7 +10680,7 @@
             setIsAnalyzed(true);
             setActiveTab("TEMUAN");
             setIsAnalyzing(false);
-          }, 20);
+          }, 0);
         };
 
         const stats = useMemo(
