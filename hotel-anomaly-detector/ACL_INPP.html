@@ -4917,7 +4917,7 @@
             detail: "Mengecek error, aturan audit, dan outlier AI.",
           });
           // Defer heavy computation so React can render the spinner first
-          setTimeout(() => {
+          setTimeout(() => { try {
           // Scope filter: zero out datasets that belong to a DIFFERENT scope
           // so analysis blocks produce 0 exceptions for out-of-scope modules
           // Only datasets that are UNIQUE to a single scope are exclusive.
@@ -9187,7 +9187,7 @@
                 score: 60,
                 desc: `Nominal ${p.poAmount.toLocaleString()} berulang ${group.length}x pada vendor/tanggal sama`,
                 ref: safeStr(p.poNo || p.vendor || `PROC-${p.idx + 1}`),
-                srcRef: _prcRef,
+                srcRef: buildSrcRef(p, ["poNo", "vendor", "poAmount", "poDate"]),
               });
             });
           });
@@ -9211,7 +9211,7 @@
                 score: group.length >= 8 ? 84 : 76,
                 desc: `PR ${prNo} menghasilkan ${group.length} PO dengan total ${total.toLocaleString()}`,
                 ref: safeStr(prNo),
-                srcRef: _prcRef,
+                srcRef: buildSrcRef(group[0], ["poNo", "vendor", "poAmount", "poDate"]),
               });
             }
           });
@@ -9230,7 +9230,7 @@
               score: 65,
               desc: `PO non-kerja ${weekendProcRows.length} dari ${procurementRows.length} transaksi`,
               ref: safeStr(topWeekend?.poNo || topWeekend?.poDate || "PROC-WEEKEND"),
-              srcRef: _prcRef,
+              srcRef: buildSrcRef(topWeekend, ["poNo", "vendor", "poAmount", "poDate"]),
             });
           }
           const vendorTotalCounter = {};
@@ -9257,7 +9257,7 @@
                 score: 68,
                 desc: `Vendor ${vendor} muncul ${weekendCount}/${totalCount} transaksi di hari non-kerja`,
                 ref: safeStr(refRow?.poNo || vendor),
-                srcRef: _prcRef,
+                srcRef: buildSrcRef(refRow, ["poNo", "vendor", "poAmount", "poDate"]),
               });
             }
           });
@@ -9295,7 +9295,7 @@
                     score: 88,
                     desc: `Vendor ${vendorName} dominan pada paket ${scope.toUpperCase()} (${rows.length}/${group.length})`,
                     ref: safeStr(r.poNo || r.tenderId || vendorName || `PROC-${r.idx + 1}`),
-                    srcRef: _prcRef,
+                    srcRef: buildSrcRef(r, ["poNo", "vendor", "poAmount", "poDate"]),
                   });
                 });
               }
@@ -9322,7 +9322,7 @@
                   score: 90,
                   desc: `Total split PO ${total.toLocaleString()} pada vendor/requester/tanggal sama`,
                   ref: safeStr(g.poNo || g.vendor || `PROC-${g.idx + 1}`),
-                  srcRef: _prcRef,
+                  srcRef: buildSrcRef(g, ["poNo", "vendor", "poAmount", "poDate"]),
                 });
               });
             }
@@ -10679,7 +10679,11 @@
             setExceptions(deduped);
             setIsAnalyzed(true);
             setActiveTab("TEMUAN");
+          } catch (err) {
+            console.error("runAnalysis error:", err);
+          } finally {
             setIsAnalyzing(false);
+          }
           }, 0);
         };
 
