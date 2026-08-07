@@ -291,7 +291,7 @@
         const wb = XLSX.read(arrayBuffer, { type: "array" });
         const sheetNames = wb.SheetNames || [];
         if (!sheetNames.length) return [];
-        const codeRegex = /^\d{4}\.[a-z0-9]+$/i;
+        const codeRegex = /^\d{3,5}\.[a-z0-9]+$/i;
         const out = [];
         const dedupe = {};
         const netAmount = (debitRaw, creditRaw) => toNum(debitRaw) - toNum(creditRaw);
@@ -416,7 +416,7 @@
           "summarydeferred",
         ]);
         const out = [];
-        const codeRegex = /^\d{4}\.[a-z0-9]+$/i;
+        const codeRegex = /^\d{3,5}\.[a-z0-9]+$/i;
         const readRows = (sheetName) =>
           sheetName && wb.Sheets[sheetName]
             ? XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {
@@ -709,7 +709,7 @@
         for (let i = searchEnd; i >= nameStart; i--) {
           const t = tokens[i];
           if (
-            /^(SUP)?\d{3,4}\.[A-Z0-9]{2,10}$/i.test(t) ||
+            /^(SUP)?\d{3,5}\.[A-Z0-9]{2,10}$/i.test(t) ||
             /^\d{4}-\d{4}$/i.test(t) ||
             /^211\.[A-Z0-9]{2,10}$/i.test(t) ||
             /^(?:TEST|INPP|[A-Z]{2,5})$/i.test(t)
@@ -1820,6 +1820,24 @@
               "closingbalance",
               "saldoakhir",
             ],
+          },
+          payroll: {
+            id: [...commonKeywords.id, "empid", "employeeid", "nip", "nik", "emp"],
+            name: [...commonKeywords.name, "employee", "employeename", "karyawan", "pegawai"],
+            acc: ["acc", "account", "bankaccount", "bankaccno", "nomorrekening", "rekening", "bankno"],
+            basic: ["basic", "basicsalary", "gapok", "gajipokok", "basicpay", "basicwage", "gajidasar"],
+            ot: ["ot", "overtime", "lembur", "otpay", "overtimepay", "uanglembur"],
+            status: [...commonKeywords.status, "active", "aktif", "resign", "terminated", "inactive"],
+            department: ["department", "dept", "divisi", "division", "unit"],
+          },
+          gl: {
+            id: [...commonKeywords.id, "journal", "journalid", "jeid", "jrn", "journalno"],
+            date: [...commonKeywords.date],
+            debit: ["debit", "dr", "debitamount", "debit amount"],
+            credit: ["credit", "cr", "creditamount", "credit amount"],
+            acc: ["acc", "account", "accountcode", "account_code", "coa", "kodeakun", "glcode", "accountno", "akun"],
+            desc: [...commonKeywords.desc, "description"],
+            user: ["user", "maker", "preparer", "poster", "approver", "inputby", "createdby", "entryby"],
           },
           vendorMaster: {
             cid: ["cid", "vendorid", "vendor_id", "idvendor"],
@@ -5297,8 +5315,9 @@
             safeStr(code).toUpperCase().replace(/\s+/g, "").replace(/^SUP/, "");
           const vendorMasterRows = vendorMaster
             .map((v, idx) => {
-              const rawText = Object.values(v || {})
-                .map((val) => safeStr(val))
+              const rawText = Object.entries(v || {})
+                .filter(([k]) => !k.startsWith("__"))
+                .map(([, val]) => safeStr(val))
                 .filter(Boolean)
                 .join(" ")
                 .replace(/\s+/g, " ")
@@ -5502,7 +5521,7 @@
             const hasDeliverySignal = vendorMasterRows.some((r) => r.deliveryRaw !== "");
             vendorMasterRows.forEach((r) => {
               const cidRef = safeStr(r.cid || r.accCode || `VENDOR-${r.idx + 1}`);
-              if (testRegex.test(`${r.cid} ${r.name} ${r.accCode} ${r.rawText}`)) {
+              if (testRegex.test(`${r.cid} ${r.name} ${r.accCode}`)) {
                 exc.push({
                   id: genId("MVD"),
                   module: "MASTER",
@@ -5522,7 +5541,7 @@
                   ref: cidRef,
                 });
               }
-              if (r.accCode && !/^(SUP)?\d{4}\.[A-Z0-9]{2,10}$/i.test(r.accCode)) {
+              if (r.accCode && !/^(SUP)?\d{3,5}\.[A-Z0-9]{2,10}$/i.test(r.accCode)) {
                 exc.push({
                   id: genId("MVD"),
                   module: "MASTER",
@@ -7944,7 +7963,113 @@
                 ref: safeStr(fa.id || fa["Asset ID"] || fa["Asset Code"]),
               });
           });
-          payroll.forEach(() => {});
+          if (payroll.length) {
+            const ghostEmpRegex = /\b(ghost|test|dummy|temp|xxx|fake|fiktif|coba)\b/i;
+            const bankAccGroups = {};
+            payroll.forEach((p) => {
+              const empId = safeStr(
+                p.id || p["Emp ID"] || p.empid || p.Employee || p.employee || ""
+              );
+              const name = safeStr(
+                p.name || p["Employee Name"] || p.Employee || p.employee || ""
+              );
+              const acc = safeStr(
+                p.acc || p.Account || p["Bank Acc"] || p.bankaccount || p["Bank Account"] || p.rekening || ""
+              );
+              const basic = toNum(
+                p.basic || p.Basic || p["Basic Salary"] || p.basicsalary || p.gapok || 0
+              );
+              const ot = toNum(
+                p.ot || p.OT || p["OT Pay"] || p.overtime || p.lembur || 0
+              );
+              const status = safeStr(
+                p.status || p.Status || p.stat || p.Stat || ""
+              ).toLowerCase();
+              const ref = empId || name || "EMP";
+
+              // Ghost/fictitious employee
+              if (name && ghostEmpRegex.test(name)) {
+                exc.push({
+                  id: genId("PAY"),
+                  module: "PAYROLL",
+                  test: "Ghost Employee",
+                  score: 90,
+                  desc: `Indikasi karyawan fiktif: ${name}`,
+                  ref,
+                });
+              }
+
+              // OT abuse: OT > 50% of basic salary
+              if (basic > 0 && ot > basic * 0.5) {
+                exc.push({
+                  id: genId("PAY"),
+                  module: "PAYROLL",
+                  test: "OT Abuse",
+                  score: 75,
+                  desc: `Lembur berlebihan ${ot.toLocaleString()} (${((ot / basic) * 100).toFixed(0)}% gaji pokok) — ${name || empId}`,
+                  ref,
+                });
+              }
+
+              // Inactive-but-paid
+              if (
+                (status.includes("resign") || status.includes("terminat") || status.includes("nonaktif") || status.includes("inactive")) &&
+                (basic > 0 || ot > 0)
+              ) {
+                exc.push({
+                  id: genId("PAY"),
+                  module: "PAYROLL",
+                  test: "Inactive Employee Paid",
+                  score: 85,
+                  desc: `Karyawan ${name || empId} berstatus ${safeStr(p.status || p.Status)} masih menerima pembayaran`,
+                  ref,
+                });
+              }
+
+              // Shared bank account grouping
+              if (acc) {
+                if (!bankAccGroups[acc]) bankAccGroups[acc] = [];
+                bankAccGroups[acc].push({ empId, name, ref });
+              }
+            });
+
+            // Shared bank account: more than one employee on same account
+            Object.entries(bankAccGroups).forEach(([acc, emps]) => {
+              if (emps.length > 1) {
+                exc.push({
+                  id: genId("PAY"),
+                  module: "PAYROLL",
+                  test: "Shared Bank Account",
+                  score: 90,
+                  desc: `Rekening ${acc} digunakan oleh ${emps.length} karyawan: ${emps.map((e) => e.name || e.empId).join(", ")}`,
+                  ref: emps.map((e) => e.ref).join("|"),
+                });
+              }
+            });
+
+            // Duplicate employee by name (case-insensitive, same non-empty name)
+            const nameSeen = {};
+            payroll.forEach((p) => {
+              const name = safeStr(
+                p.name || p["Employee Name"] || p.Employee || p.employee || ""
+              ).toLowerCase().trim();
+              if (!name) return;
+              if (!nameSeen[name]) nameSeen[name] = [];
+              nameSeen[name].push(safeStr(p.id || p["Emp ID"] || p.empid || "UNK"));
+            });
+            Object.entries(nameSeen).forEach(([name, ids]) => {
+              if (ids.length > 1) {
+                exc.push({
+                  id: genId("PAY"),
+                  module: "PAYROLL",
+                  test: "Duplicate Employee Name",
+                  score: 80,
+                  desc: `Nama karyawan duplikat: "${name}" muncul ${ids.length}x (ID: ${ids.join(", ")})`,
+                  ref: ids.join("|"),
+                });
+              }
+            });
+          }
           revenue.forEach((r) => {
             if (isWeekend(r.date || r.Date) && r.type !== "Parking")
               exc.push({
@@ -9138,7 +9263,7 @@
           let eomCount = 0;
           const glTotal = gl.length || 1;
           gl.forEach((g) => {
-            if (toNum(g.debit || g.Debit) > HIGH_VALUE_THRESHOLD && safeStr(g.acc || g.Acc) === "SUSPENSE")
+            if (toNum(g.debit || g.Debit) > HIGH_VALUE_THRESHOLD && safeStr(g.acc || g.Acc || g.account || g.Account || g.account_code || g.accountCode).toUpperCase() === "SUSPENSE")
               exc.push({
                 id: genId("GL"),
                 module: "GL",
@@ -9860,6 +9985,7 @@
               }
             });
             const unmatchedStmt = [];
+            const consumedBankIdx = new Set(); // 1-to-1: each bank entry matched at most once vs stmt
             stmtRowsOut.forEach((s) => {
               const amt = s.flow.amount;
               const match = findIndexedMatch({
@@ -9872,6 +9998,7 @@
                     !b.flow.dir || !s.flow.dir || b.flow.dir === s.flow.dir;
                   return dirOk;
                 },
+                consumed: consumedBankIdx,
               });
               if (match) {
                 matchedStmt.add(s.idx);
