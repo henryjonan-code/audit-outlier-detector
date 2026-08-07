@@ -10738,13 +10738,13 @@
               {
                 name: "Hotel/Mall/Apt",
                 value: exceptions.filter((e) =>
-                  ["APARTMENT", "RENTAL", "IPL", "HOTEL", "MALL", "CONST", "FO_RC", "FO_TX"].includes(e.module)
+                  ["APARTMENT", "RENTAL", "IPL", "HOTEL", "MALL", "FO_RC", "FO_TX"].includes(e.module)
                 ).length,
               },
               {
                 name: "Property",
                 value: exceptions.filter((e) =>
-                  ["AR", "ASSET", "PAYROLL", "REV"].includes(e.module)
+                  ["AR", "ASSET", "PAYROLL", "REV", "CONST"].includes(e.module)
                 ).length,
               },
               {
@@ -11338,7 +11338,7 @@ ${optional.length ? `<div class="sec">B. Data Opsional (jika tersedia)</div>
                   <Icon name="shield-alert" className="text-blue-500" />
                   AUDIT<span className="text-blue-500">COMMAND</span> LANGUAGE
                   <span className="text-[10px] bg-gradient-to-r from-emerald-500 to-cyan-500 px-2 py-1 rounded text-white ml-2 font-bold italic tracking-normal">
-                    HOTEL • MALL • APARTMENT
+                    {auditScope === "PROJECTS" ? "PROJECTS SIPIL" : auditScope === "HOTEL" ? "HOTEL" : auditScope === "MALL" ? "MALL" : auditScope === "APARTMENT" ? "APARTMENT" : "HOTEL • MALL • APARTMENT"}
                   </span>
                 </h1>
                 <p className="text-slate-400 text-xs mt-1 font-semibold italic text-slate-500 uppercase tracking-widest leading-none">
