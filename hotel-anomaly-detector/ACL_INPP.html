@@ -5050,7 +5050,8 @@
             return AUDIT_PROFILE.arOtherKeywords.some((kw) => name.includes(kw));
           };
           const resolveMallBillingExpectation = ({ base, sc, sales, toPctRaw }) => {
-            const turnoverRent = sales > 0 ? sales * toPct(toPctRaw) : 0;
+            // Mall TO% column is always 0–100 scale (e.g. 0.5 = 0.5%, not 50%)
+            const turnoverRent = sales > 0 ? sales * (toPctRaw / 100) : 0;
             const mode = AUDIT_PROFILE.mallBillingMode;
             if (mode === "additive") {
               return {
