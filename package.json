@@ -1,0 +1,21 @@
+{
+  "name": "audit-workspace-board",
+  "version": "1.0.0",
+  "description": "Online collaborative audit task board (Kanban-style) for INPP audit teams.",
+  "main": "server/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test test/**/*.test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "lowdb": "^1.0.0",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.7.5",
+    "supertest": "^7.0.0"
+  }
+}
