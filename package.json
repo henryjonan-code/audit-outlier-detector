@@ -4,6 +4,9 @@
   "description": "Online collaborative audit task board (Kanban-style) for INPP audit teams.",
   "main": "server/index.js",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",

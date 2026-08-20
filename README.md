@@ -92,4 +92,45 @@ PORT=3000 npm start
 ```
 
 Set `DB_PATH` to point at a persistent volume if your host's filesystem is
-ephemeral.
+ephemeral — otherwise every redeploy/restart wipes the board.
+
+### Deploy on Render (recommended, has a free-tier-friendly path)
+
+This repo includes a `render.yaml` Blueprint, so Render can provision
+everything (web service + a small persistent disk for `data/db.json`) from
+one click:
+
+1. Merge this PR (or deploy straight from the branch — Render can point at
+   any branch).
+2. Go to <https://dashboard.render.com>, sign in with GitHub.
+3. **New +** → **Blueprint**, pick the `audit-outlier-detector` repo. Render
+   reads `render.yaml` automatically and shows one service:
+   `audit-workspace-board`.
+4. Confirm the plan. The blueprint requests the **Starter** plan (~$7/mo)
+   because a persistent disk (needed so tasks survive restarts) isn't
+   available on the free plan. If you want $0/mo instead, edit
+   `render.yaml` before deploying: change `plan: starter` to `plan: free`
+   and delete the `disk:` block — the board will work, but every redeploy
+   or spin-down resets all tasks/members to empty.
+5. Click **Apply** / **Deploy**. First build takes 1–2 minutes.
+6. Once live, Render gives you a URL like
+   `https://audit-workspace-board.onrender.com` — that's the link your team
+   opens to create/join the workspace.
+
+I can't click through your Render/Railway/Fly.io account myself (no
+credentials to it), so steps 2–6 need you at the keyboard — but the repo is
+ready to deploy as-is. Ping me if a build fails and paste the error; I can
+fix the code from here.
+
+### Alternative: Railway / Fly.io / any VM
+
+Same idea, no `render.yaml` needed — these hosts auto-detect
+`npm start` from `package.json`:
+
+- **Railway**: New Project → Deploy from GitHub repo → it builds and starts
+  automatically. Add a volume mounted at e.g. `/data` and set
+  `DB_PATH=/data/db.json` in the service's environment variables so tasks
+  persist across deploys.
+- **Fly.io** / **a small VM**: `npm install --omit=dev && npm start`, with
+  `DB_PATH` pointed at a persistent disk/volume and `PORT` set by the
+  platform (Fly.io sets this automatically).
