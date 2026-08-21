@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6350,  # Update 21 Ags 2026: -1.6% dari 6450
+        'current_price': 6300,  # Update 21 Ags 2026: -2.3% dari 6450 (Ajaib)
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -71,7 +71,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 2840,  # Update 21 Ags 2026: -5.9% dari 3020
+        'current_price': 3070,  # Update 21 Ags 2026: +1.7% dari 3020 (Ajaib)
         'price_change_3y': -14.6,  # 3 TAHUN: masih TURUN
         'price_change_1y': -6.0,  # 1 TAHUN: membaik dari -32% (52w: 3290-4450)
         # METRIK KHUSUS BANK
@@ -105,7 +105,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 4150,  # Update 21 Ags 2026: -2.6% dari 4260
+        'current_price': 4110,  # Update 21 Ags 2026: -3.5% dari 4260 (Ajaib)
         'price_change_3y': 35.0,  # 3 TAHUN: dari ~3980 ke 5375 - membaik
         'price_change_1y': -7.3,  # 1 TAHUN: membaik dari -17.1% (recovery!)
         # METRIK KHUSUS BANK
@@ -174,7 +174,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indofood CBP Sukses Makmur',
         'sector': 'Consumer Defensive',
         'industry': 'Packaged Foods',
-        'current_price': 8375,  # Update 29 Juli 2026: +2.8% dari 8150
+        'current_price': 7625,  # Update 21 Ags 2026: -6.4% dari 8150 (Fortune, 18 Ags)
         'price_change_3y': 8.2,
         'price_change_1y': -31.0,
         'debt_to_equity': 0.45,
@@ -300,7 +300,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Telkom Indonesia Tbk',
         'sector': 'Communication Services',
         'industry': 'Telecom Services',
-        'current_price': 3310,  # Update 6 Ags 2026: +3.8% dari 3190
+        'current_price': 2630,  # Update 21 Ags 2026: -20.5% dari 3310 (Ajaib)
         'price_change_3y': -28.5,
         'debt_to_equity': 0.55,
         'roe': 18.5,
@@ -326,7 +326,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Adaro Energy Indonesia',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2570,  # Update 19 Ags 2026: +2.0% dari 2520
+        'current_price': 2460,  # Update 21 Ags 2026: -2.4% dari 2520 (Ajaib)
         'price_change_3y': 145.2,
         'price_change_1y': -18.5,
         'debt_to_equity': 0.35,
@@ -352,7 +352,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 5025,  # Update 23 Juli 2026: -9.9% dari 5575
+        'current_price': 5000,  # Update 21 Ags 2026: -10.4% dari 5575 (Ajaib)
         'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
         'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UP
         'debt_to_equity': 0.15,
@@ -379,7 +379,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 3140,  # Update 21 Ags 2026: +8.7% dari 2890
+        'current_price': 3040,  # Update 21 Ags 2026: +5.2% dari 2890 (Ajaib)
         'price_change_3y': 270.7,  # 3 TAHUN: dari ~998 ke 3700
         'price_change_1y': 166.2,  # 1 TAHUN: dari ~1390 ke 3700 - masih UP
         'debt_to_equity': 0.42,
@@ -408,7 +408,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra International Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Manufacturers',
-        'current_price': 5025,  # Update 6 Ags 2026 (fix delayed): +3.6% dari 4850
+        'current_price': 5075,  # Update 21 Ags 2026: +4.6% dari 4850 (Ajaib)
         'price_change_3y': -8.5,
         'debt_to_equity': 0.85,
         'roe': 15.2,
@@ -457,7 +457,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2650,  # Update 23 Juli 2026: +1.1% dari 2620
+        'current_price': 2700,  # Update 21 Ags 2026: +3.1% dari 2620 (Ajaib)
         'price_change_3y': 43.7,  # 3 TAHUN: dari ~1775 ke 2550
         'price_change_1y': 26.9,  # 1 TAHUN: dari ~2010 ke 2550 - still UP
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH
@@ -661,7 +661,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Sarana Menara Nusantara',
         'sector': 'Real Estate',
         'industry': 'REIT - Specialty',
-        'current_price': 885,
+        'current_price': 414,  # Update 21 Ags 2026 (Ajaib) - possible stock split
         'price_change_3y': -22.5,
         'debt_to_equity': 1.85,
         'roe': 32.5,
@@ -685,7 +685,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Tower Bersama Infrastructure',
         'sector': 'Real Estate',
         'industry': 'REIT - Specialty',
-        'current_price': 2150,
+        'current_price': 1375,  # Update 21 Ags 2026 (Ajaib)
         'price_change_3y': -15.8,
         'debt_to_equity': 2.25,
         'roe': 28.5,
@@ -735,7 +735,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Japfa Comfeed Indonesia',
         'sector': 'Consumer Defensive',
         'industry': 'Farm Products',
-        'current_price': 1580,
+        'current_price': 2250,  # Update 21 Ags 2026: +42.4% dari 1580 (Kompas100, 20 Ags)
         'price_change_3y': 58.2,
         'debt_to_equity': 0.95,
         'roe': 15.2,
@@ -843,7 +843,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3670,  # Update 23 Juli 2026: +5.2% dari 3490
+        'current_price': 3490,  # Update 21 Ags 2026: 0.0% dari 3490 (Ajaib)
         'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
         'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
@@ -934,7 +934,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Indo Tambangraya Megah Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 24450,  # Update 29 Juli 2026: -3.7% dari 25400
+        'current_price': 24675,  # Update 21 Ags 2026: -2.9% dari 25400 (Ajaib)
         'price_change_3y': 46.4,  # 3 TAHUN: estimasi
         'price_change_1y': 17.0,  # 1 TAHUN: consolidation
         'debt_to_equity': 0.022,  # 2.2% - SANGAT RENDAH
