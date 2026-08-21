@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6450,  # Update 6 Ags 2026: +2.8% dari 6275
+        'current_price': 6350,  # Update 21 Ags 2026: -1.6% dari 6450
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -71,7 +71,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3020,  # Update 6 Ags 2026: +3.1% dari 2930
+        'current_price': 2840,  # Update 21 Ags 2026: -5.9% dari 3020
         'price_change_3y': -14.6,  # 3 TAHUN: masih TURUN
         'price_change_1y': -6.0,  # 1 TAHUN: membaik dari -32% (52w: 3290-4450)
         # METRIK KHUSUS BANK
@@ -105,7 +105,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 4260,  # Update 6 Ags 2026: +3.9% dari 4100
+        'current_price': 4150,  # Update 21 Ags 2026: -2.6% dari 4260
         'price_change_3y': 35.0,  # 3 TAHUN: dari ~3980 ke 5375 - membaik
         'price_change_1y': -7.3,  # 1 TAHUN: membaik dari -17.1% (recovery!)
         # METRIK KHUSUS BANK
@@ -139,7 +139,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3660,  # Update 6 Ags 2026: +5.2% dari 3480
+        'current_price': 3560,  # Update 21 Ags 2026: -2.7% dari 3660
         'price_change_3y': 18.5,  # 3 TAHUN: UPTREND lemah
         'price_change_1y': -12.5,  # 1 TAHUN: TURUN - DOWNTREND!
         # METRIK KHUSUS BANK
@@ -326,7 +326,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Adaro Energy Indonesia',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2520,  # Update 6 Ags 2026: -0.8% dari 2540
+        'current_price': 2570,  # Update 19 Ags 2026: +2.0% dari 2520
         'price_change_3y': 145.2,
         'price_change_1y': -18.5,
         'debt_to_equity': 0.35,
@@ -379,7 +379,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 2890,  # Update 6 Ags 2026: +5.5% dari 2740
+        'current_price': 3140,  # Update 21 Ags 2026: +8.7% dari 2890
         'price_change_3y': 270.7,  # 3 TAHUN: dari ~998 ke 3700
         'price_change_1y': 166.2,  # 1 TAHUN: dari ~1390 ke 3700 - masih UP
         'debt_to_equity': 0.42,
@@ -408,7 +408,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra International Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Manufacturers',
-        'current_price': 4850,
+        'current_price': 5025,  # Update 6 Ags 2026 (fix delayed): +3.6% dari 4850
         'price_change_3y': -8.5,
         'debt_to_equity': 0.85,
         'roe': 15.2,
