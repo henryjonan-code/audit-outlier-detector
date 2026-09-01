@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6300,  # Update 21 Ags 2026: -2.3% dari 6450 (Ajaib)
+        'current_price': 6475,  # Update 1 Sep 2026: +2.8% dari 6300 (Ajaib)
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -71,7 +71,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3070,  # Update 21 Ags 2026: +1.7% dari 3020 (Ajaib)
+        'current_price': 3170,  # Update 1 Sep 2026: +3.3% dari 3020
         'price_change_3y': -14.6,  # 3 TAHUN: masih TURUN
         'price_change_1y': -6.0,  # 1 TAHUN: membaik dari -32% (52w: 3290-4450)
         # METRIK KHUSUS BANK
@@ -105,7 +105,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 4110,  # Update 21 Ags 2026: -3.5% dari 4260 (Ajaib)
+        'current_price': 4180,  # Update 1 Sep 2026: -1.9% dari 4260
         'price_change_3y': 35.0,  # 3 TAHUN: dari ~3980 ke 5375 - membaik
         'price_change_1y': -7.3,  # 1 TAHUN: membaik dari -17.1% (recovery!)
         # METRIK KHUSUS BANK
@@ -139,7 +139,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3560,  # Update 21 Ags 2026: -2.7% dari 3660
+        'current_price': 3660,  # Update 1 Sep 2026: 0.0% dari 3660
         'price_change_3y': 18.5,  # 3 TAHUN: UPTREND lemah
         'price_change_1y': -12.5,  # 1 TAHUN: TURUN - DOWNTREND!
         # METRIK KHUSUS BANK
@@ -300,7 +300,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Telkom Indonesia Tbk',
         'sector': 'Communication Services',
         'industry': 'Telecom Services',
-        'current_price': 2630,  # Update 21 Ags 2026: -20.5% dari 3310 (Ajaib)
+        'current_price': 2740,  # Update 1 Sep 2026: +4.2% dari 2630 (Ajaib)
         'price_change_3y': -28.5,
         'debt_to_equity': 0.55,
         'roe': 18.5,
@@ -408,7 +408,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra International Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Manufacturers',
-        'current_price': 5075,  # Update 21 Ags 2026: +4.6% dari 4850 (Ajaib)
+        'current_price': 4780,  # Update 1 Sep 2026: -1.5% dari 4850
         'price_change_3y': -8.5,
         'debt_to_equity': 0.85,
         'roe': 15.2,
@@ -843,7 +843,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3490,  # Update 21 Ags 2026: 0.0% dari 3490 (Ajaib)
+        'current_price': 3890,  # Update 1 Sep 2026: +11.5% dari 3490 (Pluang)
         'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
         'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
