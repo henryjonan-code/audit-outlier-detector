@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6475,  # Update 1 Sep 2026: +2.8% dari 6300 (Ajaib)
+        'current_price': 6675,  # Update 2 Sep 2026: +3.1% dari 6475 (portfolio)
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -326,7 +326,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Adaro Energy Indonesia',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2460,  # Update 21 Ags 2026: -2.4% dari 2520 (Ajaib)
+        'current_price': 2650,  # Update 2 Sep 2026: +7.7% dari 2460 (portfolio)
         'price_change_3y': 145.2,
         'price_change_1y': -18.5,
         'debt_to_equity': 0.35,
@@ -352,7 +352,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 5000,  # Update 21 Ags 2026: -10.4% dari 5575 (Ajaib)
+        'current_price': 4820,  # Update 2 Sep 2026: -3.6% dari 5000 (portfolio)
         'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
         'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UP
         'debt_to_equity': 0.15,
@@ -457,7 +457,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra Otoparts Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Parts',
-        'current_price': 2700,  # Update 21 Ags 2026: +3.1% dari 2620 (Ajaib)
+        'current_price': 3390,  # Update 2 Sep 2026: +25.6% dari 2700 (portfolio - koreksi data lama)
         'price_change_3y': 43.7,  # 3 TAHUN: dari ~1775 ke 2550
         'price_change_1y': 26.9,  # 1 TAHUN: dari ~2010 ke 2550 - still UP
         'debt_to_equity': 0.035,  # 3.5% - SANGAT RENDAH
@@ -843,7 +843,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 3890,  # Update 1 Sep 2026: +11.5% dari 3490 (Pluang)
+        'current_price': 4010,  # Update 2 Sep 2026: +3.1% dari 3890 (portfolio)
         'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
         'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
@@ -901,7 +901,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Tempo Scan Pacific Tbk',
         'sector': 'Healthcare',
         'industry': 'Drug Manufacturers',
-        'current_price': 2960,  # Update 4 Juli 2026 (unchanged)
+        'current_price': 2760,  # Update 2 Sep 2026: -6.8% dari 2960 (portfolio)
         'price_change_3y': 49.2,  # 3 TAHUN: dari ~1790 ke 2670
         'price_change_1y': 30.4,  # 1 TAHUN: dari ~2047 ke 2670 - UPTREND!
         'debt_to_equity': 0.12,  # 12% - RENDAH
@@ -963,7 +963,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 2420,  # Update 29 Juli 2026: +3.4% dari 2340
+        'current_price': 2720,  # Update 2 Sep 2026: +12.4% dari 2420 (portfolio)
         'price_change_3y': 34.1,  # 3 TAHUN: estimasi
         'price_change_1y': 14.9,  # 1 TAHUN: koreksi
         'debt_to_equity': 0.20,  # 20% - RENDAH
