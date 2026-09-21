@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6675,  # Update 2 Sep 2026: +3.1% dari 6475 (portfolio)
+        'current_price': 6300,  # Update 21 Sep 2026: -5.6% dari 6675 (Ajaib)
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -71,7 +71,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3170,  # Update 1 Sep 2026: +3.3% dari 3020
+        'current_price': 3310,  # Update 21 Sep 2026: +4.4% dari 3170
         'price_change_3y': -14.6,  # 3 TAHUN: masih TURUN
         'price_change_1y': -6.0,  # 1 TAHUN: membaik dari -32% (52w: 3290-4450)
         # METRIK KHUSUS BANK
@@ -105,7 +105,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 4180,  # Update 1 Sep 2026: -1.9% dari 4260
+        'current_price': 4260,  # Update 21 Sep 2026: +1.9% dari 4180
         'price_change_3y': 35.0,  # 3 TAHUN: dari ~3980 ke 5375 - membaik
         'price_change_1y': -7.3,  # 1 TAHUN: membaik dari -17.1% (recovery!)
         # METRIK KHUSUS BANK
@@ -139,7 +139,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3660,  # Update 1 Sep 2026: 0.0% dari 3660
+        'current_price': 3650,  # Update 21 Sep 2026: -0.3% dari 3660
         'price_change_3y': 18.5,  # 3 TAHUN: UPTREND lemah
         'price_change_1y': -12.5,  # 1 TAHUN: TURUN - DOWNTREND!
         # METRIK KHUSUS BANK
@@ -300,7 +300,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Telkom Indonesia Tbk',
         'sector': 'Communication Services',
         'industry': 'Telecom Services',
-        'current_price': 2740,  # Update 1 Sep 2026: +4.2% dari 2630 (Ajaib)
+        'current_price': 2710,  # Update 21 Sep 2026: -1.1% dari 2740 (Investing, 15 Sep)
         'price_change_3y': -28.5,
         'debt_to_equity': 0.55,
         'roe': 18.5,
@@ -326,7 +326,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Adaro Energy Indonesia',
         'sector': 'Energy',
         'industry': 'Thermal Coal',
-        'current_price': 2650,  # Update 2 Sep 2026: +7.7% dari 2460 (portfolio)
+        'current_price': 2780,  # Update 21 Sep 2026: +4.9% dari 2650 (Ajaib)
         'price_change_3y': 145.2,
         'price_change_1y': -18.5,
         'debt_to_equity': 0.35,
@@ -843,7 +843,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Timah Tbk',
         'sector': 'Basic Materials',
         'industry': 'Tin Mining',
-        'current_price': 4010,  # Update 2 Sep 2026: +3.1% dari 3890 (portfolio)
+        'current_price': 4420,  # Update 21 Sep 2026: +10.2% dari 4010 (Pluang)
         'price_change_3y': 359.4,  # 3 TAHUN: dari ~825 ke 3790
         'price_change_1y': 247.7,  # 1 TAHUN: dari ~1090 ke 3790 - UPTREND!
         'debt_to_equity': 0.007,  # 0.72% - SANGAT RENDAH
@@ -963,7 +963,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 2720,  # Update 2 Sep 2026: +12.4% dari 2420 (portfolio)
+        'current_price': 3090,  # Update 21 Sep 2026: +13.6% dari 2720 (Ajaib)
         'price_change_3y': 34.1,  # 3 TAHUN: estimasi
         'price_change_1y': 14.9,  # 1 TAHUN: koreksi
         'debt_to_equity': 0.20,  # 20% - RENDAH
