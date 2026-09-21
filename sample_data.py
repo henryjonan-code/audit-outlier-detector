@@ -985,4 +985,441 @@ SAMPLE_STOCK_DATA = [
         'governance_flag': False,  # BUMN, governance clear
         'notes': 'V5.0: ROE 22% STRONG, BUMN governance, high dividend sustainable',
     },
+
+    # =========================================================================
+    # SAHAM BARU - LQ45 Agustus 2026 (belum ada di dataset)
+    # Data: riset fundamental Sep 2026 (Yahoo, Investing, Stockbit, IDX)
+    # =========================================================================
+
+    # Tech - GOTO (MSCI REMOVED Aug 2026, price floor Rp50)
+    {
+        'ticker': 'GOTO.JK',
+        'name': 'GoTo Gojek Tokopedia Tbk',
+        'sector': 'Technology',
+        'industry': 'Internet Content & Information',
+        'current_price': 50,  # Update Sep 2026: floor Rp50 sejak Mei 2026
+        'price_change_3y': -42.0,
+        'price_change_1y': -30.0,
+        'debt_to_equity': 0.145,
+        'roe': -6.3,  # Masih rugi
+        'roa': -2.0,
+        'profit_margin': -6.5,
+        'dividend_yield': 0,  # Tidak bayar dividen
+        'current_ratio': 2.5,
+        'earnings_growth': 77.0,  # Rugi menyempit 77% YoY
+        'pe_ratio': None,  # Loss
+        'pb_ratio': 1.3,
+        'peg_ratio': None,
+        'market_cap': 60e12,
+        'avg_volume': 2_000_000_000,
+        'free_float_pct': 65,
+        'operating_cash_flow': 1000,  # OCF turn positive (est)
+        'payout_ratio': 0,
+        'governance_flag': True,  # MSCI REMOVED Aug 2026, likuiditas kolaps
+        'notes': 'MSCI REMOVED Aug 2026, floor Rp50, masih rugi - GAGAL filter',
+    },
+
+    # Copper/Gold - AMMN (MSCI REMOVED May 2026, HSC)
+    {
+        'ticker': 'AMMN.JK',
+        'name': 'Amman Mineral Internasional Tbk',
+        'sector': 'Basic Materials',
+        'industry': 'Copper',
+        'current_price': 4410,  # Update Sep 2026
+        'price_change_3y': 160.0,
+        'price_change_1y': -40.0,
+        'debt_to_equity': 1.1,
+        'roe': 4.7,
+        'roa': 4.0,
+        'profit_margin': 20.0,
+        'dividend_yield': 0,
+        'current_ratio': 1.5,
+        'earnings_growth': -30.0,
+        'pe_ratio': 27.9,
+        'pb_ratio': 5.5,
+        'peg_ratio': None,
+        'market_cap': 319e12,
+        'avg_volume': 45_000_000,
+        'free_float_pct': 19,  # MSCI-adjusted ~10%, IDX ~19%
+        'operating_cash_flow': 18000,
+        'payout_ratio': 0,
+        'governance_flag': True,  # MSCI REMOVED May 2026, high shareholding concentration
+        'notes': 'MSCI REMOVED May 2026 (HSC/low float), ROE 4.7%, no div - GAGAL',
+    },
+
+    # Mining - MDKA (near-breakeven, high leverage)
+    {
+        'ticker': 'MDKA.JK',
+        'name': 'Merdeka Copper Gold Tbk',
+        'sector': 'Basic Materials',
+        'industry': 'Gold',
+        'current_price': 2520,  # Update Sep 2026
+        'price_change_3y': -35.0,
+        'price_change_1y': 14.65,
+        'debt_to_equity': 1.87,  # High leverage
+        'roe': -0.09,  # Breakeven/rugi tipis
+        'roa': -0.5,
+        'profit_margin': -1.0,
+        'dividend_yield': 0,
+        'current_ratio': 1.2,
+        'earnings_growth': -50.0,
+        'pe_ratio': None,  # Loss
+        'pb_ratio': 2.8,
+        'peg_ratio': None,
+        'market_cap': 61e12,
+        'avg_volume': 70_000_000,
+        'free_float_pct': 35,
+        'operating_cash_flow': 3500,
+        'payout_ratio': 0,
+        'governance_flag': False,
+        'notes': 'ROE breakeven, D/E 1.87 tinggi, no div - GAGAL filter',
+    },
+
+    # BANK Syariah - BRIS
+    {
+        'ticker': 'BRIS.JK',
+        'name': 'Bank Syariah Indonesia Tbk',
+        'sector': 'Financial Services',
+        'industry': 'Banks',
+        'is_bank': True,
+        'current_price': 1710,  # Update Sep 2026
+        'price_change_3y': 5.0,
+        'price_change_1y': -25.0,
+        'car': 22.0,
+        'npl': 1.81,  # NPF gross
+        'nim': 5.6,
+        'ldr': 80.0,  # FDR
+        'cost_to_income': 40.0,
+        'debt_to_equity': None,
+        'roe': 19.36,
+        'roa': 2.54,
+        'profit_margin': 30.0,
+        'dividend_yield': 1.8,
+        'current_ratio': None,
+        'earnings_growth': 15.0,
+        'pe_ratio': 11.0,
+        'pb_ratio': 2.0,
+        'peg_ratio': 0.73,
+        'market_cap': 79e12,
+        'avg_volume': 55_000_000,
+        'free_float_pct': 13,  # BRI/Mandiri/BNI own ~87% - DI BAWAH 15%
+        'operating_cash_flow': 15000,
+        'payout_ratio': 20,
+        'governance_flag': False,
+        'notes': 'Fundamental OK (ROE 19%) tapi free float 13% <15% - GAGAL filter',
+    },
+
+    # Energy Geothermal - PGEO (low free float)
+    {
+        'ticker': 'PGEO.JK',
+        'name': 'Pertamina Geothermal Energy Tbk',
+        'sector': 'Utilities',
+        'industry': 'Utilities - Renewable',
+        'current_price': 1100,  # Update Aug 2026
+        'price_change_3y': 45.0,
+        'price_change_1y': 10.0,
+        'debt_to_equity': 0.38,
+        'roe': 7.2,
+        'roa': 4.48,
+        'profit_margin': 32.0,
+        'dividend_yield': 4.7,
+        'current_ratio': 4.47,
+        'earnings_growth': -14.2,
+        'pe_ratio': 20.0,
+        'pb_ratio': 1.5,
+        'peg_ratio': None,
+        'market_cap': 44e12,
+        'avg_volume': 25_000_000,
+        'free_float_pct': 12,  # Pertamina ~82% - DI BAWAH 15%
+        'operating_cash_flow': 4000,
+        'payout_ratio': 80,
+        'governance_flag': False,
+        'notes': 'ROE 7.2% <10% & free float 12% <15% - GAGAL filter',
+    },
+
+    # Gas Utility - PGAS (high payout)
+    {
+        'ticker': 'PGAS.JK',
+        'name': 'Perusahaan Gas Negara Tbk',
+        'sector': 'Utilities',
+        'industry': 'Utilities - Regulated Gas',
+        'current_price': 1530,  # Update Sep 2026
+        'price_change_3y': -7.0,
+        'price_change_1y': -4.79,
+        'debt_to_equity': 0.29,
+        'roe': 10.09,
+        'roa': 5.0,
+        'profit_margin': 8.0,
+        'dividend_yield': 12.2,  # Very high
+        'current_ratio': 2.01,
+        'earnings_growth': 5.0,
+        'pe_ratio': 8.74,
+        'pb_ratio': 0.9,
+        'peg_ratio': None,
+        'market_cap': 36e12,
+        'avg_volume': 60_000_000,
+        'free_float_pct': 43,
+        'operating_cash_flow': 11000,
+        'payout_ratio': 87.3,  # DI ATAS 80% - BUMN policy
+        'governance_flag': False,
+        'notes': 'ROE 10% & div 12.2% tapi payout 87% >80% - GAGAL filter',
+    },
+
+    # Oil & Gas - MEDC (high D/E)
+    {
+        'ticker': 'MEDC.JK',
+        'name': 'Medco Energi Internasional Tbk',
+        'sector': 'Energy',
+        'industry': 'Oil & Gas E&P',
+        'current_price': 1040,  # Update Sep 2026 (est)
+        'price_change_3y': -5.0,
+        'price_change_1y': -15.0,
+        'debt_to_equity': 1.65,  # High - DI ATAS 1.0
+        'roe': 8.12,
+        'roa': 3.0,
+        'profit_margin': 7.74,
+        'dividend_yield': 4.0,
+        'current_ratio': 1.3,
+        'earnings_growth': 50.0,
+        'pe_ratio': 12.51,
+        'pb_ratio': 1.0,
+        'peg_ratio': 0.25,
+        'market_cap': 26e12,
+        'avg_volume': 45_000_000,
+        'free_float_pct': 45,
+        'operating_cash_flow': 14000,
+        'payout_ratio': 40,
+        'governance_flag': False,
+        'notes': 'D/E 1.65 >1.0 & ROE 8.1% <10% - GAGAL filter',
+    },
+
+    # Energy Distribution - AKRA (LOLOS)
+    {
+        'ticker': 'AKRA.JK',
+        'name': 'AKR Corporindo Tbk',
+        'sector': 'Energy',
+        'industry': 'Oil & Gas Refining & Marketing',
+        'current_price': 1345,  # Update Sep 2026
+        'price_change_3y': -10.0,
+        'price_change_1y': 10.66,
+        'debt_to_equity': 0.33,
+        'roe': 19.53,
+        'roa': 10.0,
+        'profit_margin': 5.0,
+        'dividend_yield': 7.3,
+        'current_ratio': 1.33,
+        'earnings_growth': 3.0,
+        'pe_ratio': 10.13,
+        'pb_ratio': 1.9,
+        'peg_ratio': None,
+        'market_cap': 27e12,
+        'avg_volume': 65_000_000,
+        'free_float_pct': 41,
+        'operating_cash_flow': 2500,
+        'payout_ratio': 70,
+        'governance_flag': False,
+        'notes': 'LOLOS: ROE 19.5%, D/E rendah, div 7.3%, valuasi murah',
+    },
+
+    # Pulp & Paper - INKP (low ROE)
+    {
+        'ticker': 'INKP.JK',
+        'name': 'Indah Kiat Pulp & Paper Tbk',
+        'sector': 'Basic Materials',
+        'industry': 'Paper & Paper Products',
+        'current_price': 8500,  # Update Aug 2026
+        'price_change_3y': 2.0,
+        'price_change_1y': 23.35,
+        'debt_to_equity': 0.68,
+        'roe': 6.9,  # DI BAWAH 10%
+        'roa': 3.5,
+        'profit_margin': 14.6,
+        'dividend_yield': 0.85,
+        'current_ratio': 1.7,
+        'earnings_growth': 12.0,
+        'pe_ratio': 5.45,
+        'pb_ratio': 0.4,  # Deep discount
+        'peg_ratio': 0.45,
+        'market_cap': 46e12,
+        'avg_volume': 10_000_000,
+        'free_float_pct': 47,
+        'operating_cash_flow': 11000,
+        'payout_ratio': 5,
+        'governance_flag': False,
+        'notes': 'Valuasi super murah (PBV 0.4) tapi ROE 6.9% <10% - GAGAL filter',
+    },
+
+    # Telecom - ISAT (high D/E)
+    {
+        'ticker': 'ISAT.JK',
+        'name': 'Indosat Ooredoo Hutchison Tbk',
+        'sector': 'Communication Services',
+        'industry': 'Telecom Services',
+        'current_price': 2220,  # Update Sep 2026
+        'price_change_3y': -60.0,
+        'price_change_1y': -30.0,
+        'debt_to_equity': 1.33,  # DI ATAS 1.0
+        'roe': 15.03,
+        'roa': 5.0,
+        'profit_margin': 10.0,
+        'dividend_yield': 3.5,
+        'current_ratio': 0.5,
+        'earnings_growth': 26.0,
+        'pe_ratio': 12.58,
+        'pb_ratio': 2.6,
+        'peg_ratio': 0.48,
+        'market_cap': 71e12,
+        'avg_volume': 30_000_000,
+        'free_float_pct': 17,
+        'operating_cash_flow': 22010,  # Strong OCF (sourced)
+        'payout_ratio': 58.5,
+        'governance_flag': False,
+        'notes': 'ROE 15% & OCF kuat tapi D/E 1.33 >1.0 (telco) - GAGAL filter',
+    },
+
+    # Telecom - EXCL/XLSMART (loss FY25, turnaround)
+    {
+        'ticker': 'EXCL.JK',
+        'name': 'XLSMART Telecom Sejahtera Tbk',
+        'sector': 'Communication Services',
+        'industry': 'Telecom Services',
+        'current_price': 2250,  # Update Sep 2026 (est)
+        'price_change_3y': 5.0,
+        'price_change_1y': 5.0,
+        'debt_to_equity': 0.4,
+        'roe': -5.0,  # Rugi FY25 (merger costs)
+        'roa': -2.0,
+        'profit_margin': -3.0,
+        'dividend_yield': 6.3,
+        'current_ratio': 0.5,
+        'earnings_growth': 100.0,  # Turnaround
+        'pe_ratio': None,  # Loss TTM
+        'pb_ratio': 2.0,
+        'peg_ratio': None,
+        'market_cap': 47e12,
+        'avg_volume': 25_000_000,
+        'free_float_pct': 30,
+        'operating_cash_flow': 10000,
+        'payout_ratio': 0,  # Loss FY25
+        'governance_flag': False,
+        'notes': 'Merger XL+Smartfren, rugi FY25 - GAGAL filter (ROE negatif)',
+    },
+
+    # BANK - BBTN (low ROE)
+    {
+        'ticker': 'BBTN.JK',
+        'name': 'Bank Tabungan Negara Tbk',
+        'sector': 'Financial Services',
+        'industry': 'Banks',
+        'is_bank': True,
+        'current_price': 1180,  # Update Sep 2026
+        'price_change_3y': -15.0,
+        'price_change_1y': -15.0,
+        'car': 19.0,
+        'npl': 3.03,
+        'nim': 3.3,  # Mortgage bank - NIM tipis
+        'ldr': 96.49,  # High
+        'cost_to_income': 50.0,
+        'debt_to_equity': None,
+        'roe': 9.68,  # DI BAWAH 10%
+        'roa': 0.95,
+        'profit_margin': 21.0,
+        'dividend_yield': 5.0,
+        'current_ratio': None,
+        'earnings_growth': 14.76,
+        'pe_ratio': 5.32,
+        'pb_ratio': 0.4,  # Deep discount
+        'peg_ratio': 0.36,
+        'market_cap': 16.9e12,
+        'avg_volume': 75_000_000,
+        'free_float_pct': 40,
+        'operating_cash_flow': 12000,
+        'payout_ratio': 20,
+        'governance_flag': False,
+        'notes': 'Valuasi murah (PBV 0.4) tapi ROE 9.68% <10% - GAGAL filter',
+    },
+
+    # Coal/Energy - INDY (very low ROE)
+    {
+        'ticker': 'INDY.JK',
+        'name': 'Indika Energy Tbk',
+        'sector': 'Energy',
+        'industry': 'Thermal Coal',
+        'current_price': 2690,  # Update Sep 2026 (est)
+        'price_change_3y': 40.0,
+        'price_change_1y': 20.0,
+        'debt_to_equity': 0.9,
+        'roe': 0.51,  # Sangat rendah (transisi dari coal)
+        'roa': 0.3,
+        'profit_margin': 2.1,
+        'dividend_yield': 7.0,
+        'current_ratio': 1.5,
+        'earnings_growth': 20.0,
+        'pe_ratio': 56.0,  # Tinggi krn earnings tipis
+        'pb_ratio': 0.6,
+        'peg_ratio': None,
+        'market_cap': 14e12,
+        'avg_volume': 45_000_000,
+        'free_float_pct': 35,
+        'operating_cash_flow': 1800,
+        'payout_ratio': 50,
+        'governance_flag': False,
+        'notes': 'ROE 0.51% sangat rendah (transisi coal) - GAGAL filter',
+    },
+
+    # Nickel - NCKL/Harita (LOLOS - strong)
+    {
+        'ticker': 'NCKL.JK',
+        'name': 'Trimegah Bangun Persada Tbk',
+        'sector': 'Basic Materials',
+        'industry': 'Other Industrial Metals',
+        'current_price': 1360,  # Update Sep 2026
+        'price_change_3y': 50.0,
+        'price_change_1y': 10.0,
+        'debt_to_equity': 0.25,  # Low
+        'roe': 26.28,  # STRONG
+        'roa': 12.21,
+        'profit_margin': 30.0,
+        'dividend_yield': 2.2,
+        'current_ratio': 1.5,
+        'earnings_growth': 40.32,
+        'pe_ratio': 7.93,
+        'pb_ratio': 1.29,
+        'peg_ratio': 0.20,
+        'market_cap': 85.7e12,
+        'avg_volume': 50_000_000,
+        'free_float_pct': 16,  # Harita ~80% - lolos tipis di atas 15%
+        'operating_cash_flow': 6000,
+        'payout_ratio': 18,
+        'governance_flag': False,  # HSC watch tapi belum di-remove
+        'notes': 'LOLOS: ROE 26% STRONG, D/E 0.25, growth 40%. ⚠️ free float 16% ketat',
+    },
+
+    # Retail - MAPA (LOLOS)
+    {
+        'ticker': 'MAPA.JK',
+        'name': 'Map Aktif Adiperkasa Tbk',
+        'sector': 'Consumer Cyclical',
+        'industry': 'Apparel Retail',
+        'current_price': 680,  # Update Sep 2026
+        'price_change_3y': -20.0,
+        'price_change_1y': -25.0,
+        'debt_to_equity': 0.20,
+        'roe': 21.84,
+        'roa': 11.0,
+        'profit_margin': 9.0,
+        'dividend_yield': 0.65,
+        'current_ratio': 1.8,
+        'earnings_growth': 5.0,
+        'pe_ratio': 8.70,
+        'pb_ratio': 2.0,
+        'peg_ratio': 0.4,
+        'market_cap': 19.4e12,
+        'avg_volume': 35_000_000,
+        'free_float_pct': 44,
+        'operating_cash_flow': 2000,
+        'payout_ratio': 6,
+        'governance_flag': False,
+        'notes': 'LOLOS: ROE 21.8%, D/E 0.20 rendah, valuasi wajar',
+    },
 ]
