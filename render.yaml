@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: audit-workspace-board
+    runtime: node
+    plan: starter
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        value: /var/data/db.json
+    disk:
+      name: audit-board-data
+      mountPath: /var/data
+      sizeGB: 1
