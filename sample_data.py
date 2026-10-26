@@ -37,7 +37,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,  # FLAG untuk identifikasi bank
-        'current_price': 6075,  # Update 15 Okt 2026: +1.7% dari 5975 (Berita Moneter)
+        'current_price': 5025,  # Update 23 Okt 2026: -17.3% dari 6075 (Yahoo, koreksi pasar)
         'price_change_3y': 6.2,  # 3 TAHUN: dari ~6800 ke 7225
         'price_change_1y': -25.1,  # 1 TAHUN: TURUN dari 9650 - DOWNTREND!
         # METRIK KHUSUS BANK (bukan D/E!)
@@ -71,7 +71,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3100,  # Update 15 Okt 2026: +1.3% dari 3060 (Berita Moneter)
+        'current_price': 2900,  # Update 23 Okt 2026: -6.5% dari 3100 (Fortune/Google)
         'price_change_3y': -14.6,  # 3 TAHUN: masih TURUN
         'price_change_1y': -6.0,  # 1 TAHUN: membaik dari -32% (52w: 3290-4450)
         # METRIK KHUSUS BANK
@@ -105,7 +105,7 @@ SAMPLE_STOCK_DATA = [
         'sector': 'Financial Services',
         'industry': 'Banks',
         'is_bank': True,
-        'current_price': 3980,  # Update 15 Okt 2026: -0.7% dari 4010 (Berita Moneter)
+        'current_price': 3900,  # Update 23 Okt 2026: -2.0% dari 3980 (Yahoo)
         'price_change_3y': 35.0,  # 3 TAHUN: dari ~3980 ke 5375 - membaik
         'price_change_1y': -7.3,  # 1 TAHUN: membaik dari -17.1% (recovery!)
         # METRIK KHUSUS BANK
@@ -300,7 +300,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Telkom Indonesia Tbk',
         'sector': 'Communication Services',
         'industry': 'Telecom Services',
-        'current_price': 2320,  # Update 9 Okt 2026: +3.1% dari 2250 (Bisnis)
+        'current_price': 2240,  # Update 23 Okt 2026: -3.4% dari 2320 (KayoNews)
         'price_change_3y': -28.5,
         'debt_to_equity': 0.55,
         'roe': 18.5,
@@ -352,7 +352,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Vale Indonesia Tbk',
         'sector': 'Basic Materials',
         'industry': 'Nickel',
-        'current_price': 4820,  # Update 2 Sep 2026: -3.6% dari 5000 (portfolio)
+        'current_price': 3850,  # Update 23 Okt 2026: -20.1% dari 4820 (Investor.id)
         'price_change_3y': 195.8,  # 3 TAHUN: dari ~1885 ke 5575
         'price_change_1y': 95.6,  # 1 TAHUN: dari ~2850 ke 5575 - masih UP
         'debt_to_equity': 0.15,
@@ -379,7 +379,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Aneka Tambang Tbk',
         'sector': 'Basic Materials',
         'industry': 'Other Industrial Metals',
-        'current_price': 2990,  # Update 15 Okt 2026: -4.5% dari 3130 (Berita Moneter)
+        'current_price': 2860,  # Update 23 Okt 2026: -4.3% dari 2990 (Yahoo)
         'price_change_3y': 270.7,  # 3 TAHUN: dari ~998 ke 3700
         'price_change_1y': 166.2,  # 1 TAHUN: dari ~1390 ke 3700 - masih UP
         'debt_to_equity': 0.42,
@@ -408,7 +408,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Astra International Tbk',
         'sector': 'Consumer Cyclical',
         'industry': 'Auto Manufacturers',
-        'current_price': 4780,  # Update 15 Okt 2026: +3.9% dari 4600 (Berita Moneter)
+        'current_price': 4550,  # Update 23 Okt 2026: -4.8% dari 4780 (KayoNews)
         'price_change_3y': -8.5,
         'debt_to_equity': 0.85,
         'roe': 15.2,
