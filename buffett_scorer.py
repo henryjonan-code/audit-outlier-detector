@@ -37,6 +37,7 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Tuple
 from config import SCORING_WEIGHTS, MIN_CRITERIA, LIQUIDITY_CRITERIA, VALUATION_BENCHMARKS
+from hsc_blacklist import HSC_BLACKLIST, normalize as hsc_normalize
 
 
 class BuffettScorer:
@@ -547,6 +548,18 @@ class BuffettScorer:
             mask_val = pd.Series([True] * len(filtered), index=filtered.index)
 
         # =====================================================================
+        # HARD FILTER 8: HSC Blacklist - saham yang dikeluarkan BEI dari IHSG
+        # Kepemilikan terkonsentrasi (free float minim) = governance/likuiditas
+        # buruk. WAJIB keluar dari radar. Daftar di hsc_blacklist.py
+        # =====================================================================
+        if 'ticker' in filtered.columns:
+            mask_hsc = ~filtered['ticker'].apply(
+                lambda t: hsc_normalize(t) in HSC_BLACKLIST
+            )
+        else:
+            mask_hsc = pd.Series([True] * len(filtered), index=filtered.index)
+
+        # =====================================================================
         # SOFT FILTER: Trend positif (untuk ranking, bukan eliminasi)
         # Catatan: Dihapus dari hard filter agar tidak miss opportunity
         # pada saham quality yang sedang turun
@@ -554,7 +567,7 @@ class BuffettScorer:
 
         # GABUNGKAN SEMUA HARD FILTER
         mask_all = mask_roe & mask_de & mask_ocf & mask_div & mask_payout & \
-                   mask_float & mask_gov & mask_val
+                   mask_float & mask_gov & mask_val & mask_hsc
 
         passed = filtered[mask_all].copy()
         failed = filtered[~mask_all].copy()
