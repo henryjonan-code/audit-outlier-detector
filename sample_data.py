@@ -963,7 +963,7 @@ SAMPLE_STOCK_DATA = [
         'name': 'Bukit Asam Tbk',
         'sector': 'Energy',
         'industry': 'Coal Mining',
-        'current_price': 3130,  # Update 15 Okt 2026: -2.2% dari 3200 (Investing, sesi I)
+        'current_price': 3040,  # Update 30 Okt 2026 (close): -2.9% dari 3130 (IR PTBA)
         'price_change_3y': 34.1,  # 3 TAHUN: estimasi
         'price_change_1y': 14.9,  # 1 TAHUN: koreksi
         'debt_to_equity': 0.20,  # 20% - RENDAH
